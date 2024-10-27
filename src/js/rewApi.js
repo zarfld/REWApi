@@ -85,8 +85,15 @@ class REWApi {
     }
 
     // Methods for handling impulse response
-    async getImpulseResponse() {
-        return await this.get("http://localhost:4735/impulseresponse");
+    async getImpulseResponse(id, unit = "Percent", windowed = false, normalised = true) {
+        let endpoint = `/measurements/${id}/impulse-response?unit=${unit}`;
+        if (windowed) {
+            endpoint += `&windowed=true`;
+        }
+        if (!normalised) {
+            endpoint += `&normalised=false`;
+        }
+        return await this.get(endpoint);
     }
 
     // Methods for handling EQ and filters

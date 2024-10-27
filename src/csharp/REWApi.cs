@@ -82,9 +82,18 @@ public class REWApi
     }
 
     // Methods for handling impulse response
-    public async Task<string> GetImpulseResponseAsync()
+    public async Task<string> GetImpulseResponseAsync(string id, string unit = "Percent", bool windowed = false, bool normalised = true)
     {
-        return await GetAsync("http://localhost:4735/impulseresponse");
+        string endpoint = $"/measurements/{id}/impulse-response?unit={unit}";
+        if (windowed)
+        {
+            endpoint += "&windowed=true";
+        }
+        if (!normalised)
+        {
+            endpoint += "&normalised=false";
+        }
+        return await GetAsync(endpoint);
     }
 
     // Methods for handling EQ and filters

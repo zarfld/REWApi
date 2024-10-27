@@ -1157,3 +1157,17 @@ The default unit for the magnitude data is SPL, but other units can be requested
 The default smoothing is whatever the measurement currently uses, but other smoothings can be requested by including a `smoothing` query value in the URL, e.g., `?smoothing="1/12"`. The list of smoothing choices can be read from `/measurements/frequency-response/smoothing-choices`.
 
 Whether the returned data is log-spaced or linear-spaced depends on the measurement, but log-spaced data can be forced by including a `ppo` query value in the URL, e.g., `?ppo=96`. Note that to avoid sampling artifacts, log-spaced data will be smoothed to `ppo/2` if a greater smoothing has not already been applied.
+
+## Impulse Response Endpoint
+
+The impulse response for a measurement can be obtained by a GET request at `/measurements/:id/impulse-response`. An `ImpulseResponse` object is returned, with the following properties:
+
+- `startTime`: The start time.
+- `timingReference`: A description of the timing reference used.
+- `sampleInterval`: The sample interval in seconds.
+- `sampleRate`: The sample rate in Hz.
+- `responseData`: Base64-encoded string of response data.
+
+The default unit for the data is Percent, but other units can be requested by including a `unit` query value in the URL, e.g., `?unit=dBFS`. The list of units available can be read from `/measurements/impulse-response/units`.
+
+Impulse response queries can return the windowed portion of the data by including a query value `?windowed=true` in the URL. Data is normalised by default; for data that is not normalised, include a query value `?normalised=false` in the URL.
