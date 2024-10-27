@@ -107,6 +107,17 @@ public:
         return GetAsync(endpoint);
     }
 
+    // Methods for handling IR window settings
+    pplx::task<utility::string_t> GetIRWindowSettingsAsync(const utility::string_t& id)
+    {
+        return GetAsync(U("/measurements/") + id + U("/ir-windows"));
+    }
+
+    pplx::task<utility::string_t> UpdateIRWindowSettingsAsync(const utility::string_t& id, const json::value& content)
+    {
+        return PutAsync(U("/measurements/") + id + U("/ir-windows"), content);
+    }
+
     // Methods for handling EQ and filters
     pplx::task<utility::string_t> GetEQSettingsAsync()
     {
@@ -543,5 +554,11 @@ public:
         return client.request(methods::PUT, U("/measurements/") + id, content).then([](http_response response) {
             return response.extract_string();
         });
+    }
+
+    // Methods for handling REW View preferences
+    pplx::task<utility::string_t> GetREWViewPreferencesAsync()
+    {
+        return GetAsync(U("http://localhost:4735/application/settings"));
     }
 };
