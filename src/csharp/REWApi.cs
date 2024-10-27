@@ -132,4 +132,22 @@ public class REWApi
         Buffer.BlockCopy(bytes, 0, array, 0, bytes.Length);
         return array;
     }
+
+    // Method to add a subscription
+    public async Task<string> SubscribeAsync(HttpContent content)
+    {
+        return await PostAsync("http://localhost:4735/subscribe", content);
+    }
+
+    // Method to remove a subscription
+    public async Task<string> UnsubscribeAsync(HttpContent content)
+    {
+        return await PostAsync("http://localhost:4735/unsubscribe", content);
+    }
+
+    // Method to get the list of subscribers
+    public async Task<string> GetSubscribersAsync()
+    {
+        return await GetAsync("http://localhost:4735/subscribers");
+    }
 }
