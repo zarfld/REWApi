@@ -313,6 +313,83 @@ class REWApi {
     async setJavaStereoOnly(data) {
         return await this.post("http://localhost:4735/audio/java/stereo-only", data);
     }
+
+    // Methods for handling ASIO driver items
+    async getASIODevice() {
+        return await this.get("http://localhost:4735/audio/asio/device");
+    }
+
+    async setASIODevice(data) {
+        return await this.post("http://localhost:4735/audio/asio/device", data);
+    }
+
+    async getASIOInput() {
+        return await this.get("http://localhost:4735/audio/asio/input");
+    }
+
+    async setASIOInput(data) {
+        return await this.post("http://localhost:4735/audio/asio/input", data);
+    }
+
+    async getASIOOutput() {
+        return await this.get("http://localhost:4735/audio/asio/output");
+    }
+
+    async setASIOOutput(data) {
+        return await this.post("http://localhost:4735/audio/asio/output", data);
+    }
+
+    async getASIODevices() {
+        return await this.get("http://localhost:4735/audio/asio/devices");
+    }
+
+    async getASIOInputs() {
+        return await this.get("http://localhost:4735/audio/asio/inputs");
+    }
+
+    async getASIOOutputs() {
+        return await this.get("http://localhost:4735/audio/asio/outputs");
+    }
+
+    async getASIOTimingReferenceOutputChannel() {
+        return await this.get("http://localhost:4735/audio/asio/timing-reference-output-channel");
+    }
+
+    async setASIOTimingReferenceOutputChannel(data) {
+        return await this.post("http://localhost:4735/audio/asio/timing-reference-output-channel", data);
+    }
+
+    async getASIORefInputChannel() {
+        return await this.get("http://localhost:4735/audio/asio/ref-input-channel");
+    }
+
+    async setASIORefInputChannel(data) {
+        return await this.post("http://localhost:4735/audio/asio/ref-input-channel", data);
+    }
+
+    async getASIOLastInputChannel() {
+        return await this.get("http://localhost:4735/audio/asio/last-input-channel");
+    }
+
+    async setASIOLastInputChannel(data) {
+        return await this.post("http://localhost:4735/audio/asio/last-input-channel", data);
+    }
+
+    async setASIOSecondaryOutputEnable(data) {
+        return await this.post("http://localhost:4735/audio/asio/secondary-output-enable", data);
+    }
+
+    async getASIOSecondaryOutput() {
+        return await this.get("http://localhost:4735/audio/asio/secondary-output");
+    }
+
+    async setASIOSecondaryOutput(data) {
+        return await this.post("http://localhost:4735/audio/asio/secondary-output", data);
+    }
+
+    async sendASIOCommand(data) {
+        return await this.post("http://localhost:4735/audio/asio/command", data);
+    }
 }
 
 module.exports = REWApi;
