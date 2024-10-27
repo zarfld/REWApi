@@ -160,4 +160,41 @@ public:
     {
         return GetAsync(U("http://localhost:4735/subscribers"));
     }
+
+    // Methods for handling errors and warnings
+    pplx::task<utility::string_t> GetErrorsAsync()
+    {
+        return GetAsync(U("http://localhost:4735/application/errors"));
+    }
+
+    pplx::task<utility::string_t> GetLastErrorAsync()
+    {
+        return GetAsync(U("http://localhost:4735/application/last-error"));
+    }
+
+    pplx::task<utility::string_t> GetWarningsAsync()
+    {
+        return GetAsync(U("http://localhost:4735/application/warnings"));
+    }
+
+    pplx::task<utility::string_t> GetLastWarningAsync()
+    {
+        return GetAsync(U("http://localhost:4735/application/last-warning"));
+    }
+
+    // Methods for enabling and disabling blocking mode
+    pplx::task<utility::string_t> SetBlockingModeAsync(bool enable)
+    {
+        json::value content;
+        content[U("blocking")] = json::value::boolean(enable);
+        return PostAsync(U("http://localhost:4735/application/blocking"), content);
+    }
+
+    // Methods for handling graph update inhibition
+    pplx::task<utility::string_t> SetGraphUpdateInhibitionAsync(bool inhibit)
+    {
+        json::value content;
+        content[U("inhibit")] = json::value::boolean(inhibit);
+        return PostAsync(U("http://localhost:4735/application/inhibit-graph-updates"), content);
+    }
 };

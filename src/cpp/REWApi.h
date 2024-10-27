@@ -61,6 +61,18 @@ public:
     // Method to get the list of subscribers
     pplx::task<utility::string_t> GetSubscribersAsync();
 
+    // Methods for handling errors and warnings
+    pplx::task<utility::string_t> GetErrorsAsync();
+    pplx::task<utility::string_t> GetLastErrorAsync();
+    pplx::task<utility::string_t> GetWarningsAsync();
+    pplx::task<utility::string_t> GetLastWarningAsync();
+
+    // Methods for enabling and disabling blocking mode
+    pplx::task<utility::string_t> SetBlockingModeAsync(bool enable);
+
+    // Methods for handling graph update inhibition
+    pplx::task<utility::string_t> SetGraphUpdateInhibitionAsync(bool inhibit);
+
 private:
     bool graphUpdateInhibited;
 };
