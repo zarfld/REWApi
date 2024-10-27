@@ -355,4 +355,100 @@ public class REWApi
     {
         return await PostAsync("http://localhost:4735/audio/java/stereo-only", content);
     }
+
+    // Methods for handling ASIO driver items
+    public async Task<string> GetASIODeviceAsync()
+    {
+        return await GetAsync("http://localhost:4735/audio/asio/device");
+    }
+
+    public async Task<string> SetASIODeviceAsync(HttpContent content)
+    {
+        return await PostAsync("http://localhost:4735/audio/asio/device", content);
+    }
+
+    public async Task<string> GetASIOInputAsync()
+    {
+        return await GetAsync("http://localhost:4735/audio/asio/input");
+    }
+
+    public async Task<string> SetASIOInputAsync(HttpContent content)
+    {
+        return await PostAsync("http://localhost:4735/audio/asio/input", content);
+    }
+
+    public async Task<string> GetASIOOutputAsync()
+    {
+        return await GetAsync("http://localhost:4735/audio/asio/output");
+    }
+
+    public async Task<string> SetASIOOutputAsync(HttpContent content)
+    {
+        return await PostAsync("http://localhost:4735/audio/asio/output", content);
+    }
+
+    public async Task<string> GetASIODevicesAsync()
+    {
+        return await GetAsync("http://localhost:4735/audio/asio/devices");
+    }
+
+    public async Task<string> GetASIOInputsAsync()
+    {
+        return await GetAsync("http://localhost:4735/audio/asio/inputs");
+    }
+
+    public async Task<string> GetASIOOutputsAsync()
+    {
+        return await GetAsync("http://localhost:4735/audio/asio/outputs");
+    }
+
+    public async Task<string> GetASIOTimingReferenceOutputChannelAsync()
+    {
+        return await GetAsync("http://localhost:4735/audio/asio/timing-reference-output-channel");
+    }
+
+    public async Task<string> SetASIOTimingReferenceOutputChannelAsync(HttpContent content)
+    {
+        return await PostAsync("http://localhost:4735/audio/asio/timing-reference-output-channel", content);
+    }
+
+    public async Task<string> GetASIORefInputChannelAsync()
+    {
+        return await GetAsync("http://localhost:4735/audio/asio/ref-input-channel");
+    }
+
+    public async Task<string> SetASIORefInputChannelAsync(HttpContent content)
+    {
+        return await PostAsync("http://localhost:4735/audio/asio/ref-input-channel", content);
+    }
+
+    public async Task<string> GetASIOLastInputChannelAsync()
+    {
+        return await GetAsync("http://localhost:4735/audio/asio/last-input-channel");
+    }
+
+    public async Task<string> SetASIOLastInputChannelAsync(HttpContent content)
+    {
+        return await PostAsync("http://localhost:4735/audio/asio/last-input-channel", content);
+    }
+
+    public async Task<string> SetASIOSecondaryOutputEnableAsync(HttpContent content)
+    {
+        return await PostAsync("http://localhost:4735/audio/asio/secondary-output-enable", content);
+    }
+
+    public async Task<string> GetASIOSecondaryOutputAsync()
+    {
+        return await GetAsync("http://localhost:4735/audio/asio/secondary-output");
+    }
+
+    public async Task<string> SetASIOSecondaryOutputAsync(HttpContent content)
+    {
+        return await PostAsync("http://localhost:4735/audio/asio/secondary-output", content);
+    }
+
+    public async Task<string> SendASIOCommandAsync(HttpContent content)
+    {
+        return await PostAsync("http://localhost:4735/audio/asio/command", content);
+    }
 }

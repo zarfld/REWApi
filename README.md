@@ -820,3 +820,224 @@ Example:
   "stereoOnly": false
 }
 ```
+
+## ASIO Driver Endpoints
+
+The `/audio/asio/` endpoints provide control over ASIO driver items. The following sub-endpoints are available:
+
+### Device
+
+To get the current ASIO device, make a GET request to the `/audio/asio/device` endpoint.
+
+Example:
+
+```json
+{
+  "device": "ASIO4ALL"
+}
+```
+
+To set the ASIO device, make a POST request to the `/audio/asio/device` endpoint with a JSON body containing the device.
+
+Example:
+
+```json
+{
+  "device": "Focusrite USB ASIO"
+}
+```
+
+### Input
+
+To get the current ASIO input, make a GET request to the `/audio/asio/input` endpoint.
+
+Example:
+
+```json
+{
+  "input": "Mic 1"
+}
+```
+
+To set the ASIO input, make a POST request to the `/audio/asio/input` endpoint with a JSON body containing the input.
+
+Example:
+
+```json
+{
+  "input": "Mic 2"
+}
+```
+
+### Output
+
+To get the current ASIO output, make a GET request to the `/audio/asio/output` endpoint.
+
+Example:
+
+```json
+{
+  "output": "Speakers"
+}
+```
+
+To set the ASIO output, make a POST request to the `/audio/asio/output` endpoint with a JSON body containing the output.
+
+Example:
+
+```json
+{
+  "output": "Headphones"
+}
+```
+
+### Devices
+
+To get the list of available ASIO devices, make a GET request to the `/audio/asio/devices` endpoint.
+
+Example:
+
+```json
+[
+  "ASIO4ALL",
+  "Focusrite USB ASIO"
+]
+```
+
+### Inputs
+
+To get the list of available ASIO inputs, make a GET request to the `/audio/asio/inputs` endpoint.
+
+Example:
+
+```json
+[
+  "Mic 1",
+  "Mic 2"
+]
+```
+
+### Outputs
+
+To get the list of available ASIO outputs, make a GET request to the `/audio/asio/outputs` endpoint.
+
+Example:
+
+```json
+[
+  "Speakers",
+  "Headphones"
+]
+```
+
+### Timing Reference Output Channel
+
+To get the current timing reference output channel, make a GET request to the `/audio/asio/timing-reference-output-channel` endpoint.
+
+Example:
+
+```json
+{
+  "timingReferenceOutputChannel": "L"
+}
+```
+
+To set the timing reference output channel, make a POST request to the `/audio/asio/timing-reference-output-channel` endpoint with a JSON body containing the timing reference output channel.
+
+Example:
+
+```json
+{
+  "timingReferenceOutputChannel": "R"
+}
+```
+
+### Reference Input Channel
+
+To get the current reference input channel, make a GET request to the `/audio/asio/ref-input-channel` endpoint.
+
+Example:
+
+```json
+{
+  "refInputChannel": "Mic 1"
+}
+```
+
+To set the reference input channel, make a POST request to the `/audio/asio/ref-input-channel` endpoint with a JSON body containing the reference input channel.
+
+Example:
+
+```json
+{
+  "refInputChannel": "Mic 2"
+}
+```
+
+### Last Input Channel
+
+To get the current last input channel, make a GET request to the `/audio/asio/last-input-channel` endpoint.
+
+Example:
+
+```json
+{
+  "lastInputChannel": "Mic 1"
+}
+```
+
+To set the last input channel, make a POST request to the `/audio/asio/last-input-channel` endpoint with a JSON body containing the last input channel.
+
+Example:
+
+```json
+{
+  "lastInputChannel": "Mic 2"
+}
+```
+
+### Secondary Output Enable
+
+To enable or disable the secondary ASIO output, make a POST request to the `/audio/asio/secondary-output-enable` endpoint with a JSON body containing a boolean value.
+
+Example:
+
+```json
+{
+  "secondaryOutputEnable": true
+}
+```
+
+### Secondary Output
+
+To get the current secondary ASIO output, make a GET request to the `/audio/asio/secondary-output` endpoint.
+
+Example:
+
+```json
+{
+  "secondaryOutput": "Speakers"
+}
+```
+
+To set the secondary ASIO output, make a POST request to the `/audio/asio/secondary-output` endpoint with a JSON body containing the secondary output.
+
+Example:
+
+```json
+{
+  "secondaryOutput": "Headphones"
+}
+```
+
+### Command
+
+To issue a command to the ASIO driver, make a POST request to the `/audio/asio/command` endpoint with a JSON body containing the command.
+
+Example:
+
+```json
+{
+  "command": "reload"
+}
+```

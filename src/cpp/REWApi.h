@@ -129,6 +129,36 @@ public:
     pplx::task<utility::string_t> GetJavaStereoOnlyAsync();
     pplx::task<utility::string_t> SetJavaStereoOnlyAsync(const web::json::value& content);
 
+    // Methods for handling ASIO driver items
+    pplx::task<utility::string_t> GetASIODeviceAsync();
+    pplx::task<utility::string_t> SetASIODeviceAsync(const web::json::value& content);
+
+    pplx::task<utility::string_t> GetASIOInputAsync();
+    pplx::task<utility::string_t> SetASIOInputAsync(const web::json::value& content);
+
+    pplx::task<utility::string_t> GetASIOOutputAsync();
+    pplx::task<utility::string_t> SetASIOOutputAsync(const web::json::value& content);
+
+    pplx::task<utility::string_t> GetASIODevicesAsync();
+    pplx::task<utility::string_t> GetASIOInputsAsync();
+    pplx::task<utility::string_t> GetASIOOutputsAsync();
+
+    pplx::task<utility::string_t> GetASIOTimingReferenceOutputChannelAsync();
+    pplx::task<utility::string_t> SetASIOTimingReferenceOutputChannelAsync(const web::json::value& content);
+
+    pplx::task<utility::string_t> GetASIORefInputChannelAsync();
+    pplx::task<utility::string_t> SetASIORefInputChannelAsync(const web::json::value& content);
+
+    pplx::task<utility::string_t> GetASIOLastInputChannelAsync();
+    pplx::task<utility::string_t> SetASIOLastInputChannelAsync(const web::json::value& content);
+
+    pplx::task<utility::string_t> SetASIOSecondaryOutputEnableAsync(const web::json::value& content);
+
+    pplx::task<utility::string_t> GetASIOSecondaryOutputAsync();
+    pplx::task<utility::string_t> SetASIOSecondaryOutputAsync(const web::json::value& content);
+
+    pplx::task<utility::string_t> SendASIOCommandAsync(const web::json::value& content);
+
 private:
     bool graphUpdateInhibited;
 };
