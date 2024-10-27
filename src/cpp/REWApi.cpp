@@ -197,4 +197,48 @@ public:
         content[U("inhibit")] = json::value::boolean(inhibit);
         return PostAsync(U("http://localhost:4735/application/inhibit-graph-updates"), content);
     }
+
+    // Methods for handling audio driver selection
+    pplx::task<utility::string_t> GetAudioDriverAsync()
+    {
+        return GetAsync(U("http://localhost:4735/audio/driver"));
+    }
+
+    pplx::task<utility::string_t> SetAudioDriverAsync(const json::value& content)
+    {
+        return PostAsync(U("http://localhost:4735/audio/driver"), content);
+    }
+
+    // Methods for handling sample rate
+    pplx::task<utility::string_t> GetSampleRateAsync()
+    {
+        return GetAsync(U("http://localhost:4735/audio/samplerate"));
+    }
+
+    pplx::task<utility::string_t> SetSampleRateAsync(const json::value& content)
+    {
+        return PostAsync(U("http://localhost:4735/audio/samplerate"), content);
+    }
+
+    // Methods for handling input calibration
+    pplx::task<utility::string_t> GetInputCalibrationAsync()
+    {
+        return GetAsync(U("http://localhost:4735/audio/input-cal"));
+    }
+
+    pplx::task<utility::string_t> SetInputCalibrationAsync(const json::value& content)
+    {
+        return PutAsync(U("http://localhost:4735/audio/input-cal"), content);
+    }
+
+    // Methods for handling output calibration
+    pplx::task<utility::string_t> GetOutputCalibrationAsync()
+    {
+        return GetAsync(U("http://localhost:4735/audio/output-cal"));
+    }
+
+    pplx::task<utility::string_t> SetOutputCalibrationAsync(const json::value& content)
+    {
+        return PutAsync(U("http://localhost:4735/audio/output-cal"), content);
+    }
 };

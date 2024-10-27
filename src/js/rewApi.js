@@ -176,6 +176,42 @@ class REWApi {
         const content = { inhibit: inhibit };
         return await this.post("http://localhost:4735/application/inhibit-graph-updates", content);
     }
+
+    // Methods for handling audio driver selection
+    async getAudioDriver() {
+        return await this.get("http://localhost:4735/audio/driver");
+    }
+
+    async setAudioDriver(data) {
+        return await this.post("http://localhost:4735/audio/driver", data);
+    }
+
+    // Methods for handling sample rate
+    async getSampleRate() {
+        return await this.get("http://localhost:4735/audio/samplerate");
+    }
+
+    async setSampleRate(data) {
+        return await this.post("http://localhost:4735/audio/samplerate", data);
+    }
+
+    // Methods for handling input calibration
+    async getInputCalibration() {
+        return await this.get("http://localhost:4735/audio/input-cal");
+    }
+
+    async setInputCalibration(data) {
+        return await this.put("http://localhost:4735/audio/input-cal", data);
+    }
+
+    // Methods for handling output calibration
+    async getOutputCalibration() {
+        return await this.get("http://localhost:4735/audio/output-cal");
+    }
+
+    async setOutputCalibration(data) {
+        return await this.put("http://localhost:4735/audio/output-cal", data);
+    }
 }
 
 module.exports = REWApi;
