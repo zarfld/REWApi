@@ -1,6 +1,7 @@
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Text;
 
 public class REWApi
 {
@@ -115,5 +116,20 @@ public class REWApi
     {
         var content = new StringContent("{\"command\":\"shutdown\"}", System.Text.Encoding.UTF8, "application/json");
         return await PostAsync("http://localhost:4735/application/command", content);
+    }
+
+    public string EncodeArray(float[] array)
+    {
+        byte[] bytes = new byte[array.Length * sizeof(float)];
+        Buffer.BlockCopy(array, 0, bytes, 0, bytes.Length);
+        return Convert.ToBase64String(bytes);
+    }
+
+    public float[] DecodeArray(string base64Encoded)
+    {
+        byte[] bytes = Convert.FromBase64String(base64Encoded);
+        float[] array = new float[bytes.Length / sizeof(float)];
+        Buffer.BlockCopy(bytes, 0, array, 0, bytes.Length);
+        return array;
     }
 }

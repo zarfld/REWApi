@@ -113,6 +113,25 @@ class REWApi {
     async shutdown() {
         return await this.post("http://localhost:4735/application/command", { command: "shutdown" });
     }
+
+    encodeArray(array) {
+        const buffer = new ArrayBuffer(array.length * 4);
+        const view = new DataView(buffer);
+        for (let i = 0; i < array.length; i++) {
+            view.setFloat32(i * 4, array[i], true);
+        }
+        return Buffer.from(buffer).toString('base64');
+    }
+
+    decodeArray(base64Encoded) {
+        const buffer = Buffer.from(base64Encoded, 'base64');
+        const view = new DataView(buffer.buffer);
+        const array = new Float32Array(buffer.length / 4);
+        for (let i = 0; i < array.length; i++) {
+            array[i] = view.getFloat32(i * 4, true);
+        }
+        return array;
+    }
 }
 
 module.exports = REWApi;

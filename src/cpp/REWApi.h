@@ -4,6 +4,8 @@
 #include <cpprest/http_client.h>
 #include <cpprest/json.h>
 #include <pplx/pplxtasks.h>
+#include <vector>
+#include <string>
 
 class REWApi
 {
@@ -45,6 +47,10 @@ public:
 
     // Method to set graph update inhibition
     void SetGraphUpdateInhibition(bool inhibit);
+
+    // Methods for encoding and decoding arrays
+    std::string encodeArray(const std::vector<float>& array);
+    std::vector<float> decodeArray(const std::string& base64Encoded);
 
 private:
     bool graphUpdateInhibited;

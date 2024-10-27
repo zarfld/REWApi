@@ -216,3 +216,20 @@ class REWApi {
     }
 }
 ```
+
+## Base64 Encoding and Decoding of Arrays
+
+Arrays are transferred as Base64-encoded strings generated from the raw bytes of the 32-bit float sample values. Base64 decoding is well supported in programming languages, here is how to recover the arrays in Java:
+
+```java
+public static float[] decodeArray(String base64Encoded) {
+    return byteToFloatArray(Base64.getDecoder().decode(base64Encoded));
+}
+
+private static float[] byteToFloatArray(byte[] bytes) {
+    FloatBuffer buf = ByteBuffer.wrap(bytes).asFloatBuffer();
+    float[] floatArray = new float[buf.limit()];
+    buf.get(floatArray);
+    return floatArray;
+}
+```

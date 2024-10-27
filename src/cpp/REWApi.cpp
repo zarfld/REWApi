@@ -1,6 +1,9 @@
 #include <iostream>
 #include <cpprest/http_client.h>
 #include <cpprest/filestream.h>
+#include <vector>
+#include <string>
+#include <cpprest/base64.h>
 
 using namespace web;
 using namespace web::http;
@@ -123,5 +126,20 @@ public:
     pplx::task<utility::string_t> ShutdownAsync()
     {
         return PostAsync(U("http://localhost:4735/application/command"), json::value::parse(U("{\"command\":\"shutdown\"}")));
+    }
+
+    std::string encodeArray(const std::vector<float>& array)
+    {
+        std::vector<unsigned char> bytes(array.size() * sizeof(float));
+        std::memcpy(bytes.data(), array.data(), bytes.size());
+        return utility::conversions::to_utf8string(utility::conversions::to_base64(bytes));
+    }
+
+    std::vector<float> decodeArray(const std::string& base64Encoded)
+    {
+        auto bytes = utility::conversions::from_base64(utility::conversions::to_string_t(base64Encoded));
+        std::vector<float> array(bytes.size() / sizeof(float));
+        std::memcpy(array.data(), bytes.data(), bytes.size());
+        return array;
     }
 };
