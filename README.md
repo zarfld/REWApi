@@ -233,3 +233,45 @@ private static float[] byteToFloatArray(byte[] bytes) {
     return floatArray;
 }
 ```
+
+## Subscription Endpoints
+
+The REW API now supports subscription endpoints to allow clients to be notified of changes. The following endpoints are available:
+
+### Subscribe
+
+To add a subscription, make a POST request to the `/subscribe` endpoint with a JSON body containing the subscriber's URL.
+
+Example:
+
+```json
+{
+  "url": "http://127.0.0.1:5374/mysubscriptions"
+}
+```
+
+### Unsubscribe
+
+To remove a subscription, make a POST request to the `/unsubscribe` endpoint with the same JSON body containing the subscriber's URL.
+
+Example:
+
+```json
+{
+  "url": "http://127.0.0.1:5374/mysubscriptions"
+}
+```
+
+### Get Subscribers
+
+To get the list of subscribers, make a GET request to the `/subscribers` endpoint.
+
+Example:
+
+```json
+[
+  {
+    "url": "http://127.0.0.1:5374/mysubscriptions"
+  }
+]
+```

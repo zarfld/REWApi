@@ -142,4 +142,22 @@ public:
         std::memcpy(array.data(), bytes.data(), bytes.size());
         return array;
     }
+
+    // Method to add a subscription
+    pplx::task<utility::string_t> SubscribeAsync(const json::value& content)
+    {
+        return PostAsync(U("http://localhost:4735/subscribe"), content);
+    }
+
+    // Method to remove a subscription
+    pplx::task<utility::string_t> UnsubscribeAsync(const json::value& content)
+    {
+        return PostAsync(U("http://localhost:4735/unsubscribe"), content);
+    }
+
+    // Method to get the list of subscribers
+    pplx::task<utility::string_t> GetSubscribersAsync()
+    {
+        return GetAsync(U("http://localhost:4735/subscribers"));
+    }
 };

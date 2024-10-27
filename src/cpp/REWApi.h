@@ -52,6 +52,15 @@ public:
     std::string encodeArray(const std::vector<float>& array);
     std::vector<float> decodeArray(const std::string& base64Encoded);
 
+    // Method to add a subscription
+    pplx::task<utility::string_t> SubscribeAsync(const web::json::value& content);
+
+    // Method to remove a subscription
+    pplx::task<utility::string_t> UnsubscribeAsync(const web::json::value& content);
+
+    // Method to get the list of subscribers
+    pplx::task<utility::string_t> GetSubscribersAsync();
+
 private:
     bool graphUpdateInhibited;
 };

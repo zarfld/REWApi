@@ -130,6 +130,21 @@ class REWApi {
         }
         return array;
     }
+
+    // Method to add a subscription
+    async subscribe(data: any): Promise<any> {
+        return await this.post("http://localhost:4735/subscribe", data);
+    }
+
+    // Method to remove a subscription
+    async unsubscribe(data: any): Promise<any> {
+        return await this.post("http://localhost:4735/unsubscribe", data);
+    }
+
+    // Method to get the list of subscribers
+    async getSubscribers(): Promise<any> {
+        return await this.get("http://localhost:4735/subscribers");
+    }
 }
 
 export default REWApi;
