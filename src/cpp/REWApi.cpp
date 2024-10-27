@@ -521,4 +521,13 @@ public:
     {
         return PostAsync(U("http://localhost:4735/measurements/command"), content);
     }
+
+    // Method to update a measurement's name and/or notes
+    pplx::task<utility::string_t> UpdateMeasurementAsync(const utility::string_t& id, const json::value& content)
+    {
+        http_client client(U("http://localhost:4735"));
+        return client.request(methods::PUT, U("/measurements/") + id, content).then([](http_response response) {
+            return response.extract_string();
+        });
+    }
 };

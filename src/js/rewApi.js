@@ -439,6 +439,21 @@ class REWApi {
     async issueMeasurementCommand(data) {
         return await this.post("http://localhost:4735/measurements/command", data);
     }
+
+    // Method to update a measurement's name and/or notes
+    async updateMeasurement(id, data) {
+        const response = await fetch(`http://localhost:4735/measurements/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return await response.json();
+    }
 }
 
 module.exports = REWApi;
