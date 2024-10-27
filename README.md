@@ -275,3 +275,106 @@ Example:
   }
 ]
 ```
+
+## Application Endpoint
+
+The `/application` endpoint provides application-level control of REW. The following sub-endpoints are available:
+
+### Commands
+
+To list available commands, make a GET request to the `/application/commands` endpoint.
+
+Example:
+
+```json
+[
+  "shutdown",
+  "clearCommandInProgress"
+]
+```
+
+To issue a command, make a POST request to the `/application/command` endpoint with a JSON body containing the command.
+
+Example:
+
+```json
+{
+  "command": "shutdown"
+}
+```
+
+### Errors
+
+To get the list of errors, make a GET request to the `/application/errors` endpoint.
+
+Example:
+
+```json
+[
+  {
+    "timestamp": "2023-01-01T12:00:00Z",
+    "message": "An error occurred."
+  }
+]
+```
+
+To get the most recent error, make a GET request to the `/application/last-error` endpoint.
+
+Example:
+
+```json
+{
+  "timestamp": "2023-01-01T12:00:00Z",
+  "message": "An error occurred."
+}
+```
+
+### Warnings
+
+To get the list of warnings, make a GET request to the `/application/warnings` endpoint.
+
+Example:
+
+```json
+[
+  {
+    "timestamp": "2023-01-01T12:00:00Z",
+    "message": "A warning occurred."
+  }
+]
+```
+
+To get the most recent warning, make a GET request to the `/application/last-warning` endpoint.
+
+Example:
+
+```json
+{
+  "timestamp": "2023-01-01T12:00:00Z",
+  "message": "A warning occurred."
+}
+```
+
+### Blocking Mode
+
+To enable or disable blocking mode, make a POST request to the `/application/blocking` endpoint with a JSON body containing a boolean value.
+
+Example:
+
+```json
+{
+  "blocking": true
+}
+```
+
+### Inhibit Graph Updates
+
+To inhibit graph updates, make a POST request to the `/application/inhibit-graph-updates` endpoint with a JSON body containing a boolean value.
+
+Example:
+
+```json
+{
+  "inhibit": true
+}
+```

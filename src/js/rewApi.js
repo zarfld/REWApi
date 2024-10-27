@@ -147,6 +147,35 @@ class REWApi {
     async getSubscribers() {
         return await this.get("http://localhost:4735/subscribers");
     }
+
+    // Methods for handling errors and warnings
+    async getErrors() {
+        return await this.get("http://localhost:4735/application/errors");
+    }
+
+    async getLastError() {
+        return await this.get("http://localhost:4735/application/last-error");
+    }
+
+    async getWarnings() {
+        return await this.get("http://localhost:4735/application/warnings");
+    }
+
+    async getLastWarning() {
+        return await this.get("http://localhost:4735/application/last-warning");
+    }
+
+    // Methods for enabling and disabling blocking mode
+    async setBlockingMode(enable) {
+        const content = { blocking: enable };
+        return await this.post("http://localhost:4735/application/blocking", content);
+    }
+
+    // Methods for handling graph update inhibition
+    async setGraphUpdateInhibitionAsync(inhibit) {
+        const content = { inhibit: inhibit };
+        return await this.post("http://localhost:4735/application/inhibit-graph-updates", content);
+    }
 }
 
 module.exports = REWApi;

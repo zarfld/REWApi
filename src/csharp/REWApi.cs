@@ -150,4 +150,39 @@ public class REWApi
     {
         return await GetAsync("http://localhost:4735/subscribers");
     }
+
+    // Methods for handling errors and warnings
+    public async Task<string> GetErrorsAsync()
+    {
+        return await GetAsync("http://localhost:4735/application/errors");
+    }
+
+    public async Task<string> GetLastErrorAsync()
+    {
+        return await GetAsync("http://localhost:4735/application/last-error");
+    }
+
+    public async Task<string> GetWarningsAsync()
+    {
+        return await GetAsync("http://localhost:4735/application/warnings");
+    }
+
+    public async Task<string> GetLastWarningAsync()
+    {
+        return await GetAsync("http://localhost:4735/application/last-warning");
+    }
+
+    // Methods for enabling and disabling blocking mode
+    public async Task<string> SetBlockingModeAsync(bool enable)
+    {
+        var content = new StringContent("{\"blocking\":" + enable.ToString().ToLower() + "}", System.Text.Encoding.UTF8, "application/json");
+        return await PostAsync("http://localhost:4735/application/blocking", content);
+    }
+
+    // Methods for handling graph update inhibition
+    public async Task<string> SetGraphUpdateInhibitionAsync(bool inhibit)
+    {
+        var content = new StringContent("{\"inhibit\":" + inhibit.ToString().ToLower() + "}", System.Text.Encoding.UTF8, "application/json");
+        return await PostAsync("http://localhost:4735/application/inhibit-graph-updates", content);
+    }
 }
