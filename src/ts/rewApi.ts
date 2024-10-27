@@ -1,0 +1,102 @@
+import fetch from 'node-fetch';
+
+class REWApi {
+    async get(endpoint: string): Promise<any> {
+        const response = await fetch(endpoint);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return await response.json();
+    }
+
+    async put(endpoint: string, data: any): Promise<any> {
+        const response = await fetch(endpoint, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return await response.json();
+    }
+
+    async post(endpoint: string, data: any): Promise<any> {
+        const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return await response.json();
+    }
+
+    // Methods for handling application settings
+    async getApplicationSettings(): Promise<any> {
+        return await this.get("http://localhost:4735/application/settings");
+    }
+
+    async updateApplicationSettings(data: any): Promise<any> {
+        return await this.put("http://localhost:4735/application/settings", data);
+    }
+
+    // Methods for handling audio settings
+    async getAudioSettings(): Promise<any> {
+        return await this.get("http://localhost:4735/audio/settings");
+    }
+
+    async updateAudioSettings(data: any): Promise<any> {
+        return await this.put("http://localhost:4735/audio/settings", data);
+    }
+
+    // Methods for handling measurements
+    async getMeasurements(): Promise<any> {
+        return await this.get("http://localhost:4735/measurements");
+    }
+
+    async addMeasurement(data: any): Promise<any> {
+        return await this.post("http://localhost:4735/measurements", data);
+    }
+
+    // Methods for handling frequency response
+    async getFrequencyResponse(): Promise<any> {
+        return await this.get("http://localhost:4735/frequencyresponse");
+    }
+
+    // Methods for handling impulse response
+    async getImpulseResponse(): Promise<any> {
+        return await this.get("http://localhost:4735/impulseresponse");
+    }
+
+    // Methods for handling EQ and filters
+    async getEQSettings(): Promise<any> {
+        return await this.get("http://localhost:4735/eq/settings");
+    }
+
+    async updateEQSettings(data: any): Promise<any> {
+        return await this.put("http://localhost:4735/eq/settings", data);
+    }
+
+    // Methods for handling SPL meter
+    async getSPLMeter(): Promise<any> {
+        return await this.get("http://localhost:4735/splmeter");
+    }
+
+    // Methods for handling RTA
+    async getRTA(): Promise<any> {
+        return await this.get("http://localhost:4735/rta");
+    }
+
+    // Methods for handling room simulator
+    async getRoomSimulator(): Promise<any> {
+        return await this.get("http://localhost:4735/roomsimulator");
+    }
+}
+
+export default REWApi;
