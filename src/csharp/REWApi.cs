@@ -100,4 +100,11 @@ public class REWApi
     {
         return await GetAsync("http://localhost:4735/roomsimulator");
     }
+
+    // Method for handling shutdown command
+    public async Task<string> ShutdownAsync()
+    {
+        var content = new StringContent("{\"command\":\"shutdown\"}", System.Text.Encoding.UTF8, "application/json");
+        return await PostAsync("http://localhost:4735/application/command", content);
+    }
 }

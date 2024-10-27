@@ -97,6 +97,11 @@ class REWApi {
     async getRoomSimulator(): Promise<any> {
         return await this.get("http://localhost:4735/roomsimulator");
     }
+
+    // Method for handling shutdown command
+    async shutdown(): Promise<any> {
+        return await this.post("http://localhost:4735/application/command", { command: "shutdown" });
+    }
 }
 
 export default REWApi;
