@@ -430,6 +430,15 @@ class REWApi {
     async getSelectedMeasurementIndex() {
         return await this.get("http://localhost:4735/measurements/selected");
     }
+
+    // Methods for handling measurement commands
+    async getMeasurementCommands() {
+        return await this.get("http://localhost:4735/measurements/commands");
+    }
+
+    async issueMeasurementCommand(data) {
+        return await this.post("http://localhost:4735/measurements/command", data);
+    }
 }
 
 module.exports = REWApi;

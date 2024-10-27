@@ -1119,3 +1119,25 @@ Example:
   "timeSpanSeconds": 1.0
 }
 ```
+
+## Measurements Commands
+
+A GET at the `/measurements/commands` endpoint returns a list of commands, to issue a command POST it to the `/measurements/command` endpoint. The "Save all" command has a parameter for the path to the file to be saved to, if the file exists it will be overwritten. A note to be saved with the measurement can optionally be specified as a second parameter. The "Load" command has a list of the filenames to load as parameters in the command. Note that if a file path has backslash as the path separator the string for the path will need to escape the backslash entries, i.e. use a double backslash instead or replace backslash by forward slash. Here are examples of loading two mdat files and of saving all files:
+
+```json
+{
+  "command": "Load",
+  "parameters": [
+    "C:/Users/myusername/REW/file1.mdat",
+    "C:/Users/myusername/REW/file2.mdat"
+  ]
+}
+
+{
+  "command": "Save all",
+  "parameters": [
+    "C:/Users/myusername/REW/latest.mdat",
+    "These are my latest files"
+  ]
+}
+```
