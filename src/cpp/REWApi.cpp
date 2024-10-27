@@ -463,4 +463,30 @@ public:
     {
         return PostAsync(U("http://localhost:4735/audio/asio/command"), content);
     }
+
+    // Methods for handling input levels
+    pplx::task<utility::string_t> StartMonitoringInputLevelsAsync()
+    {
+        return PostAsync(U("http://localhost:4735/input-levels/command"), json::value::parse(U("{\"command\":\"start\"}")));
+    }
+
+    pplx::task<utility::string_t> StopMonitoringInputLevelsAsync()
+    {
+        return PostAsync(U("http://localhost:4735/input-levels/command"), json::value::parse(U("{\"command\":\"stop\"}")));
+    }
+
+    pplx::task<utility::string_t> SubscribeInputLevelsAsync(const json::value& content)
+    {
+        return PostAsync(U("http://localhost:4735/input-levels/subscribe"), content);
+    }
+
+    pplx::task<utility::string_t> UnsubscribeInputLevelsAsync(const json::value& content)
+    {
+        return PostAsync(U("http://localhost:4735/input-levels/unsubscribe"), content);
+    }
+
+    pplx::task<utility::string_t> GetLastInputLevelsAsync()
+    {
+        return GetAsync(U("http://localhost:4735/input-levels/last-levels"));
+    }
 };

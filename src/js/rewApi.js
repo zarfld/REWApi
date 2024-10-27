@@ -390,6 +390,29 @@ class REWApi {
     async sendASIOCommand(data) {
         return await this.post("http://localhost:4735/audio/asio/command", data);
     }
+
+    // Methods for handling input levels
+    async startMonitoringInputLevels() {
+        const content = { command: "start" };
+        return await this.post("http://localhost:4735/input-levels/command", content);
+    }
+
+    async stopMonitoringInputLevels() {
+        const content = { command: "stop" };
+        return await this.post("http://localhost:4735/input-levels/command", content);
+    }
+
+    async subscribeInputLevels(data) {
+        return await this.post("http://localhost:4735/input-levels/subscribe", data);
+    }
+
+    async unsubscribeInputLevels(data) {
+        return await this.post("http://localhost:4735/input-levels/unsubscribe", data);
+    }
+
+    async getLastInputLevels() {
+        return await this.get("http://localhost:4735/input-levels/last-levels");
+    }
 }
 
 module.exports = REWApi;
