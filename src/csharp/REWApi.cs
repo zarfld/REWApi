@@ -531,4 +531,21 @@ public class REWApi
     {
         return await PutAsync($"http://localhost:4735/measurements/{id}", content);
     }
+
+    // Methods for handling IR window settings
+    public async Task<string> GetIRWindowSettingsAsync(string id)
+    {
+        return await GetAsync($"http://localhost:4735/measurements/{id}/ir-windows");
+    }
+
+    public async Task<string> UpdateIRWindowSettingsAsync(string id, HttpContent content)
+    {
+        return await PutAsync($"http://localhost:4735/measurements/{id}/ir-windows", content);
+    }
+
+    // Methods for handling REW View preferences
+    public async Task<string> GetREWViewPreferencesAsync()
+    {
+        return await GetAsync("http://localhost:4735/application/settings");
+    }
 }

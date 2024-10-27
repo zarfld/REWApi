@@ -465,6 +465,20 @@ class REWApi {
         }
         return await response.json();
     }
+
+    // Methods for handling IR window settings
+    async getIRWindowSettings(id) {
+        return await this.get(`http://localhost:4735/measurements/${id}/ir-windows`);
+    }
+
+    async updateIRWindowSettings(id, data) {
+        return await this.put(`http://localhost:4735/measurements/${id}/ir-windows`, data);
+    }
+
+    // Methods for handling REW View preferences
+    async getREWViewPreferences() {
+        return await this.get("http://localhost:4735/application/settings");
+    }
 }
 
 module.exports = REWApi;

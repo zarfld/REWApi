@@ -179,6 +179,13 @@ public:
     // Method to update a measurement's name and/or notes
     pplx::task<utility::string_t> UpdateMeasurementAsync(const utility::string_t& id, const web::json::value& content);
 
+    // Methods for handling IR window settings
+    pplx::task<utility::string_t> GetIRWindowSettingsAsync(const utility::string_t& id);
+    pplx::task<utility::string_t> UpdateIRWindowSettingsAsync(const utility::string_t& id, const web::json::value& content);
+
+    // Methods for handling REW View preferences
+    pplx::task<utility::string_t> GetREWViewPreferencesAsync();
+
 private:
     bool graphUpdateInhibited;
 };

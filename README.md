@@ -1171,3 +1171,48 @@ The impulse response for a measurement can be obtained by a GET request at `/mea
 The default unit for the data is Percent, but other units can be requested by including a `unit` query value in the URL, e.g., `?unit=dBFS`. The list of units available can be read from `/measurements/impulse-response/units`.
 
 Impulse response queries can return the windowed portion of the data by including a query value `?windowed=true` in the URL. Data is normalised by default; for data that is not normalised, include a query value `?normalised=false` in the URL.
+
+## Impulse Response Window Settings Endpoint
+
+The impulse response window settings for a measurement can be accessed and updated using the `/measurements/:id/ir-windows` endpoint. The settings are in an `IRWindows` object, which includes the following properties:
+
+- `leftWindowType`: The type of the left window.
+- `rightWindowType`: The type of the right window.
+- `leftWindowWidthms`: The width of the left window in milliseconds.
+- `rightWindowWidthms`: The width of the right window in milliseconds.
+- `refTimems`: The reference time in milliseconds.
+- `addFDW`: A boolean indicating whether to add FDW.
+- `fdwWidthCycles`: The width of the FDW in cycles.
+
+The FDW width can be in cycles or octaves according to the current selection in the REW View preferences. Either can be used when changing window settings by PUT or POST.
+
+Example `IRWindows` object:
+
+```json
+{
+  "leftWindowType": "Tukey 0.25",
+  "rightWindowType": "Tukey 0.25",
+  "leftWindowWidthms": 125,
+  "rightWindowWidthms": 500,
+  "refTimems": 0,
+  "addFDW": true,
+  "fdwWidthCycles": 15
+}
+```
+
+To access the IR window settings, you can use the `/measurements/:id/ir-windows` endpoint. Here are the steps:
+
+1. Make a GET request to the `/measurements/:id/ir-windows` endpoint to retrieve the current IR window settings for a specific measurement.
+2. The response will be an `IRWindows` object containing the settings such as `leftWindowType`, `rightWindowType`, `leftWindowWidthms`, `rightWindowWidthms`, `refTimems`, `addFDW`, and `fdwWidthCycles`.
+3. To update the IR window settings, make a PUT or POST request to the same endpoint with the updated `IRWindows` object in the request body.
+
+For more details, you can refer to the API documentation available via swagger-ui at `localhost:4735`.
+
+## Determining the Current Selection in the REW View Preferences
+
+To determine the current selection in the REW View preferences, you can follow these steps:
+
+1. Make a GET request to the `/application/settings` endpoint to retrieve the current application settings.
+2. The response will include the current selection in the REW View preferences, which will help you understand the current configuration.
+
+For more details, you can refer to the API documentation available via swagger-ui at `localhost:4735`.
