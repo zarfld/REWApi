@@ -489,4 +489,25 @@ public:
     {
         return GetAsync(U("http://localhost:4735/input-levels/last-levels"));
     }
+
+    // Methods for handling selected measurement
+    pplx::task<utility::string_t> SelectMeasurementByUUIDAsync(const json::value& content)
+    {
+        return PostAsync(U("http://localhost:4735/measurements/selected-uuid"), content);
+    }
+
+    pplx::task<utility::string_t> SelectMeasurementByIndexAsync(const json::value& content)
+    {
+        return PostAsync(U("http://localhost:4735/measurements/selected"), content);
+    }
+
+    pplx::task<utility::string_t> GetSelectedMeasurementUUIDAsync()
+    {
+        return GetAsync(U("http://localhost:4735/measurements/selected-uuid"));
+    }
+
+    pplx::task<utility::string_t> GetSelectedMeasurementIndexAsync()
+    {
+        return GetAsync(U("http://localhost:4735/measurements/selected"));
+    }
 };
