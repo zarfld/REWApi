@@ -451,4 +451,32 @@ public class REWApi
     {
         return await PostAsync("http://localhost:4735/audio/asio/command", content);
     }
+
+    // Methods for handling input levels
+    public async Task<string> StartMonitoringInputLevelsAsync()
+    {
+        var content = new StringContent("{\"command\":\"start\"}", System.Text.Encoding.UTF8, "application/json");
+        return await PostAsync("http://localhost:4735/input-levels/command", content);
+    }
+
+    public async Task<string> StopMonitoringInputLevelsAsync()
+    {
+        var content = new StringContent("{\"command\":\"stop\"}", System.Text.Encoding.UTF8, "application/json");
+        return await PostAsync("http://localhost:4735/input-levels/command", content);
+    }
+
+    public async Task<string> SubscribeInputLevelsAsync(HttpContent content)
+    {
+        return await PostAsync("http://localhost:4735/input-levels/subscribe", content);
+    }
+
+    public async Task<string> UnsubscribeInputLevelsAsync(HttpContent content)
+    {
+        return await PostAsync("http://localhost:4735/input-levels/unsubscribe", content);
+    }
+
+    public async Task<string> GetLastInputLevelsAsync()
+    {
+        return await GetAsync("http://localhost:4735/input-levels/last-levels");
+    }
 }

@@ -159,6 +159,13 @@ public:
 
     pplx::task<utility::string_t> SendASIOCommandAsync(const web::json::value& content);
 
+    // Methods for handling input levels
+    pplx::task<utility::string_t> StartMonitoringInputLevelsAsync();
+    pplx::task<utility::string_t> StopMonitoringInputLevelsAsync();
+    pplx::task<utility::string_t> SubscribeInputLevelsAsync(const web::json::value& content);
+    pplx::task<utility::string_t> UnsubscribeInputLevelsAsync(const web::json::value& content);
+    pplx::task<utility::string_t> GetLastInputLevelsAsync();
+
 private:
     bool graphUpdateInhibited;
 };
