@@ -71,9 +71,14 @@ public class REWApi
     }
 
     // Methods for handling frequency response
-    public async Task<string> GetFrequencyResponseAsync()
+    public async Task<string> GetFrequencyResponseAsync(string id, string unit = "SPL", string smoothing = "default", int ppo = 0)
     {
-        return await GetAsync("http://localhost:4735/frequencyresponse");
+        string endpoint = $"/measurements/{id}/frequency-response?unit={unit}&smoothing={smoothing}";
+        if (ppo > 0)
+        {
+            endpoint += $"&ppo={ppo}";
+        }
+        return await GetAsync(endpoint);
     }
 
     // Methods for handling impulse response

@@ -76,8 +76,12 @@ class REWApi {
     }
 
     // Methods for handling frequency response
-    async getFrequencyResponse() {
-        return await this.get("http://localhost:4735/frequencyresponse");
+    async getFrequencyResponse(id, unit = "SPL", smoothing = "default", ppo = 0) {
+        let endpoint = `/measurements/${id}/frequency-response?unit=${unit}&smoothing=${smoothing}`;
+        if (ppo > 0) {
+            endpoint += `&ppo=${ppo}`;
+        }
+        return await this.get(endpoint);
     }
 
     // Methods for handling impulse response
