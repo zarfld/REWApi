@@ -229,4 +229,130 @@ public class REWApi
     {
         return await PutAsync("http://localhost:4735/audio/output-cal", content);
     }
+
+    // Methods for handling Java driver items
+    public async Task<string> GetJavaInputDeviceAsync()
+    {
+        return await GetAsync("http://localhost:4735/audio/java/input-device");
+    }
+
+    public async Task<string> SetJavaInputDeviceAsync(HttpContent content)
+    {
+        return await PostAsync("http://localhost:4735/audio/java/input-device", content);
+    }
+
+    public async Task<string> GetJavaInputAsync()
+    {
+        return await GetAsync("http://localhost:4735/audio/java/input");
+    }
+
+    public async Task<string> SetJavaInputAsync(HttpContent content)
+    {
+        return await PostAsync("http://localhost:4735/audio/java/input", content);
+    }
+
+    public async Task<string> GetJavaOutputDeviceAsync()
+    {
+        return await GetAsync("http://localhost:4735/audio/java/output-device");
+    }
+
+    public async Task<string> SetJavaOutputDeviceAsync(HttpContent content)
+    {
+        return await PostAsync("http://localhost:4735/audio/java/output-device", content);
+    }
+
+    public async Task<string> GetJavaOutputAsync()
+    {
+        return await GetAsync("http://localhost:4735/audio/java/output");
+    }
+
+    public async Task<string> SetJavaOutputAsync(HttpContent content)
+    {
+        return await PostAsync("http://localhost:4735/audio/java/output", content);
+    }
+
+    public async Task<string> GetJavaInputChannelAsync()
+    {
+        return await GetAsync("http://localhost:4735/audio/java/input-channel");
+    }
+
+    public async Task<string> SetJavaInputChannelAsync(HttpContent content)
+    {
+        return await PostAsync("http://localhost:4735/audio/java/input-channel", content);
+    }
+
+    public async Task<string> GetJavaOutputChannelAsync()
+    {
+        return await GetAsync("http://localhost:4735/audio/java/output-channel");
+    }
+
+    public async Task<string> SetJavaOutputChannelAsync(HttpContent content)
+    {
+        return await PostAsync("http://localhost:4735/audio/java/output-channel", content);
+    }
+
+    public async Task<string> GetJavaRefInputChannelAsync()
+    {
+        return await GetAsync("http://localhost:4735/audio/java/ref-input-channel");
+    }
+
+    public async Task<string> SetJavaRefInputChannelAsync(HttpContent content)
+    {
+        return await PostAsync("http://localhost:4735/audio/java/ref-input-channel", content);
+    }
+
+    public async Task<string> GetJavaLastInputChannelAsync()
+    {
+        return await GetAsync("http://localhost:4735/audio/java/last-input-channel");
+    }
+
+    public async Task<string> SetJavaLastInputChannelAsync(HttpContent content)
+    {
+        return await PostAsync("http://localhost:4735/audio/java/last-input-channel", content);
+    }
+
+    public async Task<string> GetJavaRefOutputChannelAsync()
+    {
+        return await GetAsync("http://localhost:4735/audio/java/ref-output-channel");
+    }
+
+    public async Task<string> SetJavaRefOutputChannelAsync(HttpContent content)
+    {
+        return await PostAsync("http://localhost:4735/audio/java/ref-output-channel", content);
+    }
+
+    public async Task<string> GetJavaNumInputChannelsAsync()
+    {
+        return await GetAsync("http://localhost:4735/audio/java/num-input-channels");
+    }
+
+    public async Task<string> GetJavaOutputChannelsAsync()
+    {
+        return await GetAsync("http://localhost:4735/audio/java/output-channels");
+    }
+
+    public async Task<string> GetJavaRefOutputChannelsAsync()
+    {
+        return await GetAsync("http://localhost:4735/audio/java/ref-output-channels");
+    }
+
+    public async Task<string> GetJavaOutputChannelMappingAsync()
+    {
+        return await GetAsync("http://localhost:4735/audio/java/output-channel-mapping");
+    }
+
+    public async Task<string> SetJavaOutputChannelMappingAsync(HttpContent content)
+    {
+        return await PostAsync("http://localhost:4735/audio/java/output-channel-mapping", content);
+    }
+
+    public async Task<string> GetJavaStereoOnlyAsync()
+    {
+        return await GetAsync("http://localhost:4735/audio/java/stereo-only");
+    }
+
+    public async Task<string> SetJavaStereoOnlyAsync(HttpContent content)
+    {
+        return await PostAsync("http://localhost:4735/audio/java/stereo-only", content);
+    }
 }

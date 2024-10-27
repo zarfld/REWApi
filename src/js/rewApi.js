@@ -212,6 +212,107 @@ class REWApi {
     async setOutputCalibration(data) {
         return await this.put("http://localhost:4735/audio/output-cal", data);
     }
+
+    // Methods for handling Java driver items
+    async getJavaInputDevice() {
+        return await this.get("http://localhost:4735/audio/java/input-device");
+    }
+
+    async setJavaInputDevice(data) {
+        return await this.post("http://localhost:4735/audio/java/input-device", data);
+    }
+
+    async getJavaInput() {
+        return await this.get("http://localhost:4735/audio/java/input");
+    }
+
+    async setJavaInput(data) {
+        return await this.post("http://localhost:4735/audio/java/input", data);
+    }
+
+    async getJavaOutputDevice() {
+        return await this.get("http://localhost:4735/audio/java/output-device");
+    }
+
+    async setJavaOutputDevice(data) {
+        return await this.post("http://localhost:4735/audio/java/output-device", data);
+    }
+
+    async getJavaOutput() {
+        return await this.get("http://localhost:4735/audio/java/output");
+    }
+
+    async setJavaOutput(data) {
+        return await this.post("http://localhost:4735/audio/java/output", data);
+    }
+
+    async getJavaInputChannel() {
+        return await this.get("http://localhost:4735/audio/java/input-channel");
+    }
+
+    async setJavaInputChannel(data) {
+        return await this.post("http://localhost:4735/audio/java/input-channel", data);
+    }
+
+    async getJavaOutputChannel() {
+        return await this.get("http://localhost:4735/audio/java/output-channel");
+    }
+
+    async setJavaOutputChannel(data) {
+        return await this.post("http://localhost:4735/audio/java/output-channel", data);
+    }
+
+    async getJavaRefInputChannel() {
+        return await this.get("http://localhost:4735/audio/java/ref-input-channel");
+    }
+
+    async setJavaRefInputChannel(data) {
+        return await this.post("http://localhost:4735/audio/java/ref-input-channel", data);
+    }
+
+    async getJavaLastInputChannel() {
+        return await this.get("http://localhost:4735/audio/java/last-input-channel");
+    }
+
+    async setJavaLastInputChannel(data) {
+        return await this.post("http://localhost:4735/audio/java/last-input-channel", data);
+    }
+
+    async getJavaRefOutputChannel() {
+        return await this.get("http://localhost:4735/audio/java/ref-output-channel");
+    }
+
+    async setJavaRefOutputChannel(data) {
+        return await this.post("http://localhost:4735/audio/java/ref-output-channel", data);
+    }
+
+    async getJavaNumInputChannels() {
+        return await this.get("http://localhost:4735/audio/java/num-input-channels");
+    }
+
+    async getJavaOutputChannels() {
+        return await this.get("http://localhost:4735/audio/java/output-channels");
+    }
+
+    async getJavaRefOutputChannels() {
+        return await this.get("http://localhost:4735/audio/java/ref-output-channels");
+    }
+
+    async getJavaOutputChannelMapping() {
+        return await this.get("http://localhost:4735/audio/java/output-channel-mapping");
+    }
+
+    async setJavaOutputChannelMapping(data) {
+        return await this.post("http://localhost:4735/audio/java/output-channel-mapping", data);
+    }
+
+    async getJavaStereoOnly() {
+        return await this.get("http://localhost:4735/audio/java/stereo-only");
+    }
+
+    async setJavaStereoOnly(data) {
+        return await this.post("http://localhost:4735/audio/java/stereo-only", data);
+    }
 }
 
 module.exports = REWApi;
