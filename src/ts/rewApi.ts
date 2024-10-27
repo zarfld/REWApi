@@ -411,6 +411,23 @@ class REWApi {
     async getLastInputLevels(): Promise<any> {
         return await this.get("http://localhost:4735/input-levels/last-levels");
     }
+
+    // Methods for handling selected measurement
+    async selectMeasurementByUUID(data: any): Promise<any> {
+        return await this.post("http://localhost:4735/measurements/selected-uuid", data);
+    }
+
+    async selectMeasurementByIndex(data: any): Promise<any> {
+        return await this.post("http://localhost:4735/measurements/selected", data);
+    }
+
+    async getSelectedMeasurementUUID(): Promise<any> {
+        return await this.get("http://localhost:4735/measurements/selected-uuid");
+    }
+
+    async getSelectedMeasurementIndex(): Promise<any> {
+        return await this.get("http://localhost:4735/measurements/selected");
+    }
 }
 
 export default REWApi;

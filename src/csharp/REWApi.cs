@@ -479,4 +479,25 @@ public class REWApi
     {
         return await GetAsync("http://localhost:4735/input-levels/last-levels");
     }
+
+    // Methods for handling selected measurement
+    public async Task<string> SelectMeasurementByUUIDAsync(HttpContent content)
+    {
+        return await PostAsync("http://localhost:4735/measurements/selected-uuid", content);
+    }
+
+    public async Task<string> SelectMeasurementByIndexAsync(HttpContent content)
+    {
+        return await PostAsync("http://localhost:4735/measurements/selected", content);
+    }
+
+    public async Task<string> GetSelectedMeasurementUUIDAsync()
+    {
+        return await GetAsync("http://localhost:4735/measurements/selected-uuid");
+    }
+
+    public async Task<string> GetSelectedMeasurementIndexAsync()
+    {
+        return await GetAsync("http://localhost:4735/measurements/selected");
+    }
 }
