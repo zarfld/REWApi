@@ -511,4 +511,10 @@ public class REWApi
     {
         return await PostAsync("http://localhost:4735/measurements/command", content);
     }
+
+    // Method to update a measurement's name and/or notes
+    public async Task<string> UpdateMeasurementAsync(string id, HttpContent content)
+    {
+        return await PutAsync($"http://localhost:4735/measurements/{id}", content);
+    }
 }
