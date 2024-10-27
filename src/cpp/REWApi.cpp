@@ -93,9 +93,18 @@ public:
     }
 
     // Methods for handling impulse response
-    pplx::task<utility::string_t> GetImpulseResponseAsync()
+    pplx::task<utility::string_t> GetImpulseResponseAsync(const utility::string_t& id, const utility::string_t& unit = U("Percent"), bool windowed = false, bool normalised = true)
     {
-        return GetAsync(U("http://localhost:4735/impulseresponse"));
+        utility::string_t endpoint = U("/measurements/") + id + U("/impulse-response?unit=") + unit;
+        if (windowed)
+        {
+            endpoint += U("&windowed=true");
+        }
+        if (!normalised)
+        {
+            endpoint += U("&normalised=false");
+        }
+        return GetAsync(endpoint);
     }
 
     // Methods for handling EQ and filters
