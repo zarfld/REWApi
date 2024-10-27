@@ -531,3 +531,292 @@ Example:
   }
 }
 ```
+
+## Java Driver Endpoints
+
+The `/audio/java/` endpoints provide control over Java driver items. The following sub-endpoints are available:
+
+### Input Device
+
+To get the current input device, make a GET request to the `/audio/java/input-device` endpoint.
+
+Example:
+
+```json
+{
+  "inputDevice": "Microphone"
+}
+```
+
+To set the input device, make a POST request to the `/audio/java/input-device` endpoint with a JSON body containing the input device.
+
+Example:
+
+```json
+{
+  "inputDevice": "Line In"
+}
+```
+
+### Input
+
+To get the current input, make a GET request to the `/audio/java/input` endpoint.
+
+Example:
+
+```json
+{
+  "input": "Mic"
+}
+```
+
+To set the input, make a POST request to the `/audio/java/input` endpoint with a JSON body containing the input.
+
+Example:
+
+```json
+{
+  "input": "Line In"
+}
+```
+
+### Output Device
+
+To get the current output device, make a GET request to the `/audio/java/output-device` endpoint.
+
+Example:
+
+```json
+{
+  "outputDevice": "Speakers"
+}
+```
+
+To set the output device, make a POST request to the `/audio/java/output-device` endpoint with a JSON body containing the output device.
+
+Example:
+
+```json
+{
+  "outputDevice": "Headphones"
+}
+```
+
+### Output
+
+To get the current output, make a GET request to the `/audio/java/output` endpoint.
+
+Example:
+
+```json
+{
+  "output": "Speakers"
+}
+```
+
+To set the output, make a POST request to the `/audio/java/output` endpoint with a JSON body containing the output.
+
+Example:
+
+```json
+{
+  "output": "Headphones"
+}
+```
+
+### Input Channel
+
+To get the current input channel, make a GET request to the `/audio/java/input-channel` endpoint.
+
+Example:
+
+```json
+{
+  "inputChannel": 1
+}
+```
+
+To set the input channel, make a POST request to the `/audio/java/input-channel` endpoint with a JSON body containing the input channel.
+
+Example:
+
+```json
+{
+  "inputChannel": 2
+}
+```
+
+### Output Channel
+
+To get the current output channel, make a GET request to the `/audio/java/output-channel` endpoint.
+
+Example:
+
+```json
+{
+  "outputChannel": "L+R"
+}
+```
+
+To set the output channel, make a POST request to the `/audio/java/output-channel` endpoint with a JSON body containing the output channel.
+
+Example:
+
+```json
+{
+  "outputChannel": "L"
+}
+```
+
+### Reference Input Channel
+
+To get the current reference input channel, make a GET request to the `/audio/java/ref-input-channel` endpoint.
+
+Example:
+
+```json
+{
+  "refInputChannel": 1
+}
+```
+
+To set the reference input channel, make a POST request to the `/audio/java/ref-input-channel` endpoint with a JSON body containing the reference input channel.
+
+Example:
+
+```json
+{
+  "refInputChannel": 2
+}
+```
+
+### Last Input Channel
+
+To get the current last input channel, make a GET request to the `/audio/java/last-input-channel` endpoint.
+
+Example:
+
+```json
+{
+  "lastInputChannel": 1
+}
+```
+
+To set the last input channel, make a POST request to the `/audio/java/last-input-channel` endpoint with a JSON body containing the last input channel.
+
+Example:
+
+```json
+{
+  "lastInputChannel": 2
+}
+```
+
+### Reference Output Channel
+
+To get the current reference output channel, make a GET request to the `/audio/java/ref-output-channel` endpoint.
+
+Example:
+
+```json
+{
+  "refOutputChannel": "L+R"
+}
+```
+
+To set the reference output channel, make a POST request to the `/audio/java/ref-output-channel` endpoint with a JSON body containing the reference output channel.
+
+Example:
+
+```json
+{
+  "refOutputChannel": "L"
+}
+```
+
+### Number of Input Channels
+
+To get the number of input channels, make a GET request to the `/audio/java/num-input-channels` endpoint.
+
+Example:
+
+```json
+{
+  "numInputChannels": 2
+}
+```
+
+### Output Channels
+
+To get the available output channels, make a GET request to the `/audio/java/output-channels` endpoint.
+
+Example:
+
+```json
+[
+  "L",
+  "R",
+  "L+R"
+]
+```
+
+### Reference Output Channels
+
+To get the available reference output channels, make a GET request to the `/audio/java/ref-output-channels` endpoint.
+
+Example:
+
+```json
+[
+  "L",
+  "R",
+  "L+R"
+]
+```
+
+### Output Channel Mapping
+
+To get the current output channel mapping, make a GET request to the `/audio/java/output-channel-mapping` endpoint.
+
+Example:
+
+```json
+[
+  "L",
+  "R",
+  "L+R"
+]
+```
+
+To set the output channel mapping, make a POST request to the `/audio/java/output-channel-mapping` endpoint with a JSON body containing the output channel mapping.
+
+Example:
+
+```json
+[
+  "L",
+  "R"
+]
+```
+
+### Stereo Only
+
+To get the stereo only flag, make a GET request to the `/audio/java/stereo-only` endpoint.
+
+Example:
+
+```json
+{
+  "stereoOnly": true
+}
+```
+
+To set the stereo only flag, make a POST request to the `/audio/java/stereo-only` endpoint with a JSON body containing the stereo only flag.
+
+Example:
+
+```json
+{
+  "stereoOnly": false
+}
+```

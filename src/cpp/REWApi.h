@@ -89,6 +89,46 @@ public:
     pplx::task<utility::string_t> GetOutputCalibrationAsync();
     pplx::task<utility::string_t> SetOutputCalibrationAsync(const web::json::value& content);
 
+    // Methods for handling Java driver items
+    pplx::task<utility::string_t> GetJavaInputDeviceAsync();
+    pplx::task<utility::string_t> SetJavaInputDeviceAsync(const web::json::value& content);
+
+    pplx::task<utility::string_t> GetJavaInputAsync();
+    pplx::task<utility::string_t> SetJavaInputAsync(const web::json::value& content);
+
+    pplx::task<utility::string_t> GetJavaOutputDeviceAsync();
+    pplx::task<utility::string_t> SetJavaOutputDeviceAsync(const web::json::value& content);
+
+    pplx::task<utility::string_t> GetJavaOutputAsync();
+    pplx::task<utility::string_t> SetJavaOutputAsync(const web::json::value& content);
+
+    pplx::task<utility::string_t> GetJavaInputChannelAsync();
+    pplx::task<utility::string_t> SetJavaInputChannelAsync(const web::json::value& content);
+
+    pplx::task<utility::string_t> GetJavaOutputChannelAsync();
+    pplx::task<utility::string_t> SetJavaOutputChannelAsync(const web::json::value& content);
+
+    pplx::task<utility::string_t> GetJavaRefInputChannelAsync();
+    pplx::task<utility::string_t> SetJavaRefInputChannelAsync(const web::json::value& content);
+
+    pplx::task<utility::string_t> GetJavaLastInputChannelAsync();
+    pplx::task<utility::string_t> SetJavaLastInputChannelAsync(const web::json::value& content);
+
+    pplx::task<utility::string_t> GetJavaRefOutputChannelAsync();
+    pplx::task<utility::string_t> SetJavaRefOutputChannelAsync(const web::json::value& content);
+
+    pplx::task<utility::string_t> GetJavaNumInputChannelsAsync();
+
+    pplx::task<utility::string_t> GetJavaOutputChannelsAsync();
+
+    pplx::task<utility::string_t> GetJavaRefOutputChannelsAsync();
+
+    pplx::task<utility::string_t> GetJavaOutputChannelMappingAsync();
+    pplx::task<utility::string_t> SetJavaOutputChannelMappingAsync(const web::json::value& content);
+
+    pplx::task<utility::string_t> GetJavaStereoOnlyAsync();
+    pplx::task<utility::string_t> SetJavaStereoOnlyAsync(const web::json::value& content);
+
 private:
     bool graphUpdateInhibited;
 };

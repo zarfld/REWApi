@@ -241,4 +241,130 @@ public:
     {
         return PutAsync(U("http://localhost:4735/audio/output-cal"), content);
     }
+
+    // Methods for handling Java driver items
+    pplx::task<utility::string_t> GetJavaInputDeviceAsync()
+    {
+        return GetAsync(U("http://localhost:4735/audio/java/input-device"));
+    }
+
+    pplx::task<utility::string_t> SetJavaInputDeviceAsync(const json::value& content)
+    {
+        return PostAsync(U("http://localhost:4735/audio/java/input-device"), content);
+    }
+
+    pplx::task<utility::string_t> GetJavaInputAsync()
+    {
+        return GetAsync(U("http://localhost:4735/audio/java/input"));
+    }
+
+    pplx::task<utility::string_t> SetJavaInputAsync(const json::value& content)
+    {
+        return PostAsync(U("http://localhost:4735/audio/java/input"), content);
+    }
+
+    pplx::task<utility::string_t> GetJavaOutputDeviceAsync()
+    {
+        return GetAsync(U("http://localhost:4735/audio/java/output-device"));
+    }
+
+    pplx::task<utility::string_t> SetJavaOutputDeviceAsync(const json::value& content)
+    {
+        return PostAsync(U("http://localhost:4735/audio/java/output-device"), content);
+    }
+
+    pplx::task<utility::string_t> GetJavaOutputAsync()
+    {
+        return GetAsync(U("http://localhost:4735/audio/java/output"));
+    }
+
+    pplx::task<utility::string_t> SetJavaOutputAsync(const json::value& content)
+    {
+        return PostAsync(U("http://localhost:4735/audio/java/output"), content);
+    }
+
+    pplx::task<utility::string_t> GetJavaInputChannelAsync()
+    {
+        return GetAsync(U("http://localhost:4735/audio/java/input-channel"));
+    }
+
+    pplx::task<utility::string_t> SetJavaInputChannelAsync(const json::value& content)
+    {
+        return PostAsync(U("http://localhost:4735/audio/java/input-channel"), content);
+    }
+
+    pplx::task<utility::string_t> GetJavaOutputChannelAsync()
+    {
+        return GetAsync(U("http://localhost:4735/audio/java/output-channel"));
+    }
+
+    pplx::task<utility::string_t> SetJavaOutputChannelAsync(const json::value& content)
+    {
+        return PostAsync(U("http://localhost:4735/audio/java/output-channel"), content);
+    }
+
+    pplx::task<utility::string_t> GetJavaRefInputChannelAsync()
+    {
+        return GetAsync(U("http://localhost:4735/audio/java/ref-input-channel"));
+    }
+
+    pplx::task<utility::string_t> SetJavaRefInputChannelAsync(const json::value& content)
+    {
+        return PostAsync(U("http://localhost:4735/audio/java/ref-input-channel"), content);
+    }
+
+    pplx::task<utility::string_t> GetJavaLastInputChannelAsync()
+    {
+        return GetAsync(U("http://localhost:4735/audio/java/last-input-channel"));
+    }
+
+    pplx::task<utility::string_t> SetJavaLastInputChannelAsync(const json::value& content)
+    {
+        return PostAsync(U("http://localhost:4735/audio/java/last-input-channel"), content);
+    }
+
+    pplx::task<utility::string_t> GetJavaRefOutputChannelAsync()
+    {
+        return GetAsync(U("http://localhost:4735/audio/java/ref-output-channel"));
+    }
+
+    pplx::task<utility::string_t> SetJavaRefOutputChannelAsync(const json::value& content)
+    {
+        return PostAsync(U("http://localhost:4735/audio/java/ref-output-channel"), content);
+    }
+
+    pplx::task<utility::string_t> GetJavaNumInputChannelsAsync()
+    {
+        return GetAsync(U("http://localhost:4735/audio/java/num-input-channels"));
+    }
+
+    pplx::task<utility::string_t> GetJavaOutputChannelsAsync()
+    {
+        return GetAsync(U("http://localhost:4735/audio/java/output-channels"));
+    }
+
+    pplx::task<utility::string_t> GetJavaRefOutputChannelsAsync()
+    {
+        return GetAsync(U("http://localhost:4735/audio/java/ref-output-channels"));
+    }
+
+    pplx::task<utility::string_t> GetJavaOutputChannelMappingAsync()
+    {
+        return GetAsync(U("http://localhost:4735/audio/java/output-channel-mapping"));
+    }
+
+    pplx::task<utility::string_t> SetJavaOutputChannelMappingAsync(const json::value& content)
+    {
+        return PostAsync(U("http://localhost:4735/audio/java/output-channel-mapping"), content);
+    }
+
+    pplx::task<utility::string_t> GetJavaStereoOnlyAsync()
+    {
+        return GetAsync(U("http://localhost:4735/audio/java/stereo-only"));
+    }
+
+    pplx::task<utility::string_t> SetJavaStereoOnlyAsync(const json::value& content)
+    {
+        return PostAsync(U("http://localhost:4735/audio/java/stereo-only"), content);
+    }
 };
