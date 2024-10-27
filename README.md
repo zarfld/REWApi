@@ -1141,3 +1141,19 @@ A GET at the `/measurements/commands` endpoint returns a list of commands, to is
   ]
 }
 ```
+
+## Frequency Response Endpoint
+
+The frequency response for a measurement can be obtained by a GET request at `/measurements/:id/frequency-response`. A `FrequencyResponse` object is returned, with the following properties:
+
+- `smoothing`: The smoothing setting.
+- `startFrequency`: The start frequency.
+- `pointsPerOctave`: The points-per-octave figure (for log-spaced data) or a frequency step value (for linear-spaced data).
+- `magnitudes`: Base64-encoded string of response magnitudes.
+- `phases`: Base64-encoded string of response phases.
+
+The default unit for the magnitude data is SPL, but other units can be requested by including a `unit` query value in the URL, e.g., `?unit=dBFS`. The list of units available can be read from `/measurements/frequency-response/units`.
+
+The default smoothing is whatever the measurement currently uses, but other smoothings can be requested by including a `smoothing` query value in the URL, e.g., `?smoothing="1/12"`. The list of smoothing choices can be read from `/measurements/frequency-response/smoothing-choices`.
+
+Whether the returned data is log-spaced or linear-spaced depends on the measurement, but log-spaced data can be forced by including a `ppo` query value in the URL, e.g., `?ppo=96`. Note that to avoid sampling artifacts, log-spaced data will be smoothed to `ppo/2` if a greater smoothing has not already been applied.

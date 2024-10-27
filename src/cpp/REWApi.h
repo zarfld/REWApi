@@ -27,7 +27,7 @@ public:
     pplx::task<utility::string_t> AddMeasurementAsync(const web::json::value& content);
 
     // Methods for handling frequency response
-    pplx::task<utility::string_t> GetFrequencyResponseAsync();
+    pplx::task<utility::string_t> GetFrequencyResponseAsync(const utility::string_t& id, const utility::string_t& unit = U("SPL"), const utility::string_t& smoothing = U("default"), int ppo = 0);
 
     // Methods for handling impulse response
     pplx::task<utility::string_t> GetImpulseResponseAsync();

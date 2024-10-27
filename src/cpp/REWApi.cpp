@@ -82,9 +82,14 @@ public:
     }
 
     // Methods for handling frequency response
-    pplx::task<utility::string_t> GetFrequencyResponseAsync()
+    pplx::task<utility::string_t> GetFrequencyResponseAsync(const utility::string_t& id, const utility::string_t& unit = U("SPL"), const utility::string_t& smoothing = U("default"), int ppo = 0)
     {
-        return GetAsync(U("http://localhost:4735/frequencyresponse"));
+        utility::string_t endpoint = U("/measurements/") + id + U("/frequency-response?unit=") + unit + U("&smoothing=") + smoothing;
+        if (ppo > 0)
+        {
+            endpoint += U("&ppo=") + std::to_wstring(ppo);
+        }
+        return GetAsync(endpoint);
     }
 
     // Methods for handling impulse response
