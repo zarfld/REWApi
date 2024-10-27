@@ -42,6 +42,12 @@ public:
 
     // Methods for handling room simulator
     pplx::task<utility::string_t> GetRoomSimulatorAsync();
+
+    // Method to set graph update inhibition
+    void SetGraphUpdateInhibition(bool inhibit);
+
+private:
+    bool graphUpdateInhibited;
 };
 
 #endif // REWAPI_H

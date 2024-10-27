@@ -10,7 +10,9 @@ This repository contains implementations of the Room EQ Wizard (REW) API in C#, 
 
 Note: When running REW without a GUI, you must use the [application](https://www.roomeqwizard.com/help/help_en-GB/html/api.html#application) shutdown command to close REW when done.
 
-## Examples
+## Inhibiting Graph Updates
+
+A flag can be set to inhibit any graph updates. This may be useful when running actions which delete or modify measurements to prevent graphs being updated with partial data or errors caused by trying to plot data which is no longer available.
 
 ### C#
 
@@ -22,9 +24,16 @@ using System.Threading.Tasks;
 public class REWApi
 {
     private static readonly HttpClient client = new HttpClient();
+    private bool graphUpdateInhibited = false;
+
+    public void SetGraphUpdateInhibition(bool inhibit)
+    {
+        graphUpdateInhibited = inhibit;
+    }
 
     public async Task<string> GetAsync(string endpoint)
     {
+        if (graphUpdateInhibited) return null;
         HttpResponseMessage response = await client.GetAsync(endpoint);
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadAsStringAsync();
@@ -32,6 +41,7 @@ public class REWApi
 
     public async Task<string> PutAsync(string endpoint, HttpContent content)
     {
+        if (graphUpdateInhibited) return null;
         HttpResponseMessage response = await client.PutAsync(endpoint, content);
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadAsStringAsync();
@@ -39,6 +49,7 @@ public class REWApi
 
     public async Task<string> PostAsync(string endpoint, HttpContent content)
     {
+        if (graphUpdateInhibited) return null;
         HttpResponseMessage response = await client.PostAsync(endpoint, content);
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadAsStringAsync();
@@ -60,9 +71,18 @@ using namespace concurrency::streams;
 
 class REWApi
 {
+private:
+    bool graphUpdateInhibited = false;
+
 public:
+    void SetGraphUpdateInhibition(bool inhibit)
+    {
+        graphUpdateInhibited = inhibit;
+    }
+
     pplx::task<utility::string_t> GetAsync(const utility::string_t& endpoint)
     {
+        if (graphUpdateInhibited) return pplx::task_from_result(utility::string_t());
         http_client client(U("http://localhost:4735"));
         return client.request(methods::GET, endpoint).then([](http_response response) {
             return response.extract_string();
@@ -71,6 +91,7 @@ public:
 
     pplx::task<utility::string_t> PutAsync(const utility::string_t& endpoint, const json::value& content)
     {
+        if (graphUpdateInhibited) return pplx::task_from_result(utility::string_t());
         http_client client(U("http://localhost:4735"));
         return client.request(methods::PUT, endpoint, content).then([](http_response response) {
             return response.extract_string();
@@ -79,6 +100,7 @@ public:
 
     pplx::task<utility::string_t> PostAsync(const utility::string_t& endpoint, const json::value& content)
     {
+        if (graphUpdateInhibited) return pplx::task_from_result(utility::string_t());
         http_client client(U("http://localhost:4735"));
         return client.request(methods::POST, endpoint, content).then([](http_response response) {
             return response.extract_string();
@@ -93,7 +115,16 @@ public:
 const fetch = require('node-fetch');
 
 class REWApi {
+    constructor() {
+        this.graphUpdateInhibited = false;
+    }
+
+    setGraphUpdateInhibition(inhibit) {
+        this.graphUpdateInhibited = inhibit;
+    }
+
     async get(endpoint) {
+        if (this.graphUpdateInhibited) return null;
         const response = await fetch(endpoint);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -102,6 +133,7 @@ class REWApi {
     }
 
     async put(endpoint, data) {
+        if (this.graphUpdateInhibited) return null;
         const response = await fetch(endpoint, {
             method: 'PUT',
             headers: {
@@ -116,6 +148,7 @@ class REWApi {
     }
 
     async post(endpoint, data) {
+        if (this.graphUpdateInhibited) return null;
         const response = await fetch(endpoint, {
             method: 'POST',
             headers: {
@@ -137,7 +170,14 @@ class REWApi {
 import fetch from 'node-fetch';
 
 class REWApi {
+    private graphUpdateInhibited: boolean = false;
+
+    setGraphUpdateInhibition(inhibit: boolean) {
+        this.graphUpdateInhibited = inhibit;
+    }
+
     async get(endpoint: string): Promise<any> {
+        if (this.graphUpdateInhibited) return null;
         const response = await fetch(endpoint);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -146,6 +186,7 @@ class REWApi {
     }
 
     async put(endpoint: string, data: any): Promise<any> {
+        if (this.graphUpdateInhibited) return null;
         const response = await fetch(endpoint, {
             method: 'PUT',
             headers: {
@@ -160,6 +201,7 @@ class REWApi {
     }
 
     async post(endpoint: string, data: any): Promise<any> {
+        if (this.graphUpdateInhibited) return null;
         const response = await fetch(endpoint, {
             method: 'POST',
             headers: {
