@@ -428,6 +428,15 @@ class REWApi {
     async getSelectedMeasurementIndex(): Promise<any> {
         return await this.get("http://localhost:4735/measurements/selected");
     }
+
+    // Methods for handling measurement commands
+    async getMeasurementCommands(): Promise<any> {
+        return await this.get("http://localhost:4735/measurements/commands");
+    }
+
+    async issueMeasurementCommand(data: any): Promise<any> {
+        return await this.post("http://localhost:4735/measurements/command", data);
+    }
 }
 
 export default REWApi;

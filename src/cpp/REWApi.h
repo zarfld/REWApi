@@ -166,6 +166,16 @@ public:
     pplx::task<utility::string_t> UnsubscribeInputLevelsAsync(const web::json::value& content);
     pplx::task<utility::string_t> GetLastInputLevelsAsync();
 
+    // Methods for handling selected measurement
+    pplx::task<utility::string_t> SelectMeasurementByUUIDAsync(const web::json::value& content);
+    pplx::task<utility::string_t> SelectMeasurementByIndexAsync(const web::json::value& content);
+    pplx::task<utility::string_t> GetSelectedMeasurementUUIDAsync();
+    pplx::task<utility::string_t> GetSelectedMeasurementIndexAsync();
+
+    // Methods for handling measurement commands
+    pplx::task<utility::string_t> GetMeasurementCommandsAsync();
+    pplx::task<utility::string_t> IssueMeasurementCommandAsync(const web::json::value& content);
+
 private:
     bool graphUpdateInhibited;
 };

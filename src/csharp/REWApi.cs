@@ -500,4 +500,15 @@ public class REWApi
     {
         return await GetAsync("http://localhost:4735/measurements/selected");
     }
+
+    // Methods for handling measurement commands
+    public async Task<string> GetMeasurementCommandsAsync()
+    {
+        return await GetAsync("http://localhost:4735/measurements/commands");
+    }
+
+    public async Task<string> IssueMeasurementCommandAsync(HttpContent content)
+    {
+        return await PostAsync("http://localhost:4735/measurements/command", content);
+    }
 }

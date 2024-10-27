@@ -510,4 +510,15 @@ public:
     {
         return GetAsync(U("http://localhost:4735/measurements/selected"));
     }
+
+    // Methods for handling measurement commands
+    pplx::task<utility::string_t> GetMeasurementCommandsAsync()
+    {
+        return GetAsync(U("http://localhost:4735/measurements/commands"));
+    }
+
+    pplx::task<utility::string_t> IssueMeasurementCommandAsync(const json::value& content)
+    {
+        return PostAsync(U("http://localhost:4735/measurements/command"), content);
+    }
 };
