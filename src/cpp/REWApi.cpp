@@ -107,4 +107,10 @@ public:
     {
         return GetAsync(U("http://localhost:4735/roomsimulator"));
     }
+
+    // Method for handling shutdown command
+    pplx::task<utility::string_t> ShutdownAsync()
+    {
+        return PostAsync(U("http://localhost:4735/application/command"), json::value::parse(U("{\"command\":\"shutdown\"}")));
+    }
 };

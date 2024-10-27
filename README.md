@@ -8,6 +8,8 @@ This repository contains implementations of the Room EQ Wizard (REW) API in C#, 
 2. Access the API documentation via swagger-ui at localhost:4735.
 3. Interact with the API endpoints using GET, PUT, and POST methods.
 
+Note: When running REW without a GUI, you must use the [application](https://www.roomeqwizard.com/help/help_en-GB/html/api.html#application) shutdown command to close REW when done.
+
 ## Examples
 
 ### C#
