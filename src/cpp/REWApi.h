@@ -73,6 +73,22 @@ public:
     // Methods for handling graph update inhibition
     pplx::task<utility::string_t> SetGraphUpdateInhibitionAsync(bool inhibit);
 
+    // Methods for handling audio driver selection
+    pplx::task<utility::string_t> GetAudioDriverAsync();
+    pplx::task<utility::string_t> SetAudioDriverAsync(const web::json::value& content);
+
+    // Methods for handling sample rate
+    pplx::task<utility::string_t> GetSampleRateAsync();
+    pplx::task<utility::string_t> SetSampleRateAsync(const web::json::value& content);
+
+    // Methods for handling input calibration
+    pplx::task<utility::string_t> GetInputCalibrationAsync();
+    pplx::task<utility::string_t> SetInputCalibrationAsync(const web::json::value& content);
+
+    // Methods for handling output calibration
+    pplx::task<utility::string_t> GetOutputCalibrationAsync();
+    pplx::task<utility::string_t> SetOutputCalibrationAsync(const web::json::value& content);
+
 private:
     bool graphUpdateInhibited;
 };

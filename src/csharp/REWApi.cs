@@ -185,4 +185,48 @@ public class REWApi
         var content = new StringContent("{\"inhibit\":" + inhibit.ToString().ToLower() + "}", System.Text.Encoding.UTF8, "application/json");
         return await PostAsync("http://localhost:4735/application/inhibit-graph-updates", content);
     }
+
+    // Methods for handling audio driver selection
+    public async Task<string> GetAudioDriverAsync()
+    {
+        return await GetAsync("http://localhost:4735/audio/driver");
+    }
+
+    public async Task<string> SetAudioDriverAsync(HttpContent content)
+    {
+        return await PostAsync("http://localhost:4735/audio/driver", content);
+    }
+
+    // Methods for handling sample rate
+    public async Task<string> GetSampleRateAsync()
+    {
+        return await GetAsync("http://localhost:4735/audio/samplerate");
+    }
+
+    public async Task<string> SetSampleRateAsync(HttpContent content)
+    {
+        return await PostAsync("http://localhost:4735/audio/samplerate", content);
+    }
+
+    // Methods for handling input calibration
+    public async Task<string> GetInputCalibrationAsync()
+    {
+        return await GetAsync("http://localhost:4735/audio/input-cal");
+    }
+
+    public async Task<string> SetInputCalibrationAsync(HttpContent content)
+    {
+        return await PutAsync("http://localhost:4735/audio/input-cal", content);
+    }
+
+    // Methods for handling output calibration
+    public async Task<string> GetOutputCalibrationAsync()
+    {
+        return await GetAsync("http://localhost:4735/audio/output-cal");
+    }
+
+    public async Task<string> SetOutputCalibrationAsync(HttpContent content)
+    {
+        return await PutAsync("http://localhost:4735/audio/output-cal", content);
+    }
 }

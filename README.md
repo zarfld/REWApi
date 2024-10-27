@@ -378,3 +378,156 @@ Example:
   "inhibit": true
 }
 ```
+
+## Audio Endpoint
+
+The `/audio` endpoint provides full control of REW's audio input and output selections and associated controls. The following sub-endpoints are available:
+
+### Driver
+
+To get the current audio driver, make a GET request to the `/audio/driver` endpoint.
+
+Example:
+
+```json
+{
+  "driver": "Java"
+}
+```
+
+To set the audio driver, make a POST request to the `/audio/driver` endpoint with a JSON body containing the driver.
+
+Example:
+
+```json
+{
+  "driver": "ASIO"
+}
+```
+
+### Driver Types
+
+To get the available audio driver types, make a GET request to the `/audio/driver-types` endpoint.
+
+Example:
+
+```json
+[
+  "Java",
+  "ASIO"
+]
+```
+
+### Sample Rate
+
+To get the current sample rate, make a GET request to the `/audio/samplerate` endpoint.
+
+Example:
+
+```json
+{
+  "samplerate": 44100
+}
+```
+
+To set the sample rate, make a POST request to the `/audio/samplerate` endpoint with a JSON body containing the sample rate.
+
+Example:
+
+```json
+{
+  "samplerate": 48000
+}
+```
+
+### Sample Rates
+
+To get the available sample rates for the current interface selection, make a GET request to the `/audio/samplerates` endpoint.
+
+Example:
+
+```json
+[
+  44100,
+  48000,
+  96000
+]
+```
+
+### Configuration
+
+To get the global option to treat 32-bit data as 24-bit, make a GET request to the `/audio/configuration` endpoint.
+
+Example:
+
+```json
+{
+  "treat32as24": true
+}
+```
+
+To set the global option to treat 32-bit data as 24-bit, make a POST request to the `/audio/configuration` endpoint with a JSON body containing the option.
+
+Example:
+
+```json
+{
+  "treat32as24": false
+}
+```
+
+### Input Calibration
+
+To get the current input calibration configuration, make a GET request to the `/audio/input-cal` endpoint.
+
+Example:
+
+```json
+{
+  "inputCalConfiguration": {
+    "inputSelection": "Mic",
+    "calFilePath": "C:\\path\\to\\calfile.cal"
+  }
+}
+```
+
+To update the input calibration configuration, make a PUT request to the `/audio/input-cal` endpoint with a JSON body containing the configuration.
+
+Example:
+
+```json
+{
+  "inputCalConfiguration": {
+    "inputSelection": "Mic",
+    "calFilePath": "C:\\path\\to\\newcalfile.cal"
+  }
+}
+```
+
+### Output Calibration
+
+To get the current output calibration configuration, make a GET request to the `/audio/output-cal` endpoint.
+
+Example:
+
+```json
+{
+  "outputCalConfiguration": {
+    "outputSelection": "Soundcard",
+    "calFilePath": "C:\\path\\to\\calfile.cal"
+  }
+}
+```
+
+To update the output calibration configuration, make a PUT request to the `/audio/output-cal` endpoint with a JSON body containing the configuration.
+
+Example:
+
+```json
+{
+  "outputCalConfiguration": {
+    "outputSelection": "Soundcard",
+    "calFilePath": "C:\\path\\to\\newcalfile.cal"
+  }
+}
+```
