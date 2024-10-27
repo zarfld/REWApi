@@ -5,9 +5,16 @@ using System.Threading.Tasks;
 public class REWApi
 {
     private static readonly HttpClient client = new HttpClient();
+    private bool graphUpdateInhibited = false;
+
+    public void SetGraphUpdateInhibition(bool inhibit)
+    {
+        graphUpdateInhibited = inhibit;
+    }
 
     public async Task<string> GetAsync(string endpoint)
     {
+        if (graphUpdateInhibited) return null;
         HttpResponseMessage response = await client.GetAsync(endpoint);
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadAsStringAsync();
@@ -15,6 +22,7 @@ public class REWApi
 
     public async Task<string> PutAsync(string endpoint, HttpContent content)
     {
+        if (graphUpdateInhibited) return null;
         HttpResponseMessage response = await client.PutAsync(endpoint, content);
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadAsStringAsync();
@@ -22,6 +30,7 @@ public class REWApi
 
     public async Task<string> PostAsync(string endpoint, HttpContent content)
     {
+        if (graphUpdateInhibited) return null;
         HttpResponseMessage response = await client.PostAsync(endpoint, content);
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadAsStringAsync();

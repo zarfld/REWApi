@@ -9,9 +9,18 @@ using namespace concurrency::streams;
 
 class REWApi
 {
+private:
+    bool graphUpdateInhibited = false;
+
 public:
+    void SetGraphUpdateInhibition(bool inhibit)
+    {
+        graphUpdateInhibited = inhibit;
+    }
+
     pplx::task<utility::string_t> GetAsync(const utility::string_t& endpoint)
     {
+        if (graphUpdateInhibited) return pplx::task_from_result(utility::string_t());
         http_client client(U("http://localhost:4735"));
         return client.request(methods::GET, endpoint).then([](http_response response) {
             return response.extract_string();
@@ -20,6 +29,7 @@ public:
 
     pplx::task<utility::string_t> PutAsync(const utility::string_t& endpoint, const json::value& content)
     {
+        if (graphUpdateInhibited) return pplx::task_from_result(utility::string_t());
         http_client client(U("http://localhost:4735"));
         return client.request(methods::PUT, endpoint, content).then([](http_response response) {
             return response.extract_string();
@@ -28,6 +38,7 @@ public:
 
     pplx::task<utility::string_t> PostAsync(const utility::string_t& endpoint, const json::value& content)
     {
+        if (graphUpdateInhibited) return pplx::task_from_result(utility::string_t());
         http_client client(U("http://localhost:4735"));
         return client.request(methods::POST, endpoint, content).then([](http_response response) {
             return response.extract_string();

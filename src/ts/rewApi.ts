@@ -1,7 +1,14 @@
 import fetch from 'node-fetch';
 
 class REWApi {
+    private graphUpdateInhibited: boolean = false;
+
+    setGraphUpdateInhibition(inhibit: boolean) {
+        this.graphUpdateInhibited = inhibit;
+    }
+
     async get(endpoint: string): Promise<any> {
+        if (this.graphUpdateInhibited) return null;
         const response = await fetch(endpoint);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -10,6 +17,7 @@ class REWApi {
     }
 
     async put(endpoint: string, data: any): Promise<any> {
+        if (this.graphUpdateInhibited) return null;
         const response = await fetch(endpoint, {
             method: 'PUT',
             headers: {
@@ -24,6 +32,7 @@ class REWApi {
     }
 
     async post(endpoint: string, data: any): Promise<any> {
+        if (this.graphUpdateInhibited) return null;
         const response = await fetch(endpoint, {
             method: 'POST',
             headers: {
