@@ -50,6 +50,49 @@ public:
 
     pplx::task<utility::string_t> IssueMeasurementCommandWithParamsAsync(const utility::string_t& id, const utility::string_t& command, const json::value& parameters)
     {
+        // Validate boolean parameters
+        std::vector<utility::string_t> booleanParams = {U("include cal"), U("append lf tail"), U("append hf tail"), U("frequency warping"), U("replicate data")};
+        for (const auto& param : booleanParams)
+        {
+            if (parameters.has_field(param) && !parameters.at(param).is_boolean())
+            {
+                return pplx::task_from_result(utility::string_t(U("Error: Invalid value for parameter '") + param + U("'. Expected a boolean value.")));
+            }
+        }
+
+        // Validate numeric parameters
+        if (parameters.has_field(U("lf tail slope")) && parameters.at(U("lf tail slope")).as_double() < 0)
+        {
+            return pplx::task_from_result(utility::string_t(U("Error: Invalid value for parameter 'lf tail slope'. Must be ≥ 0.")));
+        }
+        if (parameters.has_field(U("hf tail slope")) && parameters.at(U("hf tail slope")).as_double() > 0)
+        {
+            return pplx::task_from_result(utility::string_t(U("Error: Invalid value for parameter 'hf tail slope'. Must be ≤ 0.")));
+        }
+
+        // Validate required parameters
+        if (parameters.at(U("append lf tail")).as_bool())
+        {
+            if (!parameters.has_field(U("lf tail start")) || !parameters.has_field(U("lf tail slope")))
+            {
+                return pplx::task_from_result(utility::string_t(U("Error: Missing required parameters 'lf tail start' and/or 'lf tail slope'.")));
+            }
+        }
+        if (parameters.at(U("append hf tail")).as_bool())
+        {
+            if (!parameters.has_field(U("hf tail start")) || !parameters.has_field(U("hf tail slope")) || !parameters.has_field(U("frequency warping")))
+            {
+                return pplx::task_from_result(utility::string_t(U("Error: Missing required parameters 'hf tail start', 'hf tail slope', and/or 'frequency warping'.")));
+            }
+        }
+        if (!parameters.at(U("append lf tail")).as_bool() || !parameters.at(U("append hf tail")).as_bool())
+        {
+            if (!parameters.has_field(U("replicate data")))
+            {
+                return pplx::task_from_result(utility::string_t(U("Error: Missing required parameter 'replicate data'.")));
+            }
+        }
+
         json::value content;
         content[U("command")] = json::value::string(command);
         content[U("parameters")] = parameters;

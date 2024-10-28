@@ -49,6 +49,39 @@ class REWApi {
     }
 
     async issueMeasurementCommandWithParams(id, command, parameters) {
+        // Validate boolean parameters
+        const booleanParams = ["include cal", "append lf tail", "append hf tail", "frequency warping", "replicate data"];
+        for (const param of booleanParams) {
+            if (parameters.hasOwnProperty(param) && typeof parameters[param] !== "boolean") {
+                return `Error: Invalid value for parameter '${param}'. Expected a boolean value.`;
+            }
+        }
+
+        // Validate numeric parameters
+        if (parameters.hasOwnProperty("lf tail slope") && parameters["lf tail slope"] < 0) {
+            return "Error: Invalid value for parameter 'lf tail slope'. Must be ≥ 0.";
+        }
+        if (parameters.hasOwnProperty("hf tail slope") && parameters["hf tail slope"] > 0) {
+            return "Error: Invalid value for parameter 'hf tail slope'. Must be ≤ 0.";
+        }
+
+        // Validate required parameters
+        if (parameters["append lf tail"]) {
+            if (!parameters.hasOwnProperty("lf tail start") || !parameters.hasOwnProperty("lf tail slope")) {
+                return "Error: Missing required parameters 'lf tail start' and/or 'lf tail slope'.";
+            }
+        }
+        if (parameters["append hf tail"]) {
+            if (!parameters.hasOwnProperty("hf tail start") || !parameters.hasOwnProperty("hf tail slope") || !parameters.hasOwnProperty("frequency warping")) {
+                return "Error: Missing required parameters 'hf tail start', 'hf tail slope', and/or 'frequency warping'.";
+            }
+        }
+        if (!parameters["append lf tail"] || !parameters["append hf tail"]) {
+            if (!parameters.hasOwnProperty("replicate data")) {
+                return "Error: Missing required parameter 'replicate data'.";
+            }
+        }
+
         const content = {
             command: command,
             parameters: parameters
