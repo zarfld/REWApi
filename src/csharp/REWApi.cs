@@ -623,4 +623,12 @@ public class REWApi
     {
         return await PostAsync("http://localhost:4735/measurements/process-measurements", content);
     }
+
+    // Method to handle the Smooth command
+    public async Task<string> SmoothAsync(string id, string smoothing = "1/3")
+    {
+        var content = new StringContent("{\"command\":\"Smooth\",\"parameters\":{\"smoothing\":\"" + smoothing + "\"}}", Encoding.UTF8, "application/json");
+        string endpoint = $"/measurements/{id}/command";
+        return await PostAsync(endpoint, content);
+    }
 }
