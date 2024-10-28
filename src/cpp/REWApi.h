@@ -193,6 +193,9 @@ public:
     // Method to generate waterfall
     pplx::task<utility::string_t> GenerateWaterfallAsync(const utility::string_t& mode, int slices, const web::json::value& parameters);
 
+    // Method to generate spectrogram
+    pplx::task<utility::string_t> GenerateSpectrogramAsync(const utility::string_t& mode, int slices, const web::json::value& parameters);
+
 private:
     bool graphUpdateInhibited;
 };

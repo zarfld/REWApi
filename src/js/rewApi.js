@@ -69,6 +69,18 @@ class REWApi {
         return await this.post("http://localhost:4735/waterfalls", content);
     }
 
+    async generateSpectrogram(mode, slices, parameters) {
+        const content = {
+            command: "Generate spectrogram",
+            parameters: {
+                mode: mode,
+                slices: slices,
+                ...parameters
+            }
+        };
+        return await this.post("http://localhost:4735/spectrograms", content);
+    }
+
     // Methods for handling application settings
     async getApplicationSettings() {
         return await this.get("http://localhost:4735/application/settings");

@@ -1236,3 +1236,57 @@ The 2D array of Doubles in the `Distortion` object should be interpreted as foll
 * The array is structured such that `data[row][column]` gives the value of the attribute at the specified row and column.
 * The column headers array provides the names or descriptions of each attribute, corresponding to the columns in the 2D array.
 * The data is returned in the default unit of percent, but other units can be requested by including a unit query value in the URL, e.g., `?unit=dBr`.
+
+## Generate Spectrogram Command
+
+The `Generate spectrogram` command allows you to generate a spectrogram with various parameters and modes. The command returns the 2D data in a `ProcessResult`. Here are some examples of commands to generate a spectrogram:
+
+### Example 1: Fourier Mode
+
+```json
+{
+  "command": "Generate spectrogram",
+  "parameters": {
+    "mode": "Fourier",
+    "slices": "551",
+    "amplitude": "Log (dB SPL)",
+    "window type": "Gaussian",
+    "window width ms": "300",
+    "before ms": "50",
+    "after ms": "500",
+    "ppo": "48"
+  },
+  "resultUrl": "http://127.0.0.1:5374/spectrograms"
+}
+```
+
+### Example 2: Morlet CWT Mode
+
+```json
+{
+  "command": "Generate spectrogram",
+  "parameters": {
+    "mode": "Morlet CWT",
+    "slices": "551",
+    "amplitude": "Linear (% peak)",
+    "before ms": "5",
+    "after ms": "50",
+    "bandwidth": "1/3",
+    "ppo": "48"
+  },
+  "resultUrl": "http://127.0.0.1:5374/spectrograms"
+}
+```
+
+The `Generate spectrogram` command supports the following parameters:
+
+- `mode`: The mode of the spectrogram. Possible values are "Fourier", "Wavelet", "Airy CWT", "Morlet CWT", and "Burst decay".
+- `slices`: The number of slices to generate.
+- `ppo`: The frequency resolution of the result.
+- `amplitude`: The data values for the amplitude.
+- Additional parameters depending on the mode:
+  - Fourier: `window type`, `window width ms`, `before ms`, `after ms`.
+  - Burst decay: `bandwidth`, `periods`.
+  - Wavelet modes: `bandwidth`, `before ms`, `after ms`.
+
+The `Generate spectrogram` command returns the 2D data in a `ProcessResult`. The result includes an array of the frequencies, an array of the times (or periods for Burst Decay), and a set of arrays of SPL data vs frequency for each time index. It is best to specify a `resultUrl` for those as the generation can take some time. Note that the commands do not affect the REW GUI and will not produce a result in the GUI; they are provided as a way to generate and extract data.
