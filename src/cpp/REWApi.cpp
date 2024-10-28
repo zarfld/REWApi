@@ -656,4 +656,15 @@ public:
         utility::string_t endpoint = U("/measurements/") + id + U("/distortion?unit=") + unit + U("&ppo=") + std::to_wstring(ppo);
         return GetAsync(endpoint);
     }
+
+    // Method to handle the Smooth command
+    pplx::task<utility::string_t> SmoothAsync(const utility::string_t& id, const utility::string_t& smoothing = U("1/3"))
+    {
+        json::value content;
+        content[U("command")] = json::value::string(U("Smooth"));
+        content[U("parameters")][U("smoothing")] = json::value::string(smoothing);
+
+        utility::string_t endpoint = U("/measurements/") + id + U("/command");
+        return PostAsync(endpoint, content);
+    }
 };

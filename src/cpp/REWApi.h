@@ -199,6 +199,9 @@ public:
     // Method to process measurements
     pplx::task<utility::string_t> ProcessMeasurementsAsync(const web::json::value& content);
 
+    // Method to handle the Smooth command
+    pplx::task<utility::string_t> SmoothAsync(const utility::string_t& id, const utility::string_t& smoothing = U("1/3"));
+
 private:
     bool graphUpdateInhibited;
 };

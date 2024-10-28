@@ -1311,3 +1311,20 @@ The Align SPL process has the following parameters:
 - `targetdB`: Either "average" to align to the average SPL of the measurements or an SPL value in dB, e.g., "75.0".
 - `frequencyHz`: The center frequency for the alignment in Hz, e.g., "1000".
 - `spanOctaves`: The alignment span in octaves, e.g., "2".
+
+## Smooth Command
+
+The `Smooth` command allows you to apply smoothing to a measurement. The command supports an optional `smoothing` parameter with a default value of `1/3 Octave Smoothing`. Here is an example of the `Smooth` command:
+
+### Example
+
+```json
+{
+  "command": "Smooth",
+  "parameters": {
+    "smoothing": "1/3"
+  }
+}
+```
+
+The `smoothing` parameter is optional, and if not provided, the default value of `1/3 Octave Smoothing` will be used. This provides flexibility for users who may not need to specify the smoothing parameter, while ensuring consistent results even if the parameter is not provided.

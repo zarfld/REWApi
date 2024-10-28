@@ -555,6 +555,18 @@ class REWApi {
         let endpoint = `/measurements/${id}/distortion?unit=${unit}&ppo=${ppo}`;
         return await this.get(endpoint);
     }
+
+    // Method to handle the Smooth command
+    async smooth(id, smoothing = "1/3") {
+        const content = {
+            command: "Smooth",
+            parameters: {
+                smoothing: smoothing
+            }
+        };
+        const endpoint = `/measurements/${id}/command`;
+        return await this.post(endpoint, content);
+    }
 }
 
 module.exports = REWApi;
