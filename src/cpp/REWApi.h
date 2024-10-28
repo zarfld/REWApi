@@ -175,6 +175,7 @@ public:
     // Methods for handling measurement commands
     pplx::task<utility::string_t> GetMeasurementCommandsAsync();
     pplx::task<utility::string_t> IssueMeasurementCommandAsync(const web::json::value& content);
+    pplx::task<utility::string_t> IssueMeasurementCommandWithParamsAsync(const utility::string_t& id, const utility::string_t& command, const web::json::value& parameters);
 
     // Method to update a measurement's name and/or notes
     pplx::task<utility::string_t> UpdateMeasurementAsync(const utility::string_t& id, const web::json::value& content);

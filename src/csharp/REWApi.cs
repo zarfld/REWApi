@@ -37,6 +37,13 @@ public class REWApi
         return await response.Content.ReadAsStringAsync();
     }
 
+    public async Task<string> IssueMeasurementCommandWithParamsAsync(string id, string command, HttpContent parameters)
+    {
+        var content = new StringContent("{\"command\":\"" + command + "\",\"parameters\":" + parameters.ReadAsStringAsync().Result + "}", Encoding.UTF8, "application/json");
+        string endpoint = $"/measurements/{id}/command";
+        return await PostAsync(endpoint, content);
+    }
+
     // Methods for handling application settings
     public async Task<string> GetApplicationSettingsAsync()
     {
