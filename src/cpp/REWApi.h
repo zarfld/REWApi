@@ -186,6 +186,9 @@ public:
     // Methods for handling REW View preferences
     pplx::task<utility::string_t> GetREWViewPreferencesAsync();
 
+    // Method to get distortion data
+    pplx::task<utility::string_t> GetDistortionAsync(const utility::string_t& id, const utility::string_t& unit = U("percent"), int ppo = 3);
+
 private:
     bool graphUpdateInhibited;
 };

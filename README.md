@@ -1216,3 +1216,23 @@ To determine the current selection in the REW View preferences, you can follow t
 2. The response will include the current selection in the REW View preferences, which will help you understand the current configuration.
 
 For more details, you can refer to the API documentation available via swagger-ui at `localhost:4735`.
+
+## Distortion Data Endpoint
+
+The distortion data for a measurement can be obtained by a GET request at `/measurements/:id/distortion`. A `Distortion` object is returned, with the following properties:
+
+- `type`: A string describing the type of data.
+- `columnHeaders`: An array of column header strings.
+- `data`: A 2D array of Doubles with the data.
+
+The default unit for the data is percent, but other units can be requested by including a `unit` query value in the URL, e.g., `?unit=dBr`. The list of units available can be read from `/measurements/distortion-units`.
+
+Sweep distortion data is returned at the PPO value included in the URL, e.g., `?ppo=12`, or at 3 PPO if not specified. PPO is not required for other types of distortion data. The list of PPO choices can be read from `/measurements/distortion-ppo-choices`.
+
+The 2D array of Doubles in the `Distortion` object should be interpreted as follows:
+
+* Each row in the 2D array represents a different measurement or data point.
+* Each column in the 2D array represents a different attribute or parameter of the measurement.
+* The array is structured such that `data[row][column]` gives the value of the attribute at the specified row and column.
+* The column headers array provides the names or descriptions of each attribute, corresponding to the columns in the 2D array.
+* The data is returned in the default unit of percent, but other units can be requested by including a unit query value in the URL, e.g., `?unit=dBr`.

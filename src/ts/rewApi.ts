@@ -478,6 +478,12 @@ class REWApi {
     async getREWViewPreferences(): Promise<any> {
         return await this.get("http://localhost:4735/application/settings");
     }
+
+    // Method to get distortion data
+    async getDistortion(id: string, unit: string = "percent", ppo: number = 3): Promise<any> {
+        let endpoint = `/measurements/${id}/distortion?unit=${unit}&ppo=${ppo}`;
+        return await this.get(endpoint);
+    }
 }
 
 export default REWApi;
