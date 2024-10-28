@@ -48,6 +48,15 @@ class REWApi {
         return await response.json();
     }
 
+    async issueMeasurementCommandWithParams(id, command, parameters) {
+        const content = {
+            command: command,
+            parameters: parameters
+        };
+        const endpoint = `/measurements/${id}/command`;
+        return await this.post(endpoint, content);
+    }
+
     // Methods for handling application settings
     async getApplicationSettings() {
         return await this.get("http://localhost:4735/application/settings");

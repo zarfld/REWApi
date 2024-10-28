@@ -48,6 +48,16 @@ public:
         });
     }
 
+    pplx::task<utility::string_t> IssueMeasurementCommandWithParamsAsync(const utility::string_t& id, const utility::string_t& command, const json::value& parameters)
+    {
+        json::value content;
+        content[U("command")] = json::value::string(command);
+        content[U("parameters")] = parameters;
+
+        utility::string_t endpoint = U("/measurements/") + id + U("/command");
+        return PostAsync(endpoint, content);
+    }
+
     // Methods for handling application settings
     pplx::task<utility::string_t> GetApplicationSettingsAsync()
     {
