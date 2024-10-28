@@ -202,6 +202,17 @@ public:
     // Method to handle the Smooth command
     pplx::task<utility::string_t> SmoothAsync(const utility::string_t& id, const utility::string_t& smoothing = U("1/3"));
 
+    // Methods for handling groups and their measurements
+    pplx::task<utility::string_t> GetGroupsAsync();
+    pplx::task<utility::string_t> GetGroupAsync(const utility::string_t& uuid);
+    pplx::task<utility::string_t> CreateGroupAsync(const web::json::value& content);
+    pplx::task<utility::string_t> UpdateGroupAsync(const utility::string_t& uuid, const web::json::value& content);
+    pplx::task<utility::string_t> DeleteGroupAsync(const utility::string_t& uuid);
+    pplx::task<utility::string_t> DeleteAllGroupsAsync();
+    pplx::task<utility::string_t> GetGroupMeasurementsAsync(const utility::string_t& uuid);
+    pplx::task<utility::string_t> AddMeasurementToGroupAsync(const utility::string_t& uuid, const web::json::value& content);
+    pplx::task<utility::string_t> RemoveMeasurementFromGroupAsync(const utility::string_t& uuid, const utility::string_t& measurementUuid);
+
 private:
     bool graphUpdateInhibited;
 };
