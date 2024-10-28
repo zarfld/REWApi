@@ -39,6 +39,49 @@ public class REWApi
 
     public async Task<string> IssueMeasurementCommandWithParamsAsync(string id, string command, HttpContent parameters)
     {
+        // Validate boolean parameters
+        var booleanParams = new[] { "include cal", "append lf tail", "append hf tail", "frequency warping", "replicate data" };
+        foreach (var param in booleanParams)
+        {
+            if (parameters.Headers.Contains(param) && !bool.TryParse(parameters.Headers.GetValues(param).FirstOrDefault(), out _))
+            {
+                return $"Error: Invalid value for parameter '{param}'. Expected a boolean value.";
+            }
+        }
+
+        // Validate numeric parameters
+        if (parameters.Headers.Contains("lf tail slope") && double.TryParse(parameters.Headers.GetValues("lf tail slope").FirstOrDefault(), out var lfTailSlope) && lfTailSlope < 0)
+        {
+            return "Error: Invalid value for parameter 'lf tail slope'. Must be ≥ 0.";
+        }
+        if (parameters.Headers.Contains("hf tail slope") && double.TryParse(parameters.Headers.GetValues("hf tail slope").FirstOrDefault(), out var hfTailSlope) && hfTailSlope > 0)
+        {
+            return "Error: Invalid value for parameter 'hf tail slope'. Must be ≤ 0.";
+        }
+
+        // Validate required parameters
+        if (bool.TryParse(parameters.Headers.GetValues("append lf tail").FirstOrDefault(), out var appendLfTail) && appendLfTail)
+        {
+            if (!parameters.Headers.Contains("lf tail start") || !parameters.Headers.Contains("lf tail slope"))
+            {
+                return "Error: Missing required parameters 'lf tail start' and/or 'lf tail slope'.";
+            }
+        }
+        if (bool.TryParse(parameters.Headers.GetValues("append hf tail").FirstOrDefault(), out var appendHfTail) && appendHfTail)
+        {
+            if (!parameters.Headers.Contains("hf tail start") || !parameters.Headers.Contains("hf tail slope") || !parameters.Headers.Contains("frequency warping"))
+            {
+                return "Error: Missing required parameters 'hf tail start', 'hf tail slope', and/or 'frequency warping'.";
+            }
+        }
+        if (!appendLfTail || !appendHfTail)
+        {
+            if (!parameters.Headers.Contains("replicate data"))
+            {
+                return "Error: Missing required parameter 'replicate data'.";
+            }
+        }
+
         var content = new StringContent("{\"command\":\"" + command + "\",\"parameters\":" + parameters.ReadAsStringAsync().Result + "}", Encoding.UTF8, "application/json");
         string endpoint = $"/measurements/{id}/command";
         return await PostAsync(endpoint, content);
