@@ -88,6 +88,11 @@ public:
         return PostAsync(U("/spectrograms"), content);
     }
 
+    pplx::task<utility::string_t> ProcessMeasurementsAsync(const json::value& content)
+    {
+        return PostAsync(U("/measurements/process-measurements"), content);
+    }
+
     // Methods for handling application settings
     pplx::task<utility::string_t> GetApplicationSettingsAsync()
     {
