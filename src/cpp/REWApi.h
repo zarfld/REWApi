@@ -190,6 +190,9 @@ public:
     // Method to get distortion data
     pplx::task<utility::string_t> GetDistortionAsync(const utility::string_t& id, const utility::string_t& unit = U("percent"), int ppo = 3);
 
+    // Method to generate waterfall
+    pplx::task<utility::string_t> GenerateWaterfallAsync(const utility::string_t& mode, int slices, const web::json::value& parameters);
+
 private:
     bool graphUpdateInhibited;
 };

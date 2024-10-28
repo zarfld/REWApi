@@ -44,6 +44,12 @@ public class REWApi
         return await PostAsync(endpoint, content);
     }
 
+    public async Task<string> GenerateWaterfallAsync(string mode, int slices, HttpContent parameters)
+    {
+        var content = new StringContent("{\"command\":\"Generate waterfall\",\"parameters\":{\"mode\":\"" + mode + "\",\"slices\":" + slices + "," + parameters.ReadAsStringAsync().Result + "}}", Encoding.UTF8, "application/json");
+        return await PostAsync("http://localhost:4735/waterfalls", content);
+    }
+
     // Methods for handling application settings
     public async Task<string> GetApplicationSettingsAsync()
     {

@@ -57,6 +57,18 @@ class REWApi {
         return await this.post(endpoint, content);
     }
 
+    async generateWaterfall(mode, slices, parameters) {
+        const content = {
+            command: "Generate waterfall",
+            parameters: {
+                mode: mode,
+                slices: slices,
+                ...parameters
+            }
+        };
+        return await this.post("http://localhost:4735/waterfalls", content);
+    }
+
     // Methods for handling application settings
     async getApplicationSettings() {
         return await this.get("http://localhost:4735/application/settings");

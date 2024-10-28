@@ -58,6 +58,21 @@ public:
         return PostAsync(endpoint, content);
     }
 
+    pplx::task<utility::string_t> GenerateWaterfallAsync(const utility::string_t& mode, int slices, const json::value& parameters)
+    {
+        json::value content;
+        content[U("command")] = json::value::string(U("Generate waterfall"));
+        content[U("parameters")][U("mode")] = json::value::string(mode);
+        content[U("parameters")][U("slices")] = json::value::number(slices);
+
+        for (const auto& param : parameters.as_object())
+        {
+            content[U("parameters")][param.first] = param.second;
+        }
+
+        return PostAsync(U("/waterfalls"), content);
+    }
+
     // Methods for handling application settings
     pplx::task<utility::string_t> GetApplicationSettingsAsync()
     {
