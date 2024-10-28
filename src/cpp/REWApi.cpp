@@ -667,4 +667,59 @@ public:
         utility::string_t endpoint = U("/measurements/") + id + U("/command");
         return PostAsync(endpoint, content);
     }
+
+    // Methods for handling groups and their measurements
+    pplx::task<utility::string_t> GetGroupsAsync()
+    {
+        return GetAsync(U("http://localhost:4735/groups"));
+    }
+
+    pplx::task<utility::string_t> GetGroupAsync(const utility::string_t& uuid)
+    {
+        return GetAsync(U("http://localhost:4735/groups/") + uuid);
+    }
+
+    pplx::task<utility::string_t> CreateGroupAsync(const json::value& content)
+    {
+        return PostAsync(U("http://localhost:4735/groups"), content);
+    }
+
+    pplx::task<utility::string_t> UpdateGroupAsync(const utility::string_t& uuid, const json::value& content)
+    {
+        return PutAsync(U("http://localhost:4735/groups/") + uuid, content);
+    }
+
+    pplx::task<utility::string_t> DeleteGroupAsync(const utility::string_t& uuid)
+    {
+        http_client client(U("http://localhost:4735"));
+        return client.request(methods::DEL, U("/groups/") + uuid).then([](http_response response) {
+            return response.extract_string();
+        });
+    }
+
+    pplx::task<utility::string_t> DeleteAllGroupsAsync()
+    {
+        http_client client(U("http://localhost:4735"));
+        return client.request(methods::DEL, U("/groups")).then([](http_response response) {
+            return response.extract_string();
+        });
+    }
+
+    pplx::task<utility::string_t> GetGroupMeasurementsAsync(const utility::string_t& uuid)
+    {
+        return GetAsync(U("http://localhost:4735/groups/") + uuid + U("/measurements"));
+    }
+
+    pplx::task<utility::string_t> AddMeasurementToGroupAsync(const utility::string_t& uuid, const json::value& content)
+    {
+        return PostAsync(U("http://localhost:4735/groups/") + uuid + U("/measurements"), content);
+    }
+
+    pplx::task<utility::string_t> RemoveMeasurementFromGroupAsync(const utility::string_t& uuid, const utility::string_t& measurementUuid)
+    {
+        http_client client(U("http://localhost:4735"));
+        return client.request(methods::DEL, U("/groups/") + uuid + U("/measurements/") + measurementUuid).then([](http_response response) {
+            return response.extract_string();
+        });
+    }
 };

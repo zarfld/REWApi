@@ -1328,3 +1328,34 @@ The `Smooth` command allows you to apply smoothing to a measurement. The command
 ```
 
 The `smoothing` parameter is optional, and if not provided, the default value of `1/3 Octave Smoothing` will be used. This provides flexibility for users who may not need to specify the smoothing parameter, while ensuring consistent results even if the parameter is not provided.
+
+## Groups Endpoint
+
+The `/groups` endpoint provides access to any groups REW has generated or loaded. Groups are referenced by their UUID, as group names may be changed by the user. The UUID for a group is available from the `GroupInfo` object. If a measurement is in a group, the group name, notes, and ID will be included in the measurement's summary. The current list of measurements in a group can be obtained by a GET request at the `/groups/:uuid/measurements` endpoint. A measurement can be placed in a group by posting a `MeasurementSummary` containing the measurement's UUID to `/groups/:uuid/measurements` or by posting a `MeasurementSummary` with the required group UUID at the `/measurements/:id/` endpoint for the measurement.
+
+### Creating a New Group
+
+To create a new group using the API, you need to make a POST request to the `/groups` endpoint with a `GroupInfo` object. Here are the steps:
+
+1. Ensure the `GroupInfo` object does not contain a UUID, as any UUID in the object will be ignored.
+2. Make a POST request to the `/groups` endpoint with the `GroupInfo` object in the request body.
+3. The response will include the new group's `GroupInfo` object, including its UUID.
+4. If the name in the `GroupInfo` object already exists in a group, there will be a bad request response.
+
+### Accessing Individual Groups
+
+Individual groups may be accessed by including their UUID in the path. A group's name or notes may be changed by making a PUT request with a `GroupInfo` object containing the fields to change to the `/groups/:uuid` endpoint.
+
+### Deleting Groups
+
+To delete a group using the API, you need to make a DELETE request to the appropriate endpoint. Here are the steps:
+
+1. To delete a specific group, make a DELETE request to the `/groups/:uuid` endpoint, where `:uuid` is the UUID of the group you want to delete.
+2. To delete all groups, make a DELETE request to the `/groups` endpoint.
+3. Note that there are no delete confirmations, so use these endpoints with care!
+
+### Group Subscriptions
+
+A subscription can be added to be notified of any changes that are made to the list of groups, including groups being added or deleted. There are no parameters for group subscriptions. The change notifications are conveyed in a `GroupsListChange` object, which has a string with a description of the type of change and the ID, name, and notes for the group changed.
+
+For more details, you can refer to the API documentation available via swagger-ui at `localhost:4735`.

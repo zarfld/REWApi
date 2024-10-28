@@ -631,4 +631,57 @@ public class REWApi
         string endpoint = $"/measurements/{id}/command";
         return await PostAsync(endpoint, content);
     }
+
+    // Methods for handling groups and their measurements
+    public async Task<string> GetGroupsAsync()
+    {
+        return await GetAsync("http://localhost:4735/groups");
+    }
+
+    public async Task<string> GetGroupAsync(string uuid)
+    {
+        return await GetAsync($"http://localhost:4735/groups/{uuid}");
+    }
+
+    public async Task<string> CreateGroupAsync(HttpContent content)
+    {
+        return await PostAsync("http://localhost:4735/groups", content);
+    }
+
+    public async Task<string> UpdateGroupAsync(string uuid, HttpContent content)
+    {
+        return await PutAsync($"http://localhost:4735/groups/{uuid}", content);
+    }
+
+    public async Task<string> DeleteGroupAsync(string uuid)
+    {
+        return await DeleteAsync($"http://localhost:4735/groups/{uuid}");
+    }
+
+    public async Task<string> DeleteAllGroupsAsync()
+    {
+        return await DeleteAsync("http://localhost:4735/groups");
+    }
+
+    public async Task<string> GetGroupMeasurementsAsync(string uuid)
+    {
+        return await GetAsync($"http://localhost:4735/groups/{uuid}/measurements");
+    }
+
+    public async Task<string> AddMeasurementToGroupAsync(string uuid, HttpContent content)
+    {
+        return await PostAsync($"http://localhost:4735/groups/{uuid}/measurements", content);
+    }
+
+    public async Task<string> RemoveMeasurementFromGroupAsync(string uuid, string measurementUuid)
+    {
+        return await DeleteAsync($"http://localhost:4735/groups/{uuid}/measurements/{measurementUuid}");
+    }
+
+    private async Task<string> DeleteAsync(string endpoint)
+    {
+        HttpResponseMessage response = await client.DeleteAsync(endpoint);
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadAsStringAsync();
+    }
 }

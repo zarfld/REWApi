@@ -567,6 +567,61 @@ class REWApi {
         const endpoint = `/measurements/${id}/command`;
         return await this.post(endpoint, content);
     }
+
+    // Methods for handling groups and their measurements
+    async getGroups() {
+        return await this.get("http://localhost:4735/groups");
+    }
+
+    async getGroup(uuid) {
+        return await this.get(`http://localhost:4735/groups/${uuid}`);
+    }
+
+    async createGroup(data) {
+        return await this.post("http://localhost:4735/groups", data);
+    }
+
+    async updateGroup(uuid, data) {
+        return await this.put(`http://localhost:4735/groups/${uuid}`, data);
+    }
+
+    async deleteGroup(uuid) {
+        const response = await fetch(`http://localhost:4735/groups/${uuid}`, {
+            method: 'DELETE'
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return await response.json();
+    }
+
+    async deleteAllGroups() {
+        const response = await fetch("http://localhost:4735/groups", {
+            method: 'DELETE'
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return await response.json();
+    }
+
+    async getGroupMeasurements(uuid) {
+        return await this.get(`http://localhost:4735/groups/${uuid}/measurements`);
+    }
+
+    async addMeasurementToGroup(uuid, data) {
+        return await this.post(`http://localhost:4735/groups/${uuid}/measurements`, data);
+    }
+
+    async removeMeasurementFromGroup(uuid, measurementUuid) {
+        const response = await fetch(`http://localhost:4735/groups/${uuid}/measurements/${measurementUuid}`, {
+            method: 'DELETE'
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return await response.json();
+    }
 }
 
 module.exports = REWApi;
