@@ -574,4 +574,10 @@ public class REWApi
         string endpoint = $"/measurements/{id}/distortion?unit={unit}&ppo={ppo}";
         return await GetAsync(endpoint);
     }
+
+    // Method to process measurements
+    public async Task<string> ProcessMeasurementsAsync(HttpContent content)
+    {
+        return await PostAsync("http://localhost:4735/measurements/process-measurements", content);
+    }
 }

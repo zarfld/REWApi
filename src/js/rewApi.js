@@ -81,6 +81,10 @@ class REWApi {
         return await this.post("http://localhost:4735/spectrograms", content);
     }
 
+    async processMeasurements(data) {
+        return await this.post("http://localhost:4735/measurements/process-measurements", data);
+    }
+
     // Methods for handling application settings
     async getApplicationSettings() {
         return await this.get("http://localhost:4735/application/settings");

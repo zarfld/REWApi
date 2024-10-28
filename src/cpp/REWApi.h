@@ -196,6 +196,9 @@ public:
     // Method to generate spectrogram
     pplx::task<utility::string_t> GenerateSpectrogramAsync(const utility::string_t& mode, int slices, const web::json::value& parameters);
 
+    // Method to process measurements
+    pplx::task<utility::string_t> ProcessMeasurementsAsync(const web::json::value& content);
+
 private:
     bool graphUpdateInhibited;
 };

@@ -1290,3 +1290,24 @@ The `Generate spectrogram` command supports the following parameters:
   - Wavelet modes: `bandwidth`, `before ms`, `after ms`.
 
 The `Generate spectrogram` command returns the 2D data in a `ProcessResult`. The result includes an array of the frequencies, an array of the times (or periods for Burst Decay), and a set of arrays of SPL data vs frequency for each time index. It is best to specify a `resultUrl` for those as the generation can take some time. Note that the commands do not affect the REW GUI and will not produce a result in the GUI; they are provided as a way to generate and extract data.
+
+## Process Measurements Endpoint
+
+The `/measurements/process-measurements` endpoint allows you to process a set of measurements by POSTing a `ProcessMeasurements` object. The `ProcessMeasurements` object has the following properties:
+
+- `measurements`: A list of either the numeric indices or UUID strings of the measurements to be processed.
+- `url`: An optional URL to which the result of the process will be posted.
+
+The process result can be read from the `/measurements/process-result` endpoint but may not be available immediately, as some processes take time to complete. The `ProcessMeasurementsResult` object has the following properties:
+
+- `processName`: The name of the process it relates to.
+- `message`: A message (which may be absent or empty).
+- `results`: A set of results for each measurement that was processed, returned as a map of result names and result values (all strings).
+
+### Align SPL Process
+
+The Align SPL process has the following parameters:
+
+- `targetdB`: Either "average" to align to the average SPL of the measurements or an SPL value in dB, e.g., "75.0".
+- `frequencyHz`: The center frequency for the alignment in Hz, e.g., "1000".
+- `spanOctaves`: The alignment span in octaves, e.g., "2".
