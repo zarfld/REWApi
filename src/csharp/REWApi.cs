@@ -548,4 +548,11 @@ public class REWApi
     {
         return await GetAsync("http://localhost:4735/application/settings");
     }
+
+    // Method to get distortion data
+    public async Task<string> GetDistortionAsync(string id, string unit = "percent", int ppo = 3)
+    {
+        string endpoint = $"/measurements/{id}/distortion?unit={unit}&ppo={ppo}";
+        return await GetAsync(endpoint);
+    }
 }

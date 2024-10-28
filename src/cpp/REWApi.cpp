@@ -561,4 +561,11 @@ public:
     {
         return GetAsync(U("http://localhost:4735/application/settings"));
     }
+
+    // Method to get distortion data
+    pplx::task<utility::string_t> GetDistortionAsync(const utility::string_t& id, const utility::string_t& unit = U("percent"), int ppo = 3)
+    {
+        utility::string_t endpoint = U("/measurements/") + id + U("/distortion?unit=") + unit + U("&ppo=") + std::to_wstring(ppo);
+        return GetAsync(endpoint);
+    }
 };
