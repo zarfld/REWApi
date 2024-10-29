@@ -629,6 +629,12 @@ public class REWApi
             {
                 return "Error: Missing required parameters 'targetdB', 'frequencyHz', and/or 'spanOctaves'.";
             }
+
+            // Validate measurementIndices field
+            if (!content.Headers.Contains("measurementIndices") || !content.Headers.GetValues("measurementIndices").FirstOrDefault().StartsWith("["))
+            {
+                return "Error: Missing or invalid 'measurementIndices' field. Must be an array.";
+            }
         }
 
         return await PostAsync("http://localhost:4735/measurements/process-measurements", content);

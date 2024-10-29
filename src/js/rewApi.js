@@ -121,6 +121,11 @@ class REWApi {
             if (!data.hasOwnProperty("parameters") || !data.parameters.hasOwnProperty("targetdB") || !data.parameters.hasOwnProperty("frequencyHz") || !data.parameters.hasOwnProperty("spanOctaves")) {
                 return "Error: Missing required parameters 'targetdB', 'frequencyHz', and/or 'spanOctaves'.";
             }
+
+            // Validate measurementIndices field
+            if (!data.hasOwnProperty("measurementIndices") || !Array.isArray(data.measurementIndices)) {
+                return "Error: Missing or invalid 'measurementIndices' field. Must be an array.";
+            }
         }
 
         return await this.post("http://localhost:4735/measurements/process-measurements", data);
