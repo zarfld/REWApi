@@ -113,6 +113,14 @@ class REWApi {
     }
 
     async processMeasurements(data: any): Promise<any> {
+        // Check if the processName is "Align SPL"
+        if (data.hasOwnProperty("processName") && data.processName === "Align SPL") {
+            // Validate required parameters
+            if (!data.hasOwnProperty("parameters") || !data.parameters.hasOwnProperty("targetdB") || !data.parameters.hasOwnProperty("frequencyHz") || !data.parameters.hasOwnProperty("spanOctaves")) {
+                return "Error: Missing required parameters 'targetdB', 'frequencyHz', and/or 'spanOctaves'.";
+            }
+        }
+
         return await this.post("http://localhost:4735/measurements/process-measurements", data);
     }
 

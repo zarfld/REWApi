@@ -133,6 +133,16 @@ public:
 
     pplx::task<utility::string_t> ProcessMeasurementsAsync(const json::value& content)
     {
+        // Check if the processName is "Align SPL"
+        if (content.has_field(U("processName")) && content.at(U("processName")).as_string() == U("Align SPL"))
+        {
+            // Validate required parameters
+            if (!content.has_field(U("parameters")) || !content.at(U("parameters")).has_field(U("targetdB")) || !content.at(U("parameters")).has_field(U("frequencyHz")) || !content.at(U("parameters")).has_field(U("spanOctaves")))
+            {
+                return pplx::task_from_result(utility::string_t(U("Error: Missing required parameters 'targetdB', 'frequencyHz', and/or 'spanOctaves'.")));
+            }
+        }
+
         return PostAsync(U("/measurements/process-measurements"), content);
     }
 
