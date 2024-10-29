@@ -757,4 +757,22 @@ public class REWApi
         var content = new StringContent("{\"command\":\"Offset t=0\",\"parameters\":{\"offset\":\"" + offset + "\",\"unit\":\"" + unit + "\"}}", Encoding.UTF8, "application/json");
         return await PostAsync("http://localhost:4735/offset-t-zero", content);
     }
+
+    // Method to handle group change subscriptions
+    public async Task<string> SubscribeToGroupChangesAsync(HttpContent content)
+    {
+        return await PostAsync("http://localhost:4735/groups/subscribe", content);
+    }
+
+    // Method to handle group change unsubscriptions
+    public async Task<string> UnsubscribeFromGroupChangesAsync(HttpContent content)
+    {
+        return await PostAsync("http://localhost:4735/groups/unsubscribe", content);
+    }
+
+    // Method to get the list of group subscribers
+    public async Task<string> GetGroupSubscribersAsync()
+    {
+        return await GetAsync("http://localhost:4735/groups/subscribers");
+    }
 }
