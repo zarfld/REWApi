@@ -171,23 +171,23 @@ public:
             {
                 return pplx::task_from_result(utility::string_t(U("Error: Invalid value for parameter 'upperLimit'. Expected a number.")));
             }
-            if (content.at(U("parameters")).has_field(U("mergeFrequency")) && !content.at(U("parameters")).at(U("mergeFrequency")).is_number())
+            if (content.at(U("parameters")).has_field(U("mergeFrequency")) && !content.at(U("mergeFrequency")).is_number())
             {
                 return pplx::task_from_result(utility::string_t(U("Error: Invalid value for parameter 'mergeFrequency'. Expected a number.")));
             }
-            if (content.at(U("parameters")).has_field(U("mergeBlend")) && !content.at(U("parameters")).at(U("mergeBlend")).is_boolean())
+            if (content.at(U("parameters")).has_field(U("mergeBlend")) && !content.at(U("mergeBlend")).is_boolean())
             {
                 return pplx::task_from_result(utility::string_t(U("Error: Invalid value for parameter 'mergeBlend'. Expected a boolean.")));
             }
-            if (content.at(U("parameters")).has_field(U("targetLevel")) && !content.at(U("parameters")).at(U("targetLevel")).is_number())
+            if (content.at(U("parameters")).has_field(U("targetLevel")) && !content.at(U("targetLevel")).is_number())
             {
                 return pplx::task_from_result(utility::string_t(U("Error: Invalid value for parameter 'targetLevel'. Expected a number.")));
             }
-            if (content.at(U("parameters")).has_field(U("autoTarget")) && !content.at(U("parameters")).at(U("autoTarget")).is_boolean())
+            if (content.at(U("parameters")).has_field(U("autoTarget")) && !content.at(U("autoTarget")).is_boolean())
             {
                 return pplx::task_from_result(utility::string_t(U("Error: Invalid value for parameter 'autoTarget'. Expected a boolean.")));
             }
-            if (content.at(U("parameters")).has_field(U("excludeNotches")) && !content.at(U("parameters")).at(U("excludeNotches")).is_boolean())
+            if (content.at(U("parameters")).has_field(U("excludeNotches")) && !content.at(U("excludeNotches")).is_boolean())
             {
                 return pplx::task_from_result(utility::string_t(U("Error: Invalid value for parameter 'excludeNotches'. Expected a boolean.")));
             }
@@ -275,12 +275,12 @@ public:
     // Methods for handling EQ and filters
     pplx::task<utility::string_t> GetEQSettingsAsync()
     {
-        return GetAsync(U("http://localhost:4735/eq/settings"));
+        return GetAsync(U("/eq/settings"));
     }
 
     pplx::task<utility::string_t> UpdateEQSettingsAsync(const json::value& content)
     {
-        return PutAsync(U("http://localhost:4735/eq/settings"), content);
+        return PutAsync(U("/eq/settings"), content);
     }
 
     // Methods for handling SPL meter
@@ -325,19 +325,19 @@ public:
     // Method to add a subscription
     pplx::task<utility::string_t> SubscribeAsync(const json::value& content)
     {
-        return PostAsync(U("http://localhost:4735/subscribe"), content);
+        return PostAsync(U("/subscribe"), content);
     }
 
     // Method to remove a subscription
     pplx::task<utility::string_t> UnsubscribeAsync(const json::value& content)
     {
-        return PostAsync(U("http://localhost:4735/unsubscribe"), content);
+        return PostAsync(U("/unsubscribe"), content);
     }
 
     // Method to get the list of subscribers
     pplx::task<utility::string_t> GetSubscribersAsync()
     {
-        return GetAsync(U("http://localhost:4735/subscribers"));
+        return GetAsync(U("/subscribers"));
     }
 
     // Methods for handling errors and warnings
@@ -693,7 +693,7 @@ public:
     // Methods for handling measurement commands
     pplx::task<utility::string_t> GetMeasurementCommandsAsync()
     {
-        return GetAsync(U("http://localhost:4735/measurements/commands"));
+        return GetAsync(U("/measurements/commands"));
     }
 
     pplx::task<utility::string_t> IssueMeasurementCommandAsync(const json::value& content)
