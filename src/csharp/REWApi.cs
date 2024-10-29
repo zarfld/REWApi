@@ -621,6 +621,16 @@ public class REWApi
     // Method to process measurements
     public async Task<string> ProcessMeasurementsAsync(HttpContent content)
     {
+        // Check if the processName is "Align SPL"
+        if (content.Headers.Contains("processName") && content.Headers.GetValues("processName").FirstOrDefault() == "Align SPL")
+        {
+            // Validate required parameters
+            if (!content.Headers.Contains("parameters") || !content.Headers.Contains("targetdB") || !content.Headers.Contains("frequencyHz") || !content.Headers.Contains("spanOctaves"))
+            {
+                return "Error: Missing required parameters 'targetdB', 'frequencyHz', and/or 'spanOctaves'.";
+            }
+        }
+
         return await PostAsync("http://localhost:4735/measurements/process-measurements", content);
     }
 
