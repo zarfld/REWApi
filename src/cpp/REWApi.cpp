@@ -149,6 +149,56 @@ public:
             }
         }
 
+        // Check if the processName is "Arithmetic"
+        if (content.has_field(U("processName")) && content.at(U("processName")).as_string() == U("Arithmetic"))
+        {
+            // Validate required parameters
+            if (!content.has_field(U("parameters")) || !content.at(U("parameters")).has_field(U("function")))
+            {
+                return pplx::task_from_result(utility::string_t(U("Error: Missing required parameter 'function'.")));
+            }
+
+            // Validate optional parameters
+            if (content.at(U("parameters")).has_field(U("maxGain")) && !content.at(U("parameters")).at(U("maxGain")).is_number())
+            {
+                return pplx::task_from_result(utility::string_t(U("Error: Invalid value for parameter 'maxGain'. Expected a number.")));
+            }
+            if (content.at(U("parameters")).has_field(U("lowerLimit")) && !content.at(U("parameters")).at(U("lowerLimit")).is_number())
+            {
+                return pplx::task_from_result(utility::string_t(U("Error: Invalid value for parameter 'lowerLimit'. Expected a number.")));
+            }
+            if (content.at(U("parameters")).has_field(U("upperLimit")) && !content.at(U("parameters")).at(U("upperLimit")).is_number())
+            {
+                return pplx::task_from_result(utility::string_t(U("Error: Invalid value for parameter 'upperLimit'. Expected a number.")));
+            }
+            if (content.at(U("parameters")).has_field(U("mergeFrequency")) && !content.at(U("parameters")).at(U("mergeFrequency")).is_number())
+            {
+                return pplx::task_from_result(utility::string_t(U("Error: Invalid value for parameter 'mergeFrequency'. Expected a number.")));
+            }
+            if (content.at(U("parameters")).has_field(U("mergeBlend")) && !content.at(U("parameters")).at(U("mergeBlend")).is_boolean())
+            {
+                return pplx::task_from_result(utility::string_t(U("Error: Invalid value for parameter 'mergeBlend'. Expected a boolean.")));
+            }
+            if (content.at(U("parameters")).has_field(U("targetLevel")) && !content.at(U("parameters")).at(U("targetLevel")).is_number())
+            {
+                return pplx::task_from_result(utility::string_t(U("Error: Invalid value for parameter 'targetLevel'. Expected a number.")));
+            }
+            if (content.at(U("parameters")).has_field(U("autoTarget")) && !content.at(U("parameters")).at(U("autoTarget")).is_boolean())
+            {
+                return pplx::task_from_result(utility::string_t(U("Error: Invalid value for parameter 'autoTarget'. Expected a boolean.")));
+            }
+            if (content.at(U("parameters")).has_field(U("excludeNotches")) && !content.at(U("parameters")).at(U("excludeNotches")).is_boolean())
+            {
+                return pplx::task_from_result(utility::string_t(U("Error: Invalid value for parameter 'excludeNotches'. Expected a boolean.")));
+            }
+
+            // Validate measurementIndices field
+            if (!content.has_field(U("measurementIndices")) || !content.at(U("measurementIndices")).is_array())
+            {
+                return pplx::task_from_result(utility::string_t(U("Error: Missing or invalid 'measurementIndices' field. Must be an array.")));
+            }
+        }
+
         return PostAsync(U("/measurements/process-measurements"), content);
     }
 

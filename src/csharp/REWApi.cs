@@ -637,6 +637,56 @@ public class REWApi
             }
         }
 
+        // Check if the processName is "Arithmetic"
+        if (content.Headers.Contains("processName") && content.Headers.GetValues("processName").FirstOrDefault() == "Arithmetic")
+        {
+            // Validate required parameters
+            if (!content.Headers.Contains("parameters") || !content.Headers.Contains("function"))
+            {
+                return "Error: Missing required parameter 'function'.";
+            }
+
+            // Validate optional parameters
+            if (content.Headers.Contains("maxGain") && !double.TryParse(content.Headers.GetValues("maxGain").FirstOrDefault(), out _))
+            {
+                return "Error: Invalid value for parameter 'maxGain'. Expected a number.";
+            }
+            if (content.Headers.Contains("lowerLimit") && !double.TryParse(content.Headers.GetValues("lowerLimit").FirstOrDefault(), out _))
+            {
+                return "Error: Invalid value for parameter 'lowerLimit'. Expected a number.";
+            }
+            if (content.Headers.Contains("upperLimit") && !double.TryParse(content.Headers.GetValues("upperLimit").FirstOrDefault(), out _))
+            {
+                return "Error: Invalid value for parameter 'upperLimit'. Expected a number.";
+            }
+            if (content.Headers.Contains("mergeFrequency") && !double.TryParse(content.Headers.GetValues("mergeFrequency").FirstOrDefault(), out _))
+            {
+                return "Error: Invalid value for parameter 'mergeFrequency'. Expected a number.";
+            }
+            if (content.Headers.Contains("mergeBlend") && !bool.TryParse(content.Headers.GetValues("mergeBlend").FirstOrDefault(), out _))
+            {
+                return "Error: Invalid value for parameter 'mergeBlend'. Expected a boolean.";
+            }
+            if (content.Headers.Contains("targetLevel") && !double.TryParse(content.Headers.GetValues("targetLevel").FirstOrDefault(), out _))
+            {
+                return "Error: Invalid value for parameter 'targetLevel'. Expected a number.";
+            }
+            if (content.Headers.Contains("autoTarget") && !bool.TryParse(content.Headers.GetValues("autoTarget").FirstOrDefault(), out _))
+            {
+                return "Error: Invalid value for parameter 'autoTarget'. Expected a boolean.";
+            }
+            if (content.Headers.Contains("excludeNotches") && !bool.TryParse(content.Headers.GetValues("excludeNotches").FirstOrDefault(), out _))
+            {
+                return "Error: Invalid value for parameter 'excludeNotches'. Expected a boolean.";
+            }
+
+            // Validate measurementIndices field
+            if (!content.Headers.Contains("measurementIndices") || !content.Headers.GetValues("measurementIndices").FirstOrDefault().StartsWith("["))
+            {
+                return "Error: Missing or invalid 'measurementIndices' field. Must be an array.";
+            }
+        }
+
         return await PostAsync("http://localhost:4735/measurements/process-measurements", content);
     }
 
