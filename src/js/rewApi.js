@@ -128,6 +128,45 @@ class REWApi {
             }
         }
 
+        // Check if the processName is "Arithmetic"
+        if (data.hasOwnProperty("processName") && data.processName === "Arithmetic") {
+            // Validate required parameters
+            if (!data.hasOwnProperty("parameters") || !data.parameters.hasOwnProperty("function")) {
+                return "Error: Missing required parameter 'function'.";
+            }
+
+            // Validate optional parameters
+            if (data.parameters.hasOwnProperty("maxGain") && typeof data.parameters.maxGain !== "number") {
+                return "Error: Invalid value for parameter 'maxGain'. Expected a number.";
+            }
+            if (data.parameters.hasOwnProperty("lowerLimit") && typeof data.parameters.lowerLimit !== "number") {
+                return "Error: Invalid value for parameter 'lowerLimit'. Expected a number.";
+            }
+            if (data.parameters.hasOwnProperty("upperLimit") && typeof data.parameters.upperLimit !== "number") {
+                return "Error: Invalid value for parameter 'upperLimit'. Expected a number.";
+            }
+            if (data.parameters.hasOwnProperty("mergeFrequency") && typeof data.parameters.mergeFrequency !== "number") {
+                return "Error: Invalid value for parameter 'mergeFrequency'. Expected a number.";
+            }
+            if (data.parameters.hasOwnProperty("mergeBlend") && typeof data.parameters.mergeBlend !== "boolean") {
+                return "Error: Invalid value for parameter 'mergeBlend'. Expected a boolean.";
+            }
+            if (data.parameters.hasOwnProperty("targetLevel") && typeof data.parameters.targetLevel !== "number") {
+                return "Error: Invalid value for parameter 'targetLevel'. Expected a number.";
+            }
+            if (data.parameters.hasOwnProperty("autoTarget") && typeof data.parameters.autoTarget !== "boolean") {
+                return "Error: Invalid value for parameter 'autoTarget'. Expected a boolean.";
+            }
+            if (data.parameters.hasOwnProperty("excludeNotches") && typeof data.parameters.excludeNotches !== "boolean") {
+                return "Error: Invalid value for parameter 'excludeNotches'. Expected a boolean.";
+            }
+
+            // Validate measurementIndices field
+            if (!data.hasOwnProperty("measurementIndices") || !Array.isArray(data.measurementIndices)) {
+                return "Error: Missing or invalid 'measurementIndices' field. Must be an array.";
+            }
+        }
+
         return await this.post("http://localhost:4735/measurements/process-measurements", data);
     }
 
