@@ -622,6 +622,18 @@ class REWApi {
         }
         return await response.json();
     }
+
+    // Method to handle the Offset t=0 command
+    async offsetTZero(offset, unit) {
+        const content = {
+            command: "Offset t=0",
+            parameters: {
+                offset: offset,
+                unit: unit
+            }
+        };
+        return await this.post("http://localhost:4735/offset-t-zero", content);
+    }
 }
 
 module.exports = REWApi;
