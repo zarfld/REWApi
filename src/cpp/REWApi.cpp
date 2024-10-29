@@ -722,4 +722,15 @@ public:
             return response.extract_string();
         });
     }
+
+    // Method to handle the Offset t=0 command
+    pplx::task<utility::string_t> OffsetTZeroAsync(const utility::string_t& offset, const utility::string_t& unit)
+    {
+        json::value content;
+        content[U("command")] = json::value::string(U("Offset t=0"));
+        content[U("parameters")][U("offset")] = json::value::string(offset);
+        content[U("parameters")][U("unit")] = json::value::string(unit);
+
+        return PostAsync(U("/offset-t-zero"), content);
+    }
 };

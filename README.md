@@ -1359,3 +1359,29 @@ To delete a group using the API, you need to make a DELETE request to the approp
 A subscription can be added to be notified of any changes that are made to the list of groups, including groups being added or deleted. There are no parameters for group subscriptions. The change notifications are conveyed in a `GroupsListChange` object, which has a string with a description of the type of change and the ID, name, and notes for the group changed.
 
 For more details, you can refer to the API documentation available via swagger-ui at `localhost:4735`.
+
+## Offset t=0 Command
+
+The `Offset t=0` command allows you to offset the time (t) by a specified value and unit. The command supports the following parameters:
+
+- `offset`: The offset value.
+- `unit`: The unit for the offset value. Valid units are:
+  - Seconds ⏱️
+  - Metres 📏
+  - Feet 👣
+  - Samples 🎚️
+
+Here is an example of a command to offset t=0:
+
+```json
+{
+  "command": "Offset t=0",
+  "parameters": {
+    "offset": "0.5",
+    "unit": "metres"
+  },
+  "resultUrl": "http://127.0.0.1:5374/result"
+}
+```
+
+The `Offset t=0` command allows you to specify the offset value and unit to adjust the time accordingly. The valid units for the offset parameter are seconds, metres, feet, and samples. This command provides flexibility in adjusting the time based on different units of measurement.

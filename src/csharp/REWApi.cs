@@ -684,4 +684,11 @@ public class REWApi
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadAsStringAsync();
     }
+
+    // Method to handle the Offset t=0 command
+    public async Task<string> OffsetTZeroAsync(string offset, string unit)
+    {
+        var content = new StringContent("{\"command\":\"Offset t=0\",\"parameters\":{\"offset\":\"" + offset + "\",\"unit\":\"" + unit + "\"}}", Encoding.UTF8, "application/json");
+        return await PostAsync("http://localhost:4735/offset-t-zero", content);
+    }
 }
