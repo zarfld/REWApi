@@ -799,4 +799,22 @@ public:
 
         return PostAsync(U("/offset-t-zero"), content);
     }
+
+    // Method to handle group change subscriptions
+    pplx::task<utility::string_t> SubscribeToGroupChangesAsync(const json::value& content)
+    {
+        return PostAsync(U("/groups/subscribe"), content);
+    }
+
+    // Method to handle group change unsubscriptions
+    pplx::task<utility::string_t> UnsubscribeFromGroupChangesAsync(const json::value& content)
+    {
+        return PostAsync(U("/groups/unsubscribe"), content);
+    }
+
+    // Method to get the list of group subscribers
+    pplx::task<utility::string_t> GetGroupSubscribersAsync()
+    {
+        return GetAsync(U("/groups/subscribers"));
+    }
 };

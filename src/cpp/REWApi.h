@@ -213,6 +213,15 @@ public:
     pplx::task<utility::string_t> AddMeasurementToGroupAsync(const utility::string_t& uuid, const web::json::value& content);
     pplx::task<utility::string_t> RemoveMeasurementFromGroupAsync(const utility::string_t& uuid, const utility::string_t& measurementUuid);
 
+    // Method to handle group change subscriptions
+    pplx::task<utility::string_t> SubscribeToGroupChangesAsync(const web::json::value& content);
+
+    // Method to handle group change unsubscriptions
+    pplx::task<utility::string_t> UnsubscribeFromGroupChangesAsync(const web::json::value& content);
+
+    // Method to get the list of group subscribers
+    pplx::task<utility::string_t> GetGroupSubscribersAsync();
+
 private:
     bool graphUpdateInhibited;
 };

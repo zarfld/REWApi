@@ -686,6 +686,21 @@ class REWApi {
         };
         return await this.post("http://localhost:4735/offset-t-zero", content);
     }
+
+    // Method to handle group change subscriptions
+    async subscribeToGroupChanges(data) {
+        return await this.post("http://localhost:4735/groups/subscribe", data);
+    }
+
+    // Method to handle group change unsubscriptions
+    async unsubscribeFromGroupChanges(data) {
+        return await this.post("http://localhost:4735/groups/unsubscribe", data);
+    }
+
+    // Method to get the list of group subscribers
+    async getGroupSubscribers() {
+        return await this.get("http://localhost:4735/groups/subscribers");
+    }
 }
 
 module.exports = REWApi;
