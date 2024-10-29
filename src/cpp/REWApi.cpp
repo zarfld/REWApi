@@ -141,6 +141,12 @@ public:
             {
                 return pplx::task_from_result(utility::string_t(U("Error: Missing required parameters 'targetdB', 'frequencyHz', and/or 'spanOctaves'.")));
             }
+
+            // Validate measurementIndices field
+            if (!content.has_field(U("measurementIndices")) || !content.at(U("measurementIndices")).is_array())
+            {
+                return pplx::task_from_result(utility::string_t(U("Error: Missing or invalid 'measurementIndices' field. Must be an array.")));
+            }
         }
 
         return PostAsync(U("/measurements/process-measurements"), content);
