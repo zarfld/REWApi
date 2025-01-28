@@ -275,7 +275,7 @@ class REWApi {
         const buffer = Buffer.from(base64Encoded, 'base64');
         const view = new DataView(buffer.buffer);
         const array = new Float32Array(buffer.length / 4);
-        for (let i = 0; i < array.length; i++) {
+        for (let i = 0; array.length; i++) {
             array[i] = view.getFloat32(i * 4, true);
         }
         return array;
