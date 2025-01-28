@@ -14,6 +14,7 @@ class REWApi
 {
 private:
     bool graphUpdateInhibited = false;
+    bool blockingModeEnabled = false;
 
 public:
     void SetGraphUpdateInhibition(bool inhibit)
@@ -43,7 +44,13 @@ public:
     {
         if (graphUpdateInhibited) return pplx::task_from_result(utility::string_t());
         http_client client(U("http://localhost:4735"));
-        return client.request(methods::POST, endpoint, content).then([](http_response response) {
+        return client.request(methods::POST, endpoint, content).then([this](http_response response) {
+            if (blockingModeEnabled)
+            {
+                return response.content_ready().then([](http_response response) {
+                    return response.extract_string();
+                });
+            }
             return response.extract_string();
         });
     }
@@ -364,6 +371,7 @@ public:
     // Methods for enabling and disabling blocking mode
     pplx::task<utility::string_t> SetBlockingModeAsync(bool enable)
     {
+        blockingModeEnabled = enable;
         json::value content;
         content[U("blocking")] = json::value::boolean(enable);
         return PostAsync(U("http://localhost:4735/application/blocking"), content);

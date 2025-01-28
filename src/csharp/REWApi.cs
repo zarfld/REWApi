@@ -7,6 +7,7 @@ public class REWApi
 {
     private static readonly HttpClient client = new HttpClient();
     private bool graphUpdateInhibited = false;
+    private bool blockingModeEnabled = false;
 
     public void SetGraphUpdateInhibition(bool inhibit)
     {
@@ -34,6 +35,10 @@ public class REWApi
         if (graphUpdateInhibited) return null;
         HttpResponseMessage response = await client.PostAsync(endpoint, content);
         response.EnsureSuccessStatusCode();
+        if (blockingModeEnabled)
+        {
+            await response.Content.LoadIntoBufferAsync();
+        }
         return await response.Content.ReadAsStringAsync();
     }
 
@@ -251,6 +256,7 @@ public class REWApi
     // Methods for enabling and disabling blocking mode
     public async Task<string> SetBlockingModeAsync(bool enable)
     {
+        blockingModeEnabled = enable;
         var content = new StringContent("{\"blocking\":" + enable.ToString().ToLower() + "}", System.Text.Encoding.UTF8, "application/json");
         return await PostAsync("http://localhost:4735/application/blocking", content);
     }

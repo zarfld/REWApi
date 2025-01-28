@@ -224,6 +224,7 @@ public:
 
 private:
     bool graphUpdateInhibited;
+    bool blockingModeEnabled;
 };
 
 #endif // REWAPI_H
