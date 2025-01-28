@@ -936,4 +936,28 @@ public:
     {
         return PostAsync(U("/application/subscribe-warnings"), content);
     }
+
+    // Method to get the global option to treat 32-bit data as 24-bit
+    pplx::task<utility::string_t> GetTreat32As24Async()
+    {
+        return GetAsync(U("http://localhost:4735/audio/configuration"));
+    }
+
+    // Method to set the global option to treat 32-bit data as 24-bit
+    pplx::task<utility::string_t> SetTreat32As24Async(const json::value& content)
+    {
+        return PostAsync(U("http://localhost:4735/audio/configuration"), content);
+    }
+
+    // Method to check if audio is enabled
+    pplx::task<utility::string_t> IsAudioEnabledAsync()
+    {
+        return GetAsync(U("http://localhost:4735/audio/enabled"));
+    }
+
+    // Method to check if audio endpoints are ready for use
+    pplx::task<utility::string_t> AreAudioEndpointsReadyAsync()
+    {
+        return GetAsync(U("http://localhost:4735/audio/endpoints-ready"));
+    }
 };

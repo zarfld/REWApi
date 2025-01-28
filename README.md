@@ -1385,3 +1385,137 @@ Here is an example of a command to offset t=0:
 ```
 
 The `Offset t=0` command allows you to specify the offset value and unit to adjust the time accordingly. The valid units for the offset parameter are seconds, metres, feet, and samples. This command provides flexibility in adjusting the time based on different units of measurement.
+
+## New Methods for Handling Global Option to Treat 32-bit Data as 24-bit
+
+The following methods have been added to handle the global option to treat 32-bit data as 24-bit:
+
+### C++
+
+```cpp
+class REWApi
+{
+public:
+    pplx::task<utility::string_t> GetTreat32As24Async()
+    {
+        return GetAsync(U("http://localhost:4735/audio/configuration"));
+    }
+
+    pplx::task<utility::string_t> SetTreat32As24Async(const json::value& content)
+    {
+        return PostAsync(U("http://localhost:4735/audio/configuration"), content);
+    }
+};
+```
+
+### C#
+
+```csharp
+public class REWApi
+{
+    public async Task<string> GetTreat32As24Async()
+    {
+        return await GetAsync("http://localhost:4735/audio/configuration");
+    }
+
+    public async Task<string> SetTreat32As24Async(HttpContent content)
+    {
+        return await PostAsync("http://localhost:4735/audio/configuration", content);
+    }
+}
+```
+
+### JavaScript
+
+```javascript
+class REWApi {
+    async getTreat32As24() {
+        return await this.get("http://localhost:4735/audio/configuration");
+    }
+
+    async setTreat32As24(data) {
+        return await this.post("http://localhost:4735/audio/configuration", data);
+    }
+}
+```
+
+### TypeScript
+
+```typescript
+class REWApi {
+    async getTreat32As24(): Promise<any> {
+        return await this.get("http://localhost:4735/audio/configuration");
+    }
+
+    async setTreat32As24(data: any): Promise<any> {
+        return await this.post("http://localhost:4735/audio/configuration", data);
+    }
+}
+```
+
+## New Methods for Checking if Audio is Enabled and if Audio Endpoints are Ready for Use
+
+The following methods have been added to check if audio is enabled and if audio endpoints are ready for use:
+
+### C++
+
+```cpp
+class REWApi
+{
+public:
+    pplx::task<utility::string_t> IsAudioEnabledAsync()
+    {
+        return GetAsync(U("http://localhost:4735/audio/enabled"));
+    }
+
+    pplx::task<utility::string_t> AreAudioEndpointsReadyAsync()
+    {
+        return GetAsync(U("http://localhost:4735/audio/endpoints-ready"));
+    }
+};
+```
+
+### C#
+
+```csharp
+public class REWApi
+{
+    public async Task<string> IsAudioEnabledAsync()
+    {
+        return await GetAsync("http://localhost:4735/audio/enabled");
+    }
+
+    public async Task<string> AreAudioEndpointsReadyAsync()
+    {
+        return await GetAsync("http://localhost:4735/audio/endpoints-ready");
+    }
+}
+```
+
+### JavaScript
+
+```javascript
+class REWApi {
+    async isAudioEnabled() {
+        return await this.get("http://localhost:4735/audio/enabled");
+    }
+
+    async areAudioEndpointsReady() {
+        return await this.get("http://localhost:4735/audio/endpoints-ready");
+    }
+}
+```
+
+### TypeScript
+
+```typescript
+class REWApi {
+    async isAudioEnabled(): Promise<any> {
+        return await this.get("http://localhost:4735/audio/enabled");
+    }
+
+    async areAudioEndpointsReady(): Promise<any> {
+        return await this.get("http://localhost:4735/audio/endpoints-ready");
+    }
+}
+```
