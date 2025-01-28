@@ -603,11 +603,47 @@ public class REWApi
     // Methods for handling measurement commands
     public async Task<string> GetMeasurementCommandsAsync()
     {
-        return await GetAsync("http://localhost:4735/measurements/commands");
+        var commands = new[] { "Load", "Save all" };
+        return await Task.FromResult(string.Join(",", commands));
     }
 
     public async Task<string> IssueMeasurementCommandAsync(HttpContent content)
     {
+        var command = content.Headers.GetValues("command").FirstOrDefault();
+        var parameters = content.Headers.GetValues("parameters").FirstOrDefault();
+
+        if (command == "Load")
+        {
+            var paramArray = parameters.Split(',');
+            foreach (var param in paramArray)
+            {
+                if (string.IsNullOrEmpty(param))
+                {
+                    return "Error: Invalid parameter for 'Load' command. Expected a string.";
+                }
+            }
+        }
+        else if (command == "Save all")
+        {
+            var paramArray = parameters.Split(',');
+            if (paramArray.Length < 1 || paramArray.Length > 2)
+            {
+                return "Error: Invalid number of parameters for 'Save all' command. Expected 1 or 2 parameters.";
+            }
+            if (string.IsNullOrEmpty(paramArray[0]))
+            {
+                return "Error: Invalid parameter for 'Save all' command. Expected a string for the file path.";
+            }
+            if (paramArray.Length == 2 && string.IsNullOrEmpty(paramArray[1]))
+            {
+                return "Error: Invalid parameter for 'Save all' command. Expected a string for the note.";
+            }
+        }
+        else
+        {
+            return "Error: Unknown command.";
+        }
+
         return await PostAsync("http://localhost:4735/measurements/command", content);
     }
 
