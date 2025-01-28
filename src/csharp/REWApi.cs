@@ -150,7 +150,7 @@ public class REWApi
         {
             // Apply smoothing to ppo/2 if greater smoothing has not already been applied
             // This is a placeholder for the actual smoothing logic
-            // P07ca
+            // This is a placeholder for the actual smoothing logic
         }
         return response;
     }
@@ -603,7 +603,7 @@ public class REWApi
     // Methods for handling measurement commands
     public async Task<string> GetMeasurementCommandsAsync()
     {
-        var commands = new[] { "Load", "Save all" };
+        var commands = new[] { "Load", "Save all", "Save", "Generate minimum phase version", "Generate excess phase version", "Generate Mic in box correction", "Make response copy", "Merge cal data to IR", "Trim IR to windows", "Smooth", "Generate waterfalls", "Generate spectrograms", "Estimate IR delay", "Offset t=0", "Add SPL offset", "Invert", "Generate RT60 data" };
         return await Task.FromResult(string.Join(",", commands));
     }
 
@@ -637,6 +637,20 @@ public class REWApi
             if (paramArray.Length == 2 && string.IsNullOrEmpty(paramArray[1]))
             {
                 return "Error: Invalid parameter for 'Save all' command. Expected a string for the note.";
+            }
+        }
+        else if (command == "Save")
+        {
+            if (!parameters.Contains("filename") || string.IsNullOrEmpty(parameters["filename"]))
+            {
+                return "Error: Missing or invalid 'filename' parameter for 'Save' command. Expected a string.";
+            }
+        }
+        else if (command == "Smooth")
+        {
+            if (!parameters.Contains("smoothing") || string.IsNullOrEmpty(parameters["smoothing"]))
+            {
+                return "Error: Missing or invalid 'smoothing' parameter for 'Smooth' command. Expected a string.";
             }
         }
         else

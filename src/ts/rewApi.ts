@@ -582,7 +582,25 @@ class REWApi {
 
     // Methods for handling measurement commands
     async getMeasurementCommands(): Promise<any> {
-        const commands = ["Load", "Save all"];
+        const commands = [
+            "Load",
+            "Save all",
+            "Save",
+            "Generate minimum phase version",
+            "Generate excess phase version",
+            "Generate Mic in box correction",
+            "Make response copy",
+            "Merge cal data to IR",
+            "Trim IR to windows",
+            "Smooth",
+            "Generate waterfalls",
+            "Generate spectrograms",
+            "Estimate IR delay",
+            "Offset t=0",
+            "Add SPL offset",
+            "Invert",
+            "Generate RT60 data"
+        ];
         return commands;
     }
 
@@ -605,6 +623,14 @@ class REWApi {
             }
             if (parameters.length === 2 && typeof parameters[1] !== "string") {
                 return "Error: Invalid parameter for 'Save all' command. Expected a string for the note.";
+            }
+        } else if (command === "Save") {
+            if (!parameters.hasOwnProperty("filename") || typeof parameters["filename"] !== "string") {
+                return "Error: Missing or invalid 'filename' parameter for 'Save' command. Expected a string.";
+            }
+        } else if (command === "Smooth") {
+            if (!parameters.hasOwnProperty("smoothing") || typeof parameters["smoothing"] !== "string") {
+                return "Error: Missing or invalid 'smoothing' parameter for 'Smooth' command. Expected a string.";
             }
         } else {
             return "Error: Unknown command.";
