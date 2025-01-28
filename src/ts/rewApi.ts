@@ -705,6 +705,16 @@ class REWApi {
     async getGroupSubscribers(): Promise<any> {
         return await this.get("http://localhost:4735/groups/subscribers");
     }
+
+    // Method to handle error subscriptions
+    async subscribeToErrors(data: any): Promise<any> {
+        return await this.post("http://localhost:4735/application/subscribe-errors", data);
+    }
+
+    // Method to handle warning subscriptions
+    async subscribeToWarnings(data: any): Promise<any> {
+        return await this.post("http://localhost:4735/application/subscribe-warnings", data);
+    }
 }
 
 export default REWApi;
