@@ -22,6 +22,13 @@ public:
         graphUpdateInhibited = inhibit;
     }
 
+    pplx::task<void> SetGraphUpdateInhibitionAsync(bool inhibit)
+    {
+        return pplx::create_task([this, inhibit]() {
+            graphUpdateInhibited = inhibit;
+        });
+    }
+
     pplx::task<utility::string_t> GetAsync(const utility::string_t& endpoint)
     {
         if (graphUpdateInhibited) return pplx::task_from_result(utility::string_t());
