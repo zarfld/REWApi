@@ -592,97 +592,97 @@ public:
     // Methods for handling ASIO driver items
     pplx::task<utility::string_t> GetASIODeviceAsync()
     {
-        return GetAsync(U("http://localhost:4735/audio/asio/device"));
+        return GetAsync(U("/audio/asio/device"));
     }
 
     pplx::task<utility::string_t> SetASIODeviceAsync(const json::value& content)
     {
-        return PostAsync(U("http://localhost:4735/audio/asio/device"), content);
+        return PostAsync(U("/audio/asio/device"), content);
     }
 
     pplx::task<utility::string_t> GetASIOInputAsync()
     {
-        return GetAsync(U("http://localhost:4735/audio/asio/input"));
+        return GetAsync(U("/audio/asio/input"));
     }
 
     pplx::task<utility::string_t> SetASIOInputAsync(const json::value& content)
     {
-        return PostAsync(U("http://localhost:4735/audio/asio/input"), content);
+        return PostAsync(U("/audio/asio/input"), content);
     }
 
     pplx::task<utility::string_t> GetASIOOutputAsync()
     {
-        return GetAsync(U("http://localhost:4735/audio/asio/output"));
+        return GetAsync(U("/audio/asio/output"));
     }
 
     pplx::task<utility::string_t> SetASIOOutputAsync(const json::value& content)
     {
-        return PostAsync(U("http://localhost:4735/audio/asio/output"), content);
+        return PostAsync(U("/audio/asio/output"), content);
     }
 
     pplx::task<utility::string_t> GetASIODevicesAsync()
     {
-        return GetAsync(U("http://localhost:4735/audio/asio/devices"));
+        return GetAsync(U("/audio/asio/devices"));
     }
 
     pplx::task<utility::string_t> GetASIOInputsAsync()
     {
-        return GetAsync(U("http://localhost:4735/audio/asio/inputs"));
+        return GetAsync(U("/audio/asio/inputs"));
     }
 
     pplx::task<utility::string_t> GetASIOOutputsAsync()
     {
-        return GetAsync(U("http://localhost:4735/audio/asio/outputs"));
+        return GetAsync(U("/audio/asio/outputs"));
     }
 
     pplx::task<utility::string_t> GetASIOTimingReferenceOutputChannelAsync()
     {
-        return GetAsync(U("http://localhost:4735/audio/asio/timing-reference-output-channel"));
+        return GetAsync(U("/audio/asio/timing-reference-output-channel"));
     }
 
     pplx::task<utility::string_t> SetASIOTimingReferenceOutputChannelAsync(const json::value& content)
     {
-        return PostAsync(U("http://localhost:4735/audio/asio/timing-reference-output-channel"), content);
+        return PostAsync(U("/audio/asio/timing-reference-output-channel"), content);
     }
 
     pplx::task<utility::string_t> GetASIORefInputChannelAsync()
     {
-        return GetAsync(U("http://localhost:4735/audio/asio/ref-input-channel"));
+        return GetAsync(U("/audio/asio/ref-input-channel"));
     }
 
     pplx::task<utility::string_t> SetASIORefInputChannelAsync(const json::value& content)
     {
-        return PostAsync(U("http://localhost:4735/audio/asio/ref-input-channel"), content);
+        return PostAsync(U("/audio/asio/ref-input-channel"), content);
     }
 
     pplx::task<utility::string_t> GetASIOLastInputChannelAsync()
     {
-        return GetAsync(U("http://localhost:4735/audio/asio/last-input-channel"));
+        return GetAsync(U("/audio/asio/last-input-channel"));
     }
 
     pplx::task<utility::string_t> SetASIOLastInputChannelAsync(const json::value& content)
     {
-        return PostAsync(U("http://localhost:4735/audio/asio/last-input-channel"), content);
+        return PostAsync(U("/audio/asio/last-input-channel"), content);
     }
 
     pplx::task<utility::string_t> SetASIOSecondaryOutputEnableAsync(const json::value& content)
     {
-        return PostAsync(U("http://localhost:4735/audio/asio/secondary-output-enable"), content);
+        return PostAsync(U("/audio/asio/secondary-output-enable"), content);
     }
 
     pplx::task<utility::string_t> GetASIOSecondaryOutputAsync()
     {
-        return GetAsync(U("http://localhost:4735/audio/asio/secondary-output"));
+        return GetAsync(U("/audio/asio/secondary-output"));
     }
 
     pplx::task<utility::string_t> SetASIOSecondaryOutputAsync(const json::value& content)
     {
-        return PostAsync(U("http://localhost:4735/audio/asio/secondary-output"), content);
+        return PostAsync(U("/audio/asio/secondary-output"), content);
     }
 
     pplx::task<utility::string_t> SendASIOCommandAsync(const json::value& content)
     {
-        return PostAsync(U("http://localhost:4735/audio/asio/command"), content);
+        return PostAsync(U("/audio/asio/command"), content);
     }
 
     // Methods for handling input levels
@@ -874,7 +874,7 @@ public:
     {
         http_client client(U("http://localhost:4735"));
         return client.request(methods::DEL, U("/groups")).then([](http_response response) {
-            return response.extract_string();
+            return response.extract_string());
         });
     }
 
