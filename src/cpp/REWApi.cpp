@@ -271,7 +271,7 @@ public:
             {
                 // Apply smoothing to ppo/2 if greater smoothing has not already been applied
                 // This is a placeholder for the actual smoothing logic
-                // P7c83
+                // This is a placeholder for the actual smoothing logic
             }
             return response;
         });
@@ -735,11 +735,47 @@ public:
     // Methods for handling measurement commands
     pplx::task<utility::string_t> GetMeasurementCommandsAsync()
     {
-        return GetAsync(U("/measurements/commands"));
+        json::value commands = json::value::array();
+        commands[0] = json::value::string(U("Load"));
+        commands[1] = json::value::string(U("Save all"));
+        return pplx::task_from_result(commands.serialize());
     }
 
     pplx::task<utility::string_t> IssueMeasurementCommandAsync(const json::value& content)
     {
+        utility::string_t command = content.at(U("command")).as_string();
+        json::value parameters = content.at(U("parameters"));
+
+        if (command == U("Load"))
+        {
+            for (const auto& param : parameters.as_array())
+            {
+                if (!param.is_string())
+                {
+                    return pplx::task_from_result(utility::string_t(U("Error: Invalid parameter for 'Load' command. Expected a string.")));
+                }
+            }
+        }
+        else if (command == U("Save all"))
+        {
+            if (parameters.size() < 1 || parameters.size() > 2)
+            {
+                return pplx::task_from_result(utility::string_t(U("Error: Invalid number of parameters for 'Save all' command. Expected 1 or 2 parameters.")));
+            }
+            if (!parameters[0].is_string())
+            {
+                return pplx::task_from_result(utility::string_t(U("Error: Invalid parameter for 'Save all' command. Expected a string for the file path.")));
+            }
+            if (parameters.size() == 2 && !parameters[1].is_string())
+            {
+                return pplx::task_from_result(utility::string_t(U("Error: Invalid parameter for 'Save all' command. Expected a string for the note.")));
+            }
+        }
+        else
+        {
+            return pplx::task_from_result(utility::string_t(U("Error: Unknown command.")));
+        }
+
         return PostAsync(U("http://localhost:4735/measurements/command"), content);
     }
 

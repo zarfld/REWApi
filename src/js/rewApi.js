@@ -584,10 +584,34 @@ class REWApi {
 
     // Methods for handling measurement commands
     async getMeasurementCommands() {
-        return await this.get("http://localhost:4735/measurements/commands");
+        const commands = ["Load", "Save all"];
+        return commands;
     }
 
     async issueMeasurementCommand(data) {
+        const command = data.command;
+        const parameters = data.parameters;
+
+        if (command === "Load") {
+            for (const param of parameters) {
+                if (typeof param !== "string") {
+                    return "Error: Invalid parameter for 'Load' command. Expected a string.";
+                }
+            }
+        } else if (command === "Save all") {
+            if (parameters.length < 1 || parameters.length > 2) {
+                return "Error: Invalid number of parameters for 'Save all' command. Expected 1 or 2 parameters.";
+            }
+            if (typeof parameters[0] !== "string") {
+                return "Error: Invalid parameter for 'Save all' command. Expected a string for the file path.";
+            }
+            if (parameters.length === 2 && typeof parameters[1] !== "string") {
+                return "Error: Invalid parameter for 'Save all' command. Expected a string for the note.";
+            }
+        } else {
+            return "Error: Unknown command.";
+        }
+
         return await this.post("http://localhost:4735/measurements/command", data);
     }
 
