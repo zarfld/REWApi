@@ -781,4 +781,16 @@ public class REWApi
     {
         return await GetAsync("http://localhost:4735/groups/subscribers");
     }
+
+    // Method to handle error subscriptions
+    public async Task<string> SubscribeToErrorsAsync(HttpContent content)
+    {
+        return await PostAsync("http://localhost:4735/application/subscribe-errors", content);
+    }
+
+    // Method to handle warning subscriptions
+    public async Task<string> SubscribeToWarningsAsync(HttpContent content)
+    {
+        return await PostAsync("http://localhost:4735/application/subscribe-warnings", content);
+    }
 }

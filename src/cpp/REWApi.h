@@ -66,6 +66,8 @@ public:
     pplx::task<utility::string_t> GetLastErrorAsync();
     pplx::task<utility::string_t> GetWarningsAsync();
     pplx::task<utility::string_t> GetLastWarningAsync();
+    pplx::task<utility::string_t> SubscribeToErrorsAsync(const web::json::value& content);
+    pplx::task<utility::string_t> SubscribeToWarningsAsync(const web::json::value& content);
 
     // Methods for enabling and disabling blocking mode
     pplx::task<utility::string_t> SetBlockingModeAsync(bool enable);

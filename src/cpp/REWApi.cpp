@@ -825,4 +825,16 @@ public:
     {
         return GetAsync(U("/groups/subscribers"));
     }
+
+    // Method to handle error subscriptions
+    pplx::task<utility::string_t> SubscribeToErrorsAsync(const json::value& content)
+    {
+        return PostAsync(U("/application/subscribe-errors"), content);
+    }
+
+    // Method to handle warning subscriptions
+    pplx::task<utility::string_t> SubscribeToWarningsAsync(const json::value& content)
+    {
+        return PostAsync(U("/application/subscribe-warnings"), content);
+    }
 };
