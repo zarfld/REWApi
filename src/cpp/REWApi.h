@@ -52,6 +52,9 @@ public:
     // Method to set graph update inhibition
     void SetGraphUpdateInhibition(bool inhibit);
 
+    // Method to set graph update inhibition asynchronously
+    pplx::task<void> SetGraphUpdateInhibitionAsync(bool inhibit);
+
     // Methods for encoding and decoding arrays
     std::string encodeArray(const std::vector<float>& array);
     std::vector<float> decodeArray(const std::string& base64Encoded);
