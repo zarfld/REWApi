@@ -565,6 +565,10 @@ class REWApi {
         return await this.get("http://localhost:4735/input-levels/last-levels");
     }
 
+    async getInputLevelUnits() {
+        return await this.get("http://localhost:4735/input-levels/units");
+    }
+
     // Methods for handling selected measurement
     async selectMeasurementByUUID(data) {
         return await this.post("http://localhost:4735/measurements/selected-uuid", data);

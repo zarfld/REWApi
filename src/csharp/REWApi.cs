@@ -579,6 +579,11 @@ public class REWApi
         return await GetAsync("http://localhost:4735/input-levels/last-levels");
     }
 
+    public async Task<string> GetInputLevelUnitsAsync()
+    {
+        return await GetAsync("http://localhost:4735/input-levels/units");
+    }
+
     // Methods for handling selected measurement
     public async Task<string> SelectMeasurementByUUIDAsync(HttpContent content)
     {
