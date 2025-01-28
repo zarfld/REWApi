@@ -3,6 +3,7 @@ const fetch = require('node-fetch');
 class REWApi {
     constructor() {
         this.graphUpdateInhibited = false;
+        this.blockingModeEnabled = false;
     }
 
     setGraphUpdateInhibition(inhibit) {
@@ -44,6 +45,9 @@ class REWApi {
         });
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        if (this.blockingModeEnabled) {
+            await response.json();
         }
         return await response.json();
     }
@@ -300,6 +304,7 @@ class REWApi {
 
     // Methods for enabling and disabling blocking mode
     async setBlockingMode(enable) {
+        this.blockingModeEnabled = enable;
         const content = { blocking: enable };
         return await this.post("http://localhost:4735/application/blocking", content);
     }
