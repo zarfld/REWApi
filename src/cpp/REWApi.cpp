@@ -266,7 +266,25 @@ public:
         {
             endpoint += U("&ppo=") + std::to_wstring(ppo);
         }
-        return GetAsync(endpoint);
+        return GetAsync(endpoint).then([this, ppo, smoothing](utility::string_t response) {
+            if (ppo > 0 && smoothing == U("default"))
+            {
+                // Apply smoothing to ppo/2 if greater smoothing has not already been applied
+                // This is a placeholder for the actual smoothing logic
+                // P7c83
+            }
+            return response;
+        });
+    }
+
+    pplx::task<utility::string_t> GetFrequencyResponseUnitsAsync()
+    {
+        return GetAsync(U("/measurements/frequency-response/units"));
+    }
+
+    pplx::task<utility::string_t> GetFrequencyResponseSmoothingChoicesAsync()
+    {
+        return GetAsync(U("/measurements/frequency-response/smoothing-choices"));
     }
 
     // Methods for handling impulse response

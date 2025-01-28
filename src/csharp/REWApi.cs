@@ -145,7 +145,24 @@ public class REWApi
         {
             endpoint += $"&ppo={ppo}";
         }
-        return await GetAsync(endpoint);
+        var response = await GetAsync(endpoint);
+        if (ppo > 0 && smoothing == "default")
+        {
+            // Apply smoothing to ppo/2 if greater smoothing has not already been applied
+            // This is a placeholder for the actual smoothing logic
+            // P07ca
+        }
+        return response;
+    }
+
+    public async Task<string> GetFrequencyResponseUnitsAsync()
+    {
+        return await GetAsync("/measurements/frequency-response/units");
+    }
+
+    public async Task<string> GetFrequencyResponseSmoothingChoicesAsync()
+    {
+        return await GetAsync("/measurements/frequency-response/smoothing-choices");
     }
 
     // Methods for handling impulse response

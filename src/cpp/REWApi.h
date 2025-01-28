@@ -30,6 +30,8 @@ public:
 
     // Methods for handling frequency response
     pplx::task<utility::string_t> GetFrequencyResponseAsync(const utility::string_t& id, const utility::string_t& unit = U("SPL"), const utility::string_t& smoothing = U("default"), int ppo = 0);
+    pplx::task<utility::string_t> GetFrequencyResponseUnitsAsync();
+    pplx::task<utility::string_t> GetFrequencyResponseSmoothingChoicesAsync();
 
     // Methods for handling impulse response
     pplx::task<utility::string_t> GetImpulseResponseAsync(const utility::string_t& id, const utility::string_t& unit = U("Percent"), bool windowed = false, bool normalised = true);

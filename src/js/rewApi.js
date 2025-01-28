@@ -207,7 +207,20 @@ class REWApi {
         if (ppo > 0) {
             endpoint += `&ppo=${ppo}`;
         }
-        return await this.get(endpoint);
+        const response = await this.get(endpoint);
+        if (ppo > 0 && smoothing === "default") {
+            // Apply smoothing to ppo/2 if greater smoothing has not already been applied
+            // This is a placeholder for the actual smoothing logic
+        }
+        return response;
+    }
+
+    async getFrequencyResponseUnits() {
+        return await this.get("/measurements/frequency-response/units");
+    }
+
+    async getFrequencyResponseSmoothingChoices() {
+        return await this.get("/measurements/frequency-response/smoothing-choices");
     }
 
     // Methods for handling impulse response
