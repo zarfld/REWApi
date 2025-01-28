@@ -228,6 +228,18 @@ public:
     // Method to get the list of group subscribers
     pplx::task<utility::string_t> GetGroupSubscribersAsync();
 
+    // Method to get the global option to treat 32-bit data as 24-bit
+    pplx::task<utility::string_t> GetTreat32As24Async();
+
+    // Method to set the global option to treat 32-bit data as 24-bit
+    pplx::task<utility::string_t> SetTreat32As24Async(const web::json::value& content);
+
+    // Method to check if audio is enabled
+    pplx::task<utility::string_t> IsAudioEnabledAsync();
+
+    // Method to check if audio endpoints are ready for use
+    pplx::task<utility::string_t> AreAudioEndpointsReadyAsync();
+
 private:
     bool graphUpdateInhibited;
     bool blockingModeEnabled;
