@@ -171,6 +171,7 @@ public:
     pplx::task<utility::string_t> SubscribeInputLevelsAsync(const web::json::value& content);
     pplx::task<utility::string_t> UnsubscribeInputLevelsAsync(const web::json::value& content);
     pplx::task<utility::string_t> GetLastInputLevelsAsync();
+    pplx::task<utility::string_t> GetInputLevelUnitsAsync(); // P5c96
 
     // Methods for handling selected measurement
     pplx::task<utility::string_t> SelectMeasurementByUUIDAsync(const web::json::value& content);

@@ -174,7 +174,7 @@ public:
             {
                 return pplx::task_from_result(utility::string_t(U("Error: Invalid value for parameter 'lowerLimit'. Expected a number.")));
             }
-            if (content.at(U("parameters")).has_field(U("upperLimit")) && !content.at(U("parameters")).at(U("upperLimit")).is_number())
+            if (content.at(U("parameters")).has_field(U("upperLimit")) && !content.at(U("upperLimit")).is_number())
             {
                 return pplx::task_from_result(utility::string_t(U("Error: Invalid value for parameter 'upperLimit'. Expected a number.")));
             }
@@ -709,6 +709,11 @@ public:
     pplx::task<utility::string_t> GetLastInputLevelsAsync()
     {
         return GetAsync(U("http://localhost:4735/input-levels/last-levels"));
+    }
+
+    pplx::task<utility::string_t> GetInputLevelUnitsAsync()
+    {
+        return GetAsync(U("http://localhost:4735/input-levels/units"));
     }
 
     // Methods for handling selected measurement
