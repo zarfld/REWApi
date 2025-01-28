@@ -242,6 +242,22 @@ public:
         return PostAsync(U("http://localhost:4735/measurements"), content);
     }
 
+    pplx::task<utility::string_t> DeleteMeasurementAsync(const utility::string_t& id)
+    {
+        http_client client(U("http://localhost:4735"));
+        return client.request(methods::DEL, U("/measurements/") + id).then([](http_response response) {
+            return response.extract_string();
+        });
+    }
+
+    pplx::task<utility::string_t> DeleteAllMeasurementsAsync()
+    {
+        http_client client(U("http://localhost:4735"));
+        return client.request(methods::DEL, U("/measurements")).then([](http_response response) {
+            return response.extract_string();
+        });
+    }
+
     // Methods for handling frequency response
     pplx::task<utility::string_t> GetFrequencyResponseAsync(const utility::string_t& id, const utility::string_t& unit = U("SPL"), const utility::string_t& smoothing = U("default"), int ppo = 0)
     {

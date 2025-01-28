@@ -25,6 +25,8 @@ public:
     // Methods for handling measurements
     pplx::task<utility::string_t> GetMeasurementsAsync();
     pplx::task<utility::string_t> AddMeasurementAsync(const web::json::value& content);
+    pplx::task<utility::string_t> DeleteMeasurementAsync(const utility::string_t& id); // Pd3fe
+    pplx::task<utility::string_t> DeleteAllMeasurementsAsync(); // P1900
 
     // Methods for handling frequency response
     pplx::task<utility::string_t> GetFrequencyResponseAsync(const utility::string_t& id, const utility::string_t& unit = U("SPL"), const utility::string_t& smoothing = U("default"), int ppo = 0);
