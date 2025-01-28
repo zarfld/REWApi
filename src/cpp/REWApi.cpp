@@ -738,6 +738,21 @@ public:
         json::value commands = json::value::array();
         commands[0] = json::value::string(U("Load"));
         commands[1] = json::value::string(U("Save all"));
+        commands[2] = json::value::string(U("Save"));
+        commands[3] = json::value::string(U("Generate minimum phase version"));
+        commands[4] = json::value::string(U("Generate excess phase version"));
+        commands[5] = json::value::string(U("Generate Mic in box correction"));
+        commands[6] = json::value::string(U("Make response copy"));
+        commands[7] = json::value::string(U("Merge cal data to IR"));
+        commands[8] = json::value::string(U("Trim IR to windows"));
+        commands[9] = json::value::string(U("Smooth"));
+        commands[10] = json::value::string(U("Generate waterfalls"));
+        commands[11] = json::value::string(U("Generate spectrograms"));
+        commands[12] = json::value::string(U("Estimate IR delay"));
+        commands[13] = json::value::string(U("Offset t=0"));
+        commands[14] = json::value::string(U("Add SPL offset"));
+        commands[15] = json::value::string(U("Invert"));
+        commands[16] = json::value::string(U("Generate RT60 data"));
         return pplx::task_from_result(commands.serialize());
     }
 
@@ -769,6 +784,20 @@ public:
             if (parameters.size() == 2 && !parameters[1].is_string())
             {
                 return pplx::task_from_result(utility::string_t(U("Error: Invalid parameter for 'Save all' command. Expected a string for the note.")));
+            }
+        }
+        else if (command == U("Save"))
+        {
+            if (!parameters.has_field(U("filename")) || !parameters.at(U("filename")).is_string())
+            {
+                return pplx::task_from_result(utility::string_t(U("Error: Missing or invalid 'filename' parameter for 'Save' command. Expected a string.")));
+            }
+        }
+        else if (command == U("Smooth"))
+        {
+            if (!parameters.has_field(U("smoothing")) || !parameters.at(U("smoothing")).is_string())
+            {
+                return pplx::task_from_result(utility::string_t(U("Error: Missing or invalid 'smoothing' parameter for 'Smooth' command. Expected a string.")));
             }
         }
         else
