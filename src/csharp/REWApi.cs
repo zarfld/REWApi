@@ -697,6 +697,16 @@ public class REWApi
         return await GetAsync(endpoint);
     }
 
+    public async Task<string> GetDistortionUnitsAsync()
+    {
+        return await GetAsync("/measurements/distortion-units");
+    }
+
+    public async Task<string> GetDistortionPPOChoicesAsync()
+    {
+        return await GetAsync("/measurements/distortion-ppo-choices");
+    }
+
     // Method to process measurements
     public async Task<string> ProcessMeasurementsAsync(HttpContent content)
     {
