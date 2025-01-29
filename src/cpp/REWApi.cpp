@@ -137,6 +137,35 @@ public:
 
     pplx::task<utility::string_t> GenerateWaterfallAsync(const utility::string_t& mode, int slices, const json::value& parameters)
     {
+        // Validate required parameters for "Fourier" mode
+        if (mode == U("Fourier"))
+        {
+            std::vector<utility::string_t> requiredParams = {U("left window type"), U("right window type"), U("window width ms"), U("time range ms"), U("rise time ms"), U("use csd mode")};
+            for (const auto& param : requiredParams)
+            {
+                if (!parameters.has_field(param))
+                {
+                    return pplx::task_from_result(utility::string_t(U("Error: Missing required parameter '") + param + U("' for 'Fourier' mode.")));
+                }
+            }
+        }
+        // Validate required parameters for "Burst decay" mode
+        else if (mode == U("Burst decay"))
+        {
+            std::vector<utility::string_t> requiredParams = {U("bandwidth"), U("periods")};
+            for (const auto& param : requiredParams)
+            {
+                if (!parameters.has_field(param))
+                {
+                    return pplx::task_from_result(utility::string_t(U("Error: Missing required parameter '") + param + U("' for 'Burst decay' mode.")));
+                }
+            }
+        }
+        else
+        {
+            return pplx::task_from_result(utility::string_t(U("Error: Invalid mode. Expected 'Fourier' or 'Burst decay'.")));
+        }
+
         json::value content;
         content[U("command")] = json::value::string(U("Generate waterfall"));
         content[U("parameters")][U("mode")] = json::value::string(mode);

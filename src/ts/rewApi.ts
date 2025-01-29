@@ -95,6 +95,27 @@ class REWApi {
     }
 
     async generateWaterfall(mode: string, slices: number, parameters: any): Promise<any> {
+        // Validate required parameters for "Fourier" mode
+        if (mode === "Fourier") {
+            const requiredParams = ["left window type", "right window type", "window width ms", "time range ms", "rise time ms", "use csd mode"];
+            for (const param of requiredParams) {
+                if (!parameters.hasOwnProperty(param)) {
+                    return `Error: Missing required parameter '${param}' for 'Fourier' mode.`;
+                }
+            }
+        }
+        // Validate required parameters for "Burst decay" mode
+        else if (mode === "Burst decay") {
+            const requiredParams = ["bandwidth", "periods"];
+            for (const param of requiredParams) {
+                if (!parameters.hasOwnProperty(param)) {
+                    return `Error: Missing required parameter '${param}' for 'Burst decay' mode.`;
+                }
+            }
+        } else {
+            return "Error: Invalid mode. Expected 'Fourier' or 'Burst decay'.";
+        }
+
         const content = {
             command: "Generate waterfall",
             parameters: {
