@@ -1634,3 +1634,71 @@ class REWApi {
     }
 }
 ```
+
+## Generate Minimum Phase Version Command
+
+The `Generate minimum phase version` command allows you to generate a minimum phase version with various parameters. Here is an example of a command to generate a minimum phase version:
+
+```json
+{
+  "command": "Minimum phase version",
+  "parameters": {
+    "include cal": "true",
+    "append lf tail": "true",
+    "lf tail start": "27",
+    "lf tail slope": "12.0",
+    "append hf tail": "true",
+    "hf tail start": "15000",
+    "hf tail slope": "-18.0",
+    "frequency warping": "false",
+    "replicate data": "false"
+  },
+  "resultUrl": "http://127.0.0.1:5374/minphase"
+}
+```
+
+The `Generate minimum phase version` command supports the following parameters:
+
+- `include cal`: A boolean value indicating whether to include calibration.
+- `append lf tail`: A boolean value indicating whether to append a low-frequency tail.
+- `lf tail start`: The start frequency of the low-frequency tail in Hz.
+- `lf tail slope`: The slope of the low-frequency tail in dB/octave (must be ≥ 0).
+- `append hf tail`: A boolean value indicating whether to append a high-frequency tail.
+- `hf tail start`: The start frequency of the high-frequency tail in Hz.
+- `hf tail slope`: The slope of the high-frequency tail in dB/octave (must be ≤ 0).
+- `frequency warping`: A boolean value indicating whether to apply frequency warping.
+- `replicate data`: A boolean value indicating whether to replicate data.
+
+## Generate Excess Phase Version Command
+
+The `Generate excess phase version` command allows you to generate an excess phase version with various parameters. Here is an example of a command to generate an excess phase version:
+
+```json
+{
+  "command": "Excess phase version",
+  "parameters": {
+    "include cal": "true",
+    "append lf tail": "true",
+    "lf tail start": "27",
+    "lf tail slope": "12.0",
+    "append hf tail": "true",
+    "hf tail start": "15000",
+    "hf tail slope": "-18.0",
+    "frequency warping": "false",
+    "replicate data": "false"
+  },
+  "resultUrl": "http://127.0.0.1:5374/excessphase"
+}
+```
+
+The `Generate excess phase version` command supports the following parameters:
+
+- `include cal`: A boolean value indicating whether to include calibration.
+- `append lf tail`: A boolean value indicating whether to append a low-frequency tail.
+- `lf tail start`: The start frequency of the low-frequency tail in Hz.
+- `lf tail slope`: The slope of the low-frequency tail in dB/octave (must be ≥ 0).
+- `append hf tail`: A boolean value indicating whether to append a high-frequency tail.
+- `hf tail start`: The start frequency of the high-frequency tail in Hz.
+- `hf tail slope`: The slope of the high-frequency tail in dB/octave (must be ≤ 0).
+- `frequency warping`: A boolean value indicating whether to apply frequency warping.
+- `replicate data`: A boolean value indicating whether to replicate data.
