@@ -258,6 +258,12 @@ public:
     // Method to run REW without a GUI
     pplx::task<utility::string_t> RunWithoutGuiAsync();
 
+    // Method to generate minimum phase version
+    pplx::task<utility::string_t> GenerateMinimumPhaseVersionAsync(const utility::string_t& id, const web::json::value& parameters);
+
+    // Method to generate excess phase version
+    pplx::task<utility::string_t> GenerateExcessPhaseVersionAsync(const utility::string_t& id, const web::json::value& parameters);
+
 private:
     bool graphUpdateInhibited;
     bool blockingModeEnabled;
