@@ -270,6 +270,71 @@ private static float[] byteToFloatArray(byte[] bytes) {
 }
 ```
 
+### C#
+
+```csharp
+public string EncodeArray(float[] array)
+{
+    byte[] bytes = new byte[array.Length * sizeof(float)];
+    Buffer.BlockCopy(array, 0, bytes, 0, bytes.Length);
+    return Convert.ToBase64String(bytes);
+}
+
+public float[] DecodeArray(string base64Encoded)
+{
+    byte[] bytes = Convert.FromBase64String(base64Encoded);
+    float[] array = new float[bytes.Length / sizeof(float)];
+    Buffer.BlockCopy(bytes, 0, array, 0, bytes.Length);
+    return array;
+}
+```
+
+### JavaScript
+
+```javascript
+encodeArray(array) {
+    const buffer = new ArrayBuffer(array.length * 4);
+    const view = new DataView(buffer);
+    for (let i = 0; i < array.length; i++) {
+        view.setFloat32(i * 4, array[i], true);
+    }
+    return Buffer.from(buffer).toString('base64');
+}
+
+decodeArray(base64Encoded) {
+    const buffer = Buffer.from(base64Encoded, 'base64');
+    const view = new DataView(buffer.buffer);
+    const array = new Float32Array(buffer.length / 4);
+    for (let i = 0; i < array.length; i++) {
+        array[i] = view.getFloat32(i * 4, true);
+    }
+    return array;
+}
+```
+
+### TypeScript
+
+```typescript
+encodeArray(array: Float32Array): string {
+    const buffer = new ArrayBuffer(array.length * 4);
+    const view = new DataView(buffer);
+    for (let i = 0; i < array.length; i++) {
+        view.setFloat32(i * 4, array[i], true);
+    }
+    return Buffer.from(buffer).toString('base64');
+}
+
+decodeArray(base64Encoded: string): Float32Array {
+    const buffer = Buffer.from(base64Encoded, 'base64');
+    const view = new DataView(buffer.buffer);
+    const array = new Float32Array(buffer.length / 4);
+    for (let i = 0; array.length; i++) {
+        array[i] = view.getFloat32(i * 4, true);
+    }
+    return array;
+}
+```
+
 ## Subscription Endpoints
 
 The REW API now supports subscription endpoints to allow clients to be notified of changes. The following endpoints are available:
