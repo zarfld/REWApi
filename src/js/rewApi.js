@@ -680,6 +680,7 @@ class REWApi {
     }
 
     // Method to update a measurement's name and/or notes
+    // This method uses a MeasurementSummary object with the title and/or notes field set to the new value
     async updateMeasurement(id, data) {
         const response = await fetch(`http://localhost:4735/measurements/${id}`, {
             method: 'PUT',
