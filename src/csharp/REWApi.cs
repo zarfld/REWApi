@@ -100,6 +100,66 @@ public class REWApi
 
     public async Task<string> GenerateSpectrogramAsync(string mode, int slices, HttpContent parameters)
     {
+        // Validate the "mode" parameter
+        var validModes = new[] { "Fourier", "Wavelet", "Airy CWT", "Morlet CWT", "Burst decay" };
+        if (!validModes.Contains(mode))
+        {
+            return "Error: Invalid value for parameter 'mode'.";
+        }
+
+        // Validate the "slices" parameter
+        if (slices <= 0)
+        {
+            return "Error: Invalid value for parameter 'slices'. Must be > 0.";
+        }
+
+        // Validate the "ppo" parameter
+        if (!parameters.Headers.Contains("ppo") || !int.TryParse(parameters.Headers.GetValues("ppo").FirstOrDefault(), out _))
+        {
+            return "Error: Missing or invalid 'ppo' parameter. Expected a number.";
+        }
+
+        // Validate the "amplitude" parameter
+        if (!parameters.Headers.Contains("amplitude") || string.IsNullOrEmpty(parameters.Headers.GetValues("amplitude").FirstOrDefault()))
+        {
+            return "Error: Missing or invalid 'amplitude' parameter. Expected a string.";
+        }
+
+        // Validate additional parameters required for different modes
+        if (mode == "Fourier")
+        {
+            var requiredParams = new[] { "window type", "window width ms", "before ms", "after ms" };
+            foreach (var param in requiredParams)
+            {
+                if (!parameters.Headers.Contains(param))
+                {
+                    return $"Error: Missing required parameter '{param}' for 'Fourier' mode.";
+                }
+            }
+        }
+        else if (mode == "Burst decay")
+        {
+            var requiredParams = new[] { "bandwidth", "periods" };
+            foreach (var param in requiredParams)
+            {
+                if (!parameters.Headers.Contains(param))
+                {
+                    return $"Error: Missing required parameter '{param}' for 'Burst decay' mode.";
+                }
+            }
+        }
+        else if (mode == "Wavelet" || mode == "Airy CWT" || mode == "Morlet CWT")
+        {
+            var requiredParams = new[] { "bandwidth", "before ms", "after ms" };
+            foreach (var param in requiredParams)
+            {
+                if (!parameters.Headers.Contains(param))
+                {
+                    return $"Error: Missing required parameter '{param}' for '{mode}' mode.";
+                }
+            }
+        }
+
         var content = new StringContent("{\"command\":\"Generate spectrogram\",\"parameters\":{\"mode\":\"" + mode + "\",\"slices\":" + slices + "," + parameters.ReadAsStringAsync().Result + "}}", Encoding.UTF8, "application/json");
         return await PostAsync("http://localhost:4735/spectrograms", content);
     }
