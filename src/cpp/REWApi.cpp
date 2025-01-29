@@ -185,6 +185,66 @@ public:
 
     pplx::task<utility::string_t> GenerateSpectrogramAsync(const utility::string_t& mode, int slices, const json::value& parameters)
     {
+        // Validate the "mode" parameter
+        std::vector<utility::string_t> validModes = {U("Fourier"), U("Wavelet"), U("Airy CWT"), U("Morlet CWT"), U("Burst decay")};
+        if (std::find(validModes.begin(), validModes.end(), mode) == validModes.end())
+        {
+            return pplx::task_from_result(utility::string_t(U("Error: Invalid value for parameter 'mode'.")));
+        }
+
+        // Validate the "slices" parameter
+        if (slices <= 0)
+        {
+            return pplx::task_from_result(utility::string_t(U("Error: Invalid value for parameter 'slices'. Must be > 0.")));
+        }
+
+        // Validate the "ppo" parameter
+        if (!parameters.has_field(U("ppo")) || !parameters.at(U("ppo")).is_number())
+        {
+            return pplx::task_from_result(utility::string_t(U("Error: Missing or invalid 'ppo' parameter. Expected a number.")));
+        }
+
+        // Validate the "amplitude" parameter
+        if (!parameters.has_field(U("amplitude")) || !parameters.at(U("amplitude")).is_string())
+        {
+            return pplx::task_from_result(utility::string_t(U("Error: Missing or invalid 'amplitude' parameter. Expected a string.")));
+        }
+
+        // Validate additional parameters required for different modes
+        if (mode == U("Fourier"))
+        {
+            std::vector<utility::string_t> requiredParams = {U("window type"), U("window width ms"), U("before ms"), U("after ms")};
+            for (const auto& param : requiredParams)
+            {
+                if (!parameters.has_field(param))
+                {
+                    return pplx::task_from_result(utility::string_t(U("Error: Missing required parameter '") + param + U("' for 'Fourier' mode.")));
+                }
+            }
+        }
+        else if (mode == U("Burst decay"))
+        {
+            std::vector<utility::string_t> requiredParams = {U("bandwidth"), U("periods")};
+            for (const auto& param : requiredParams)
+            {
+                if (!parameters.has_field(param))
+                {
+                    return pplx::task_from_result(utility::string_t(U("Error: Missing required parameter '") + param + U("' for 'Burst decay' mode.")));
+                }
+            }
+        }
+        else if (mode == U("Wavelet") || mode == U("Airy CWT") || mode == U("Morlet CWT"))
+        {
+            std::vector<utility::string_t> requiredParams = {U("bandwidth"), U("before ms"), U("after ms")};
+            for (const auto& param : requiredParams)
+            {
+                if (!parameters.has_field(param))
+                {
+                    return pplx::task_from_result(utility::string_t(U("Error: Missing required parameter '") + param + U("' for '") + mode + U("' mode.")));
+                }
+            }
+        }
+
         json::value content;
         content[U("command")] = json::value::string(U("Generate spectrogram"));
         content[U("parameters")][U("mode")] = json::value::string(mode);

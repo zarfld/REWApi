@@ -132,6 +132,51 @@ class REWApi {
     }
 
     async generateSpectrogram(mode, slices, parameters) {
+        // Validate the "mode" parameter
+        const validModes = ["Fourier", "Wavelet", "Airy CWT", "Morlet CWT", "Burst decay"];
+        if (!validModes.includes(mode)) {
+            return "Error: Invalid value for parameter 'mode'.";
+        }
+
+        // Validate the "slices" parameter
+        if (slices <= 0) {
+            return "Error: Invalid value for parameter 'slices'. Must be > 0.";
+        }
+
+        // Validate the "ppo" parameter
+        if (!parameters.hasOwnProperty("ppo") || typeof parameters["ppo"] !== "number") {
+            return "Error: Missing or invalid 'ppo' parameter. Expected a number.";
+        }
+
+        // Validate the "amplitude" parameter
+        if (!parameters.hasOwnProperty("amplitude") || typeof parameters["amplitude"] !== "string") {
+            return "Error: Missing or invalid 'amplitude' parameter. Expected a string.";
+        }
+
+        // Validate additional parameters required for different modes
+        if (mode === "Fourier") {
+            const requiredParams = ["window type", "window width ms", "before ms", "after ms"];
+            for (const param of requiredParams) {
+                if (!parameters.hasOwnProperty(param)) {
+                    return `Error: Missing required parameter '${param}' for 'Fourier' mode.`;
+                }
+            }
+        } else if (mode === "Burst decay") {
+            const requiredParams = ["bandwidth", "periods"];
+            for (const param of requiredParams) {
+                if (!parameters.hasOwnProperty(param)) {
+                    return `Error: Missing required parameter '${param}' for 'Burst decay' mode.`;
+                }
+            }
+        } else if (mode === "Wavelet" || mode === "Airy CWT" || mode === "Morlet CWT") {
+            const requiredParams = ["bandwidth", "before ms", "after ms"];
+            for (const param of requiredParams) {
+                if (!parameters.hasOwnProperty(param)) {
+                    return `Error: Missing required parameter '${param}' for '${mode}' mode.`;
+                }
+            }
+        }
+
         const content = {
             command: "Generate spectrogram",
             parameters: {
