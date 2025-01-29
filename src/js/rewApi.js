@@ -951,6 +951,22 @@ class REWApi {
         return await this.post("http://localhost:4735/application/command", { command: "run", args: "-nogui" });
     }
 
+    // Method to get process commands
+    async getProcessCommands() {
+        const commands = ["Align SPL", "Arithmetic"];
+        return commands;
+    }
+
+    // Method to get process result
+    async getProcessResult() {
+        return await this.get("/measurements/process-result");
+    }
+
+    // Method to post process result
+    async postProcessResult(url, data) {
+        return await this.post(url, data);
+    }
+
     // Private method to notify subscribers
     async _notifySubscribers(endpoint, content) {
         const subscribers = await this.getSubscribers();

@@ -337,6 +337,24 @@ public:
         });
     }
 
+    pplx::task<utility::string_t> GetProcessCommandsAsync()
+    {
+        json::value commands = json::value::array();
+        commands[0] = json::value::string(U("Align SPL"));
+        commands[1] = json::value::string(U("Arithmetic"));
+        return pplx::task_from_result(commands.serialize());
+    }
+
+    pplx::task<utility::string_t> GetProcessResultAsync()
+    {
+        return GetAsync(U("/measurements/process-result"));
+    }
+
+    pplx::task<utility::string_t> PostProcessResultAsync(const utility::string_t& url, const json::value& content)
+    {
+        return PostAsync(url, content);
+    }
+
     // Methods for handling application settings
     pplx::task<utility::string_t> GetApplicationSettingsAsync()
     {
