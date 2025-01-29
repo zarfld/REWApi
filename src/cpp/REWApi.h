@@ -35,6 +35,7 @@ public:
 
     // Methods for handling impulse response
     pplx::task<utility::string_t> GetImpulseResponseAsync(const utility::string_t& id, const utility::string_t& unit = U("Percent"), bool windowed = false, bool normalised = true);
+    pplx::task<utility::string_t> GetFiltersImpulseResponseAsync(const utility::string_t& id, int samplerate, int length);
 
     // Methods for handling EQ and filters
     pplx::task<utility::string_t> GetEQSettingsAsync();

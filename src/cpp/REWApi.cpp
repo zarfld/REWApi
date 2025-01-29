@@ -309,6 +309,37 @@ public:
         return GetAsync(endpoint);
     }
 
+    pplx::task<utility::string_t> GetFiltersImpulseResponseAsync(const utility::string_t& id, int samplerate, int length)
+    {
+        // Validate samplerate and length parameters
+        if (samplerate <= 0)
+        {
+            return pplx::task_from_result(utility::string_t(U("Error: Invalid value for parameter 'samplerate'. Must be > 0.")));
+        }
+        if (length <= 0 || length > 4194304)
+        {
+            return pplx::task_from_result(utility::string_t(U("Error: Invalid value for parameter 'length'. Must be > 0 and <= 4194304.")));
+        }
+
+        utility::string_t endpoint = U("/measurements/") + id + U("/filters-impulse-response?samplerate=") + std::to_wstring(samplerate) + U("&length=") + std::to_wstring(length);
+        return GetAsync(endpoint).then([](utility::string_t response) {
+            // Parse the response and return the ImpulseResponse object
+            json::value jsonResponse = json::value::parse(response);
+            utility::string_t startTime = jsonResponse[U("startTime")].as_string();
+            utility::string_t sampleInterval = jsonResponse[U("sampleInterval")].as_string();
+            utility::string_t sampleRate = jsonResponse[U("sampleRate")].as_string();
+            utility::string_t responseData = jsonResponse[U("responseData")].as_string();
+
+            json::value impulseResponse;
+            impulseResponse[U("startTime")] = json::value::string(startTime);
+            impulseResponse[U("sampleInterval")] = json::value::string(sampleInterval);
+            impulseResponse[U("sampleRate")] = json::value::string(sampleRate);
+            impulseResponse[U("responseData")] = json::value::string(responseData);
+
+            return impulseResponse.serialize();
+        });
+    }
+
     // Methods for handling IR window settings
     pplx::task<utility::string_t> GetIRWindowSettingsAsync(const utility::string_t& id)
     {
