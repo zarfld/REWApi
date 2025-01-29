@@ -91,7 +91,9 @@ class REWApi {
             parameters: parameters
         };
         const endpoint = `/measurements/${id}/command`;
-        return await this.post(endpoint, content);
+        return await this.post(endpoint, content).then(response => {
+            return this._notifySubscribers(endpoint, content).then(() => response);
+        });
     }
 
     async generateWaterfall(mode, slices, parameters) {
@@ -103,7 +105,9 @@ class REWApi {
                 ...parameters
             }
         };
-        return await this.post("http://localhost:4735/waterfalls", content);
+        return await this.post("http://localhost:4735/waterfalls", content).then(response => {
+            return this._notifySubscribers("/waterfalls", content).then(() => response);
+        });
     }
 
     async generateSpectrogram(mode, slices, parameters) {
@@ -115,7 +119,9 @@ class REWApi {
                 ...parameters
             }
         };
-        return await this.post("http://localhost:4735/spectrograms", content);
+        return await this.post("http://localhost:4735/spectrograms", content).then(response => {
+            return this._notifySubscribers("/spectrograms", content).then(() => response);
+        });
     }
 
     async processMeasurements(data) {
@@ -171,7 +177,9 @@ class REWApi {
             }
         }
 
-        return await this.post("http://localhost:4735/measurements/process-measurements", data);
+        return await this.post("http://localhost:4735/measurements/process-measurements", data).then(response => {
+            return this._notifySubscribers("/measurements/process-measurements", data).then(() => response);
+        });
     }
 
     // Methods for handling application settings
@@ -198,7 +206,31 @@ class REWApi {
     }
 
     async addMeasurement(data) {
-        return await this.post("http://localhost:4735/measurements", data);
+        return await this.post("http://localhost:4735/measurements", data).then(response => {
+            return this._notifySubscribers("/measurements", data).then(() => response);
+        });
+    }
+
+    async deleteMeasurement(id) {
+        const response = await fetch(`http://localhost:4735/measurements/${id}`, {
+            method: 'DELETE'
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const responseData = await response.json();
+        return this._notifySubscribers(`/measurements/${id}`, {}).then(() => responseData);
+    }
+
+    async deleteAllMeasurements() {
+        const response = await fetch("http://localhost:4735/measurements", {
+            method: 'DELETE'
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const responseData = await response.json();
+        return this._notifySubscribers("/measurements", {}).then(() => responseData);
     }
 
     // Methods for handling frequency response
@@ -642,7 +674,9 @@ class REWApi {
             return "Error: Unknown command.";
         }
 
-        return await this.post("http://localhost:4735/measurements/command", data);
+        return await this.post("http://localhost:4735/measurements/command", data).then(response => {
+            return this._notifySubscribers("/measurements/command", data).then(() => response);
+        });
     }
 
     // Method to update a measurement's name and/or notes
@@ -657,7 +691,8 @@ class REWApi {
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        return await response.json();
+        const responseData = await response.json();
+        return this._notifySubscribers(`/measurements/${id}`, data).then(() => responseData);
     }
 
     // Methods for handling IR window settings
@@ -689,7 +724,9 @@ class REWApi {
             }
         };
         const endpoint = `/measurements/${id}/command`;
-        return await this.post(endpoint, content);
+        return await this.post(endpoint, content).then(response => {
+            return this._notifySubscribers(endpoint, content).then(() => response);
+        });
     }
 
     // Methods for handling groups and their measurements
@@ -702,11 +739,15 @@ class REWApi {
     }
 
     async createGroup(data) {
-        return await this.post("http://localhost:4735/groups", data);
+        return await this.post("http://localhost:4735/groups", data).then(response => {
+            return this._notifySubscribers("/groups", data).then(() => response);
+        });
     }
 
     async updateGroup(uuid, data) {
-        return await this.put(`http://localhost:4735/groups/${uuid}`, data);
+        return await this.put(`http://localhost:4735/groups/${uuid}`, data).then(response => {
+            return this._notifySubscribers(`/groups/${uuid}`, data).then(() => response);
+        });
     }
 
     async deleteGroup(uuid) {
@@ -716,7 +757,8 @@ class REWApi {
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        return await response.json();
+        const responseData = await response.json();
+        return this._notifySubscribers(`/groups/${uuid}`, {}).then(() => responseData);
     }
 
     async deleteAllGroups() {
@@ -726,7 +768,8 @@ class REWApi {
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        return await response.json();
+        const responseData = await response.json();
+        return this._notifySubscribers("/groups", {}).then(() => responseData);
     }
 
     async getGroupMeasurements(uuid) {
@@ -734,7 +777,9 @@ class REWApi {
     }
 
     async addMeasurementToGroup(uuid, data) {
-        return await this.post(`http://localhost:4735/groups/${uuid}/measurements`, data);
+        return await this.post(`http://localhost:4735/groups/${uuid}/measurements`, data).then(response => {
+            return this._notifySubscribers(`/groups/${uuid}/measurements`, data).then(() => response);
+        });
     }
 
     async removeMeasurementFromGroup(uuid, measurementUuid) {
@@ -744,7 +789,8 @@ class REWApi {
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        return await response.json();
+        const responseData = await response.json();
+        return this._notifySubscribers(`/groups/${uuid}/measurements/${measurementUuid}`, {}).then(() => responseData);
     }
 
     // Method to handle the Offset t=0 command
@@ -756,7 +802,9 @@ class REWApi {
                 unit: unit
             }
         };
-        return await this.post("http://localhost:4735/offset-t-zero", content);
+        return await this.post("http://localhost:4735/offset-t-zero", content).then(response => {
+            return this._notifySubscribers("/offset-t-zero", content).then(() => response);
+        });
     }
 
     // Method to handle group change subscriptions
@@ -782,6 +830,16 @@ class REWApi {
     // Method to handle warning subscriptions
     async subscribeToWarnings(data) {
         return await this.post("http://localhost:4735/application/subscribe-warnings", data);
+    }
+
+    // Private method to notify subscribers
+    async _notifySubscribers(endpoint, content) {
+        const subscribers = await this.getSubscribers();
+        const tasks = subscribers.map(subscriber => {
+            const url = subscriber.url;
+            return this.post(url + endpoint, content);
+        });
+        await Promise.all(tasks);
     }
 }
 
