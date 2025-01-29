@@ -258,6 +258,15 @@ public:
     // Method to run REW without a GUI
     pplx::task<utility::string_t> RunWithoutGuiAsync();
 
+    // Method to get process commands
+    pplx::task<utility::string_t> GetProcessCommandsAsync();
+
+    // Method to get process result
+    pplx::task<utility::string_t> GetProcessResultAsync();
+
+    // Method to post process result
+    pplx::task<utility::string_t> PostProcessResultAsync(const utility::string_t& url, const web::json::value& content);
+
 private:
     bool graphUpdateInhibited;
     bool blockingModeEnabled;

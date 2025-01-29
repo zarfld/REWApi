@@ -992,4 +992,23 @@ public class REWApi
         var content = new StringContent("{\"command\":\"run\",\"args\":\"-nogui\"}", System.Text.Encoding.UTF8, "application/json");
         return await PostAsync("http://localhost:4735/application/command", content);
     }
+
+    // Method to get process commands
+    public async Task<string> GetProcessCommandsAsync()
+    {
+        var commands = new[] { "Align SPL", "Arithmetic" };
+        return await Task.FromResult(string.Join(",", commands));
+    }
+
+    // Method to get process result
+    public async Task<string> GetProcessResultAsync()
+    {
+        return await GetAsync("/measurements/process-result");
+    }
+
+    // Method to post process result
+    public async Task<string> PostProcessResultAsync(string url, HttpContent content)
+    {
+        return await PostAsync(url, content);
+    }
 }
