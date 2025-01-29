@@ -189,6 +189,7 @@ public:
     pplx::task<utility::string_t> IssueMeasurementCommandWithParamsAsync(const utility::string_t& id, const utility::string_t& command, const web::json::value& parameters);
 
     // Method to update a measurement's name and/or notes
+    // This method uses a MeasurementSummary object with the title and/or notes field set to the new value
     pplx::task<utility::string_t> UpdateMeasurementAsync(const utility::string_t& id, const web::json::value& content);
 
     // Methods for handling IR window settings

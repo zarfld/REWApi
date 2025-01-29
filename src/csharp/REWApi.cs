@@ -667,6 +667,7 @@ public class REWApi
     }
 
     // Method to update a measurement's name and/or notes
+    // This method uses a MeasurementSummary object with the title and/or notes field set to the new value
     public async Task<string> UpdateMeasurementAsync(string id, HttpContent content)
     {
         return await PutAsync($"http://localhost:4735/measurements/{id}", content);
