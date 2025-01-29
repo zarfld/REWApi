@@ -278,6 +278,22 @@ public:
             {
                 return pplx::task_from_result(utility::string_t(U("Error: Missing or invalid 'measurementIndices' field. Must be an array.")));
             }
+
+            // Validate resultUrl field
+            if (!content.has_field(U("resultUrl")) || !content.at(U("resultUrl")).is_string())
+            {
+                return pplx::task_from_result(utility::string_t(U("Error: Missing or invalid 'resultUrl' field. Must be a string.")));
+            }
+
+            // Post results to resultUrl upon process command acknowledgment
+            utility::string_t resultUrl = content.at(U("resultUrl")).as_string();
+            json::value resultContent;
+            resultContent[U("status")] = json::value::string(U("Acknowledged"));
+            return PostAsync(resultUrl, resultContent).then([this, content](utility::string_t response) {
+                return NotifySubscribers(U("/measurements/process-measurements"), content).then([response]() {
+                    return response;
+                });
+            });
         }
 
         // Check if the processName is "Arithmetic"
