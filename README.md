@@ -10,6 +10,42 @@ This repository contains implementations of the Room EQ Wizard (REW) API in C#, 
 
 Note: When running REW without a GUI, you must use the [application](https://www.roomeqwizard.com/help/help_en-GB/html/api.html#application) shutdown command to close REW when done.
 
+### Starting the API Server on Windows
+
+To start the API server on Windows, use the following command:
+
+```sh
+C:\Program Files\REW\roomeqwizard.exe -api
+```
+
+### Starting the API Server on macOS
+
+To start the API server on macOS, use the following command:
+
+```sh
+open -a REW.app --args -api
+```
+
+### Specifying a Different Port
+
+To specify a different port, add the `-port` argument followed by the desired port number. For example, to use port 4567, use the following command:
+
+```sh
+C:\Program Files\REW\roomeqwizard.exe -api -port 4567
+```
+
+Note: Port numbers below 1024 will be ignored.
+
+### Running REW Without a GUI
+
+To run REW without a GUI, use the `-nogui` argument. For example:
+
+```sh
+C:\Program Files\REW\roomeqwizard.exe -api -nogui
+```
+
+When running REW without a GUI, you must use the [application](https://www.roomeqwizard.com/help/help_en-GB/html/api.html#application) shutdown command to close REW when done.
+
 ## Inhibiting Graph Updates
 
 A flag can be set to inhibit any graph updates. This may be useful when running actions which delete or modify measurements to prevent graphs being updated with partial data or errors caused by trying to plot data which is no longer available.

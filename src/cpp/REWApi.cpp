@@ -201,11 +201,11 @@ public:
             }
 
             // Validate optional parameters
-            if (content.at(U("parameters")).has_field(U("maxGain")) && !content.at(U("parameters")).at(U("maxGain")).is_number())
+            if (content.at(U("parameters")).has_field(U("maxGain")) && !content.at(U("maxGain")).is_number())
             {
                 return pplx::task_from_result(utility::string_t(U("Error: Invalid value for parameter 'maxGain'. Expected a number.")));
             }
-            if (content.at(U("parameters")).has_field(U("lowerLimit")) && !content.at(U("parameters")).at(U("lowerLimit")).is_number())
+            if (content.at(U("parameters")).has_field(U("lowerLimit")) && !content.at(U("lowerLimit")).is_number())
             {
                 return pplx::task_from_result(utility::string_t(U("Error: Invalid value for parameter 'lowerLimit'. Expected a number.")));
             }
@@ -1086,5 +1086,35 @@ public:
     pplx::task<utility::string_t> AreAudioEndpointsReadyAsync()
     {
         return GetAsync(U("http://localhost:4735/audio/endpoints-ready"));
+    }
+
+    // Method to start the API server
+    pplx::task<utility::string_t> StartApiServerAsync()
+    {
+        return PostAsync(U("http://localhost:4735/application/command"), json::value::parse(U("{\"command\":\"start\"}")));
+    }
+
+    // Method to stop the API server
+    pplx::task<utility::string_t> StopApiServerAsync()
+    {
+        return PostAsync(U("http://localhost:4735/application/command"), json::value::parse(U("{\"command\":\"stop\"}")));
+    }
+
+    // Method to specify a different port
+    pplx::task<utility::string_t> SetPortAsync(int port)
+    {
+        if (port < 1024)
+        {
+            return pplx::task_from_result(utility::string_t(U("Error: Port numbers below 1024 will be ignored.")));
+        }
+        json::value content;
+        content[U("port")] = json::value::number(port);
+        return PostAsync(U("http://localhost:4735/application/command"), content);
+    }
+
+    // Method to run REW without a GUI
+    pplx::task<utility::string_t> RunWithoutGuiAsync()
+    {
+        return PostAsync(U("http://localhost:4735/application/command"), json::value::parse(U("{\"command\":\"run\",\"args\":\"-nogui\"}")));
     }
 };

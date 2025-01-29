@@ -245,6 +245,18 @@ public:
     // Method to check if audio endpoints are ready for use
     pplx::task<utility::string_t> AreAudioEndpointsReadyAsync();
 
+    // Method to start the API server
+    pplx::task<utility::string_t> StartApiServerAsync();
+
+    // Method to stop the API server
+    pplx::task<utility::string_t> StopApiServerAsync();
+
+    // Method to specify a different port
+    pplx::task<utility::string_t> SetPortAsync(int port);
+
+    // Method to run REW without a GUI
+    pplx::task<utility::string_t> RunWithoutGuiAsync();
+
 private:
     bool graphUpdateInhibited;
     bool blockingModeEnabled;

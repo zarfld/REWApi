@@ -865,4 +865,60 @@ public class REWApi
     {
         return await PostAsync("http://localhost:4735/application/subscribe-warnings", content);
     }
+
+    // Method to get the global option to treat 32-bit data as 24-bit
+    public async Task<string> GetTreat32As24Async()
+    {
+        return await GetAsync("http://localhost:4735/audio/configuration");
+    }
+
+    // Method to set the global option to treat 32-bit data as 24-bit
+    public async Task<string> SetTreat32As24Async(HttpContent content)
+    {
+        return await PostAsync("http://localhost:4735/audio/configuration", content);
+    }
+
+    // Method to check if audio is enabled
+    public async Task<string> IsAudioEnabledAsync()
+    {
+        return await GetAsync("http://localhost:4735/audio/enabled");
+    }
+
+    // Method to check if audio endpoints are ready for use
+    public async Task<string> AreAudioEndpointsReadyAsync()
+    {
+        return await GetAsync("http://localhost:4735/audio/endpoints-ready");
+    }
+
+    // Method to start the API server
+    public async Task<string> StartApiServerAsync()
+    {
+        var content = new StringContent("{\"command\":\"start\"}", System.Text.Encoding.UTF8, "application/json");
+        return await PostAsync("http://localhost:4735/application/command", content);
+    }
+
+    // Method to stop the API server
+    public async Task<string> StopApiServerAsync()
+    {
+        var content = new StringContent("{\"command\":\"stop\"}", System.Text.Encoding.UTF8, "application/json");
+        return await PostAsync("http://localhost:4735/application/command", content);
+    }
+
+    // Method to specify a different port
+    public async Task<string> SetPortAsync(int port)
+    {
+        if (port < 1024)
+        {
+            return "Error: Port numbers below 1024 will be ignored.";
+        }
+        var content = new StringContent("{\"port\":" + port + "}", System.Text.Encoding.UTF8, "application/json");
+        return await PostAsync("http://localhost:4735/application/command", content);
+    }
+
+    // Method to run REW without a GUI
+    public async Task<string> RunWithoutGuiAsync()
+    {
+        var content = new StringContent("{\"command\":\"run\",\"args\":\"-nogui\"}", System.Text.Encoding.UTF8, "application/json");
+        return await PostAsync("http://localhost:4735/application/command", content);
+    }
 }
