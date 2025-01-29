@@ -16,6 +16,22 @@ private:
     bool graphUpdateInhibited = false;
     bool blockingModeEnabled = false;
 
+    pplx::task<void> NotifySubscribers(const utility::string_t& endpoint, const json::value& content)
+    {
+        return GetSubscribersAsync().then([this, endpoint, content](utility::string_t subscribers) {
+            json::value subscribersJson = json::value::parse(subscribers);
+            std::vector<pplx::task<void>> tasks;
+            for (const auto& subscriber : subscribersJson.as_array())
+            {
+                utility::string_t url = subscriber.at(U("url")).as_string();
+                tasks.push_back(PostAsync(url + endpoint, content).then([](utility::string_t response) {
+                    // Handle response if needed
+                }));
+            }
+            return pplx::when_all(tasks.begin(), tasks.end());
+        });
+    }
+
 public:
     void SetGraphUpdateInhibition(bool inhibit)
     {
@@ -112,7 +128,11 @@ public:
         content[U("parameters")] = parameters;
 
         utility::string_t endpoint = U("/measurements/") + id + U("/command");
-        return PostAsync(endpoint, content);
+        return PostAsync(endpoint, content).then([this, endpoint, content](utility::string_t response) {
+            return NotifySubscribers(endpoint, content).then([response]() {
+                return response;
+            });
+        });
     }
 
     pplx::task<utility::string_t> GenerateWaterfallAsync(const utility::string_t& mode, int slices, const json::value& parameters)
@@ -127,7 +147,11 @@ public:
             content[U("parameters")][param.first] = param.second;
         }
 
-        return PostAsync(U("/waterfalls"), content);
+        return PostAsync(U("/waterfalls"), content).then([this, content](utility::string_t response) {
+            return NotifySubscribers(U("/waterfalls"), content).then([response]() {
+                return response;
+            });
+        });
     }
 
     pplx::task<utility::string_t> GenerateSpectrogramAsync(const utility::string_t& mode, int slices, const json::value& parameters)
@@ -142,7 +166,11 @@ public:
             content[U("parameters")][param.first] = param.second;
         }
 
-        return PostAsync(U("/spectrograms"), content);
+        return PostAsync(U("/spectrograms"), content).then([this, content](utility::string_t response) {
+            return NotifySubscribers(U("/spectrograms"), content).then([response]() {
+                return response;
+            });
+        });
     }
 
     pplx::task<utility::string_t> ProcessMeasurementsAsync(const json::value& content)
@@ -213,7 +241,11 @@ public:
             }
         }
 
-        return PostAsync(U("/measurements/process-measurements"), content);
+        return PostAsync(U("/measurements/process-measurements"), content).then([this, content](utility::string_t response) {
+            return NotifySubscribers(U("/measurements/process-measurements"), content).then([response]() {
+                return response;
+            });
+        });
     }
 
     // Methods for handling application settings
@@ -246,22 +278,34 @@ public:
 
     pplx::task<utility::string_t> AddMeasurementAsync(const json::value& content)
     {
-        return PostAsync(U("http://localhost:4735/measurements"), content);
+        return PostAsync(U("http://localhost:4735/measurements"), content).then([this, content](utility::string_t response) {
+            return NotifySubscribers(U("/measurements"), content).then([response]() {
+                return response;
+            });
+        });
     }
 
     pplx::task<utility::string_t> DeleteMeasurementAsync(const utility::string_t& id)
     {
         http_client client(U("http://localhost:4735"));
-        return client.request(methods::DEL, U("/measurements/") + id).then([](http_response response) {
-            return response.extract_string();
+        return client.request(methods::DEL, U("/measurements/") + id).then([this, id](http_response response) {
+            return response.extract_string().then([this, id](utility::string_t response) {
+                return NotifySubscribers(U("/measurements/") + id, json::value::parse(U("{}"))).then([response]() {
+                    return response;
+                });
+            });
         });
     }
 
     pplx::task<utility::string_t> DeleteAllMeasurementsAsync()
     {
         http_client client(U("http://localhost:4735"));
-        return client.request(methods::DEL, U("/measurements")).then([](http_response response) {
-            return response.extract_string();
+        return client.request(methods::DEL, U("/measurements")).then([this](http_response response) {
+            return response.extract_string().then([this](utility::string_t response) {
+                return NotifySubscribers(U("/measurements"), json::value::parse(U("{}"))).then([response]() {
+                    return response;
+                });
+            });
         });
     }
 
@@ -848,15 +892,23 @@ public:
             return pplx::task_from_result(utility::string_t(U("Error: Unknown command.")));
         }
 
-        return PostAsync(U("http://localhost:4735/measurements/command"), content);
+        return PostAsync(U("http://localhost:4735/measurements/command"), content).then([this, content](utility::string_t response) {
+            return NotifySubscribers(U("/measurements/command"), content).then([response]() {
+                return response;
+            });
+        });
     }
 
     // Method to update a measurement's name and/or notes
     pplx::task<utility::string_t> UpdateMeasurementAsync(const utility::string_t& id, const json::value& content)
     {
         http_client client(U("http://localhost:4735"));
-        return client.request(methods::PUT, U("/measurements/") + id, content).then([](http_response response) {
-            return response.extract_string();
+        return client.request(methods::PUT, U("/measurements/") + id, content).then([this, id, content](http_response response) {
+            return response.extract_string().then([this, id, content](utility::string_t response) {
+                return NotifySubscribers(U("/measurements/") + id, content).then([response]() {
+                    return response;
+                });
+            });
         });
     }
 
@@ -881,7 +933,11 @@ public:
         content[U("parameters")][U("smoothing")] = json::value::string(smoothing);
 
         utility::string_t endpoint = U("/measurements/") + id + U("/command");
-        return PostAsync(endpoint, content);
+        return PostAsync(endpoint, content).then([this, endpoint, content](utility::string_t response) {
+            return NotifySubscribers(endpoint, content).then([response]() {
+                return response;
+            });
+        });
     }
 
     // Methods for handling groups and their measurements
@@ -897,27 +953,43 @@ public:
 
     pplx::task<utility::string_t> CreateGroupAsync(const json::value& content)
     {
-        return PostAsync(U("http://localhost:4735/groups"), content);
+        return PostAsync(U("http://localhost:4735/groups"), content).then([this, content](utility::string_t response) {
+            return NotifySubscribers(U("/groups"), content).then([response]() {
+                return response;
+            });
+        });
     }
 
     pplx::task<utility::string_t> UpdateGroupAsync(const utility::string_t& uuid, const json::value& content)
     {
-        return PutAsync(U("http://localhost:4735/groups/") + uuid, content);
+        return PutAsync(U("http://localhost:4735/groups/") + uuid, content).then([this, uuid, content](utility::string_t response) {
+            return NotifySubscribers(U("/groups/") + uuid, content).then([response]() {
+                return response;
+            });
+        });
     }
 
     pplx::task<utility::string_t> DeleteGroupAsync(const utility::string_t& uuid)
     {
         http_client client(U("http://localhost:4735"));
-        return client.request(methods::DEL, U("/groups/") + uuid).then([](http_response response) {
-            return response.extract_string();
+        return client.request(methods::DEL, U("/groups/") + uuid).then([this, uuid](http_response response) {
+            return response.extract_string().then([this, uuid](utility::string_t response) {
+                return NotifySubscribers(U("/groups/") + uuid, json::value::parse(U("{}"))).then([response]() {
+                    return response;
+                });
+            });
         });
     }
 
     pplx::task<utility::string_t> DeleteAllGroupsAsync()
     {
         http_client client(U("http://localhost:4735"));
-        return client.request(methods::DEL, U("/groups")).then([](http_response response) {
-            return response.extract_string());
+        return client.request(methods::DEL, U("/groups")).then([this](http_response response) {
+            return response.extract_string().then([this](utility::string_t response) {
+                return NotifySubscribers(U("/groups"), json::value::parse(U("{}"))).then([response]() {
+                    return response;
+                });
+            });
         });
     }
 
@@ -928,14 +1000,22 @@ public:
 
     pplx::task<utility::string_t> AddMeasurementToGroupAsync(const utility::string_t& uuid, const json::value& content)
     {
-        return PostAsync(U("http://localhost:4735/groups/") + uuid + U("/measurements"), content);
+        return PostAsync(U("http://localhost:4735/groups/") + uuid + U("/measurements"), content).then([this, uuid, content](utility::string_t response) {
+            return NotifySubscribers(U("/groups/") + uuid + U("/measurements"), content).then([response]() {
+                return response;
+            });
+        });
     }
 
     pplx::task<utility::string_t> RemoveMeasurementFromGroupAsync(const utility::string_t& uuid, const utility::string_t& measurementUuid)
     {
         http_client client(U("http://localhost:4735"));
-        return client.request(methods::DEL, U("/groups/") + uuid + U("/measurements/") + measurementUuid).then([](http_response response) {
-            return response.extract_string();
+        return client.request(methods::DEL, U("/groups/") + uuid + U("/measurements/") + measurementUuid).then([this, uuid, measurementUuid](http_response response) {
+            return response.extract_string().then([this, uuid, measurementUuid](utility::string_t response) {
+                return NotifySubscribers(U("/groups/") + uuid + U("/measurements/") + measurementUuid, json::value::parse(U("{}"))).then([response]() {
+                    return response;
+                });
+            });
         });
     }
 
@@ -947,7 +1027,11 @@ public:
         content[U("parameters")][U("offset")] = json::value::string(offset);
         content[U("parameters")][U("unit")] = json::value::string(unit);
 
-        return PostAsync(U("/offset-t-zero"), content);
+        return PostAsync(U("/offset-t-zero"), content).then([this, content](utility::string_t response) {
+            return NotifySubscribers(U("/offset-t-zero"), content).then([response]() {
+                return response;
+            });
+        });
     }
 
     // Method to handle group change subscriptions
