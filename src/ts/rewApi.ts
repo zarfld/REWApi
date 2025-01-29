@@ -704,6 +704,32 @@ class REWApi {
         return await this.put(`http://localhost:4735/measurements/${id}/ir-windows`, data);
     }
 
+    // Method to get left window type
+    async getLeftWindowType(id: string): Promise<any> {
+        const response = await this.getIRWindowSettings(id);
+        return response.leftWindowType;
+    }
+
+    // Method to update left window type
+    async updateLeftWindowType(id: string, leftWindowType: string): Promise<any> {
+        const response = await this.getIRWindowSettings(id);
+        response.leftWindowType = leftWindowType;
+        return await this.updateIRWindowSettings(id, response);
+    }
+
+    // Method to get right window type
+    async getRightWindowType(id: string): Promise<any> {
+        const response = await this.getIRWindowSettings(id);
+        return response.rightWindowType;
+    }
+
+    // Method to update right window type
+    async updateRightWindowType(id: string, rightWindowType: string): Promise<any> {
+        const response = await this.getIRWindowSettings(id);
+        response.rightWindowType = rightWindowType;
+        return await this.updateIRWindowSettings(id, response);
+    }
+
     // Method to get REW View preferences
     async getREWViewPreferences(): Promise<any> {
         return await this.get("http://localhost:4735/application/settings");

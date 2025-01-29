@@ -195,6 +195,10 @@ public:
     // Methods for handling IR window settings
     pplx::task<utility::string_t> GetIRWindowSettingsAsync(const utility::string_t& id);
     pplx::task<utility::string_t> UpdateIRWindowSettingsAsync(const utility::string_t& id, const web::json::value& content);
+    pplx::task<utility::string_t> GetLeftWindowTypeAsync(const utility::string_t& id);
+    pplx::task<utility::string_t> UpdateLeftWindowTypeAsync(const utility::string_t& id, const utility::string_t& leftWindowType);
+    pplx::task<utility::string_t> GetRightWindowTypeAsync(const utility::string_t& id);
+    pplx::task<utility::string_t> UpdateRightWindowTypeAsync(const utility::string_t& id, const utility::string_t& rightWindowType);
 
     // Methods for handling REW View preferences
     pplx::task<utility::string_t> GetREWViewPreferencesAsync();

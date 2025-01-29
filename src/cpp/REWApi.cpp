@@ -395,6 +395,40 @@ public:
         return PutAsync(U("/measurements/") + id + U("/ir-windows"), content);
     }
 
+    pplx::task<utility::string_t> GetLeftWindowTypeAsync(const utility::string_t& id)
+    {
+        return GetIRWindowSettingsAsync(id).then([](utility::string_t response) {
+            json::value jsonResponse = json::value::parse(response);
+            return jsonResponse[U("leftWindowType")].serialize();
+        });
+    }
+
+    pplx::task<utility::string_t> UpdateLeftWindowTypeAsync(const utility::string_t& id, const utility::string_t& leftWindowType)
+    {
+        return GetIRWindowSettingsAsync(id).then([this, id, leftWindowType](utility::string_t response) {
+            json::value jsonResponse = json::value::parse(response);
+            jsonResponse[U("leftWindowType")] = json::value::string(leftWindowType);
+            return UpdateIRWindowSettingsAsync(id, jsonResponse);
+        });
+    }
+
+    pplx::task<utility::string_t> GetRightWindowTypeAsync(const utility::string_t& id)
+    {
+        return GetIRWindowSettingsAsync(id).then([](utility::string_t response) {
+            json::value jsonResponse = json::value::parse(response);
+            return jsonResponse[U("rightWindowType")].serialize();
+        });
+    }
+
+    pplx::task<utility::string_t> UpdateRightWindowTypeAsync(const utility::string_t& id, const utility::string_t& rightWindowType)
+    {
+        return GetIRWindowSettingsAsync(id).then([this, id, rightWindowType](utility::string_t response) {
+            json::value jsonResponse = json::value::parse(response);
+            jsonResponse[U("rightWindowType")] = json::value::string(rightWindowType);
+            return UpdateIRWindowSettingsAsync(id, jsonResponse);
+        });
+    }
+
     // Methods for handling EQ and filters
     pplx::task<utility::string_t> GetEQSettingsAsync()
     {
