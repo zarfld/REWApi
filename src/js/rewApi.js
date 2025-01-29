@@ -832,6 +832,50 @@ class REWApi {
         return await this.post("http://localhost:4735/application/subscribe-warnings", data);
     }
 
+    // Method to get the global option to treat 32-bit data as 24-bit
+    async getTreat32As24() {
+        return await this.get("http://localhost:4735/audio/configuration");
+    }
+
+    // Method to set the global option to treat 32-bit data as 24-bit
+    async setTreat32As24(data) {
+        return await this.post("http://localhost:4735/audio/configuration", data);
+    }
+
+    // Method to check if audio is enabled
+    async isAudioEnabled() {
+        return await this.get("http://localhost:4735/audio/enabled");
+    }
+
+    // Method to check if audio endpoints are ready for use
+    async areAudioEndpointsReady() {
+        return await this.get("http://localhost:4735/audio/endpoints-ready");
+    }
+
+    // Method to start the API server
+    async startApiServer() {
+        return await this.post("http://localhost:4735/application/command", { command: "start" });
+    }
+
+    // Method to stop the API server
+    async stopApiServer() {
+        return await this.post("http://localhost:4735/application/command", { command: "stop" });
+    }
+
+    // Method to specify a different port
+    async setPort(port) {
+        if (port < 1024) {
+            return "Error: Port numbers below 1024 will be ignored.";
+        }
+        const content = { port: port };
+        return await this.post("http://localhost:4735/application/command", content);
+    }
+
+    // Method to run REW without a GUI
+    async runWithoutGui() {
+        return await this.post("http://localhost:4735/application/command", { command: "run", args: "-nogui" });
+    }
+
     // Private method to notify subscribers
     async _notifySubscribers(endpoint, content) {
         const subscribers = await this.getSubscribers();
