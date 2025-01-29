@@ -716,6 +716,14 @@ class REWApi {
         return await this.get(endpoint);
     }
 
+    async getDistortionUnits() {
+        return await this.get("/measurements/distortion-units");
+    }
+
+    async getDistortionPPOChoices() {
+        return await this.get("/measurements/distortion-ppo-choices");
+    }
+
     // Method to handle the Smooth command
     async smooth(id, smoothing = "1/3") {
         const content = {

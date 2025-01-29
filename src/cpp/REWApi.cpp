@@ -925,6 +925,16 @@ public:
         return GetAsync(endpoint);
     }
 
+    pplx::task<utility::string_t> GetDistortionUnitsAsync()
+    {
+        return GetAsync(U("/measurements/distortion-units"));
+    }
+
+    pplx::task<utility::string_t> GetDistortionPPOChoicesAsync()
+    {
+        return GetAsync(U("/measurements/distortion-ppo-choices"));
+    }
+
     // Method to handle the Smooth command
     pplx::task<utility::string_t> SmoothAsync(const utility::string_t& id, const utility::string_t& smoothing = U("1/3"))
     {
