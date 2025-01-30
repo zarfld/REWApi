@@ -123,6 +123,14 @@ public:
             }
         }
 
+        if (command == U("Smooth"))
+        {
+            if (!parameters.has_field(U("smoothing")) || !parameters.at(U("smoothing")).is_string())
+            {
+                return pplx::task_from_result(utility::string_t(U("Error: Missing or invalid 'smoothing' parameter for 'Smooth' command. Expected a string.")));
+            }
+        }
+
         json::value content;
         content[U("command")] = json::value::string(command);
         content[U("parameters")] = parameters;

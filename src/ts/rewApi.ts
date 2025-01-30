@@ -84,6 +84,12 @@ class REWApi {
             }
         }
 
+        if (command === "Smooth") {
+            if (!parameters.hasOwnProperty("smoothing") || typeof parameters["smoothing"] !== "string") {
+                return "Error: Missing or invalid 'smoothing' parameter for 'Smooth' command. Expected a string.";
+            }
+        }
+
         const content = {
             command: command,
             parameters: parameters
