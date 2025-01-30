@@ -1076,4 +1076,240 @@ public class REWApi
     {
         return await PostAsync(url, content);
     }
+
+    // Methods for handling the /measure endpoint
+    public async Task<string> GetMeasureCommandsAsync()
+    {
+        return await GetAsync("/measure/commands");
+    }
+
+    public async Task<string> PostMeasureCommandAsync(HttpContent content)
+    {
+        return await PostAsync("/measure/command", content);
+    }
+
+    public async Task<string> GetMeasureNamingAsync()
+    {
+        return await GetAsync("/measure/naming");
+    }
+
+    public async Task<string> PostMeasureNamingAsync(HttpContent content)
+    {
+        return await PostAsync("/measure/naming", content);
+    }
+
+    public async Task<string> PutMeasureNamingAsync(HttpContent content)
+    {
+        return await PutAsync("/measure/naming", content);
+    }
+
+    public async Task<string> GetMeasureNamingOptionsAsync()
+    {
+        return await GetAsync("/measure/naming/naming-options");
+    }
+
+    public async Task<string> GetMeasureDateTimeFormatsAsync()
+    {
+        return await GetAsync("/measure/naming/date-time-formats");
+    }
+
+    public async Task<string> GetMeasureNotesAsync()
+    {
+        return await GetAsync("/measure/notes");
+    }
+
+    public async Task<string> PostMeasureNotesAsync(HttpContent content)
+    {
+        return await PostAsync("/measure/notes", content);
+    }
+
+    public async Task<string> GetMeasureLevelAsync()
+    {
+        return await GetAsync("/measure/level");
+    }
+
+    public async Task<string> PostMeasureLevelAsync(HttpContent content)
+    {
+        return await PostAsync("/measure/level", content);
+    }
+
+    public async Task<string> GetMeasureLevelUnitsAsync()
+    {
+        return await GetAsync("/measure/level/units");
+    }
+
+    public async Task<string> GetMeasureProtectionOptionsAsync()
+    {
+        return await GetAsync("/measure/protection-options");
+    }
+
+    public async Task<string> PostMeasureProtectionOptionsAsync(HttpContent content)
+    {
+        return await PostAsync("/measure/protection-options", content);
+    }
+
+    public async Task<string> PutMeasureProtectionOptionsAsync(HttpContent content)
+    {
+        return await PutAsync("/measure/protection-options", content);
+    }
+
+    public async Task<string> GetMeasureSweepConfigurationAsync()
+    {
+        return await GetAsync("/measure/sweep/configuration");
+    }
+
+    public async Task<string> PostMeasureSweepConfigurationAsync(HttpContent content)
+    {
+        return await PostAsync("/measure/sweep/configuration", content);
+    }
+
+    public async Task<string> PutMeasureSweepConfigurationAsync(HttpContent content)
+    {
+        return await PutAsync("/measure/sweep/configuration", content);
+    }
+
+    public async Task<string> GetMeasureSweepRepetitionsAsync()
+    {
+        return await GetAsync("/measure/sweep/repetitions");
+    }
+
+    public async Task<string> PostMeasureSweepRepetitionsAsync(HttpContent content)
+    {
+        return await PostAsync("/measure/sweep/repetitions", content);
+    }
+
+    public async Task<string> GetMeasureTimingAsync()
+    {
+        return await GetAsync("/measure/timing");
+    }
+
+    public async Task<string> PostMeasureTimingAsync(HttpContent content)
+    {
+        return await PostAsync("/measure/timing", content);
+    }
+
+    public async Task<string> PutMeasureTimingAsync(HttpContent content)
+    {
+        return await PutAsync("/measure/timing", content);
+    }
+
+    public async Task<string> GetMeasureTimingOffsetAsync()
+    {
+        return await GetAsync("/measure/timing-offset");
+    }
+
+    public async Task<string> PostMeasureTimingOffsetAsync(HttpContent content)
+    {
+        return await PostAsync("/measure/timing-offset", content);
+    }
+
+    public async Task<string> GetMeasurePlaybackModeAsync()
+    {
+        return await GetAsync("/measure/playback-mode");
+    }
+
+    public async Task<string> PostMeasurePlaybackModeAsync(HttpContent content)
+    {
+        return await PostAsync("/measure/playback-mode", content);
+    }
+
+    public async Task<string> GetMeasurePlaybackModeChoicesAsync()
+    {
+        return await GetAsync("/measure/playback-mode/choices");
+    }
+
+    public async Task<string> PostMeasureFilePlaybackStimulusAsync(HttpContent content)
+    {
+        return await PostAsync("/measure/file-playback-stimulus", content);
+    }
+
+    public async Task<string> GetMeasureMeasurementModeAsync()
+    {
+        return await GetAsync("/measure/measurement-mode");
+    }
+
+    public async Task<string> PostMeasureMeasurementModeAsync(HttpContent content)
+    {
+        return await PostAsync("/measure/measurement-mode", content);
+    }
+
+    public async Task<string> GetMeasureMeasurementModeChoicesAsync()
+    {
+        return await GetAsync("/measure/measurement-mode/choices");
+    }
+
+    public async Task<string> GetMeasureNumberOfRepetitionsAsync()
+    {
+        return await GetAsync("/measure/number-of-repetitions");
+    }
+
+    public async Task<string> PostMeasureNumberOfRepetitionsAsync(HttpContent content)
+    {
+        return await PostAsync("/measure/number-of-repetitions", content);
+    }
+
+    public async Task<string> GetMeasureSequentialChannelsAsync()
+    {
+        return await GetAsync("/measure/sequential-channels");
+    }
+
+    public async Task<string> PostMeasureSequentialChannelsAsync(HttpContent content)
+    {
+        return await PostAsync("/measure/sequential-channels", content);
+    }
+
+    public async Task<string> GetMeasureSequentialChoicesAsync()
+    {
+        return await GetAsync("/measure/sequential-choices");
+    }
+
+    public async Task<string> GetMeasureStartDelayAsync()
+    {
+        return await GetAsync("/measure/start-delay");
+    }
+
+    public async Task<string> PostMeasureStartDelayAsync(HttpContent content)
+    {
+        return await PostAsync("/measure/start-delay", content);
+    }
+
+    public async Task<string> GetMeasureInvertSecondOutputAsync()
+    {
+        return await GetAsync("/measure/invert-second-output");
+    }
+
+    public async Task<string> PostMeasureInvertSecondOutputAsync(HttpContent content)
+    {
+        return await PostAsync("/measure/invert-second-output", content);
+    }
+
+    public async Task<string> GetMeasureFillSilenceWithDitherAsync()
+    {
+        return await GetAsync("/measure/fill-silence-with-dither");
+    }
+
+    public async Task<string> PostMeasureFillSilenceWithDitherAsync(HttpContent content)
+    {
+        return await PostAsync("/measure/fill-silence-with-dither", content);
+    }
+
+    public async Task<string> GetMeasureCaptureNoiseFloorAsync()
+    {
+        return await GetAsync("/measure/capture-noise-floor");
+    }
+
+    public async Task<string> PostMeasureCaptureNoiseFloorAsync(HttpContent content)
+    {
+        return await PostAsync("/measure/capture-noise-floor", content);
+    }
+
+    public async Task<string> SubscribeMeasureAsync(HttpContent content)
+    {
+        return await PostAsync("/measure/subscribe", content);
+    }
+
+    public async Task<string> UnsubscribeMeasureAsync(HttpContent content)
+    {
+        return await PostAsync("/measure/unsubscribe", content);
+    }
 }

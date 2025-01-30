@@ -272,6 +272,55 @@ public:
     // Method to post process result
     pplx::task<utility::string_t> PostProcessResultAsync(const utility::string_t& url, const web::json::value& content);
 
+    // Methods for handling the /measure endpoint
+    pplx::task<utility::string_t> GetMeasureCommandsAsync();
+    pplx::task<utility::string_t> PostMeasureCommandAsync(const web::json::value& content);
+    pplx::task<utility::string_t> GetMeasureNamingAsync();
+    pplx::task<utility::string_t> PostMeasureNamingAsync(const web::json::value& content);
+    pplx::task<utility::string_t> PutMeasureNamingAsync(const web::json::value& content);
+    pplx::task<utility::string_t> GetMeasureNamingOptionsAsync();
+    pplx::task<utility::string_t> GetMeasureDateTimeFormatsAsync();
+    pplx::task<utility::string_t> GetMeasureNotesAsync();
+    pplx::task<utility::string_t> PostMeasureNotesAsync(const web::json::value& content);
+    pplx::task<utility::string_t> GetMeasureLevelAsync();
+    pplx::task<utility::string_t> PostMeasureLevelAsync(const web::json::value& content);
+    pplx::task<utility::string_t> GetMeasureLevelUnitsAsync();
+    pplx::task<utility::string_t> GetMeasureProtectionOptionsAsync();
+    pplx::task<utility::string_t> PostMeasureProtectionOptionsAsync(const web::json::value& content);
+    pplx::task<utility::string_t> PutMeasureProtectionOptionsAsync(const web::json::value& content);
+    pplx::task<utility::string_t> GetMeasureSweepConfigurationAsync();
+    pplx::task<utility::string_t> PostMeasureSweepConfigurationAsync(const web::json::value& content);
+    pplx::task<utility::string_t> PutMeasureSweepConfigurationAsync(const web::json::value& content);
+    pplx::task<utility::string_t> GetMeasureSweepRepetitionsAsync();
+    pplx::task<utility::string_t> PostMeasureSweepRepetitionsAsync(const web::json::value& content);
+    pplx::task<utility::string_t> GetMeasureTimingAsync();
+    pplx::task<utility::string_t> PostMeasureTimingAsync(const web::json::value& content);
+    pplx::task<utility::string_t> PutMeasureTimingAsync(const web::json::value& content);
+    pplx::task<utility::string_t> GetMeasureTimingOffsetAsync();
+    pplx::task<utility::string_t> PostMeasureTimingOffsetAsync(const web::json::value& content);
+    pplx::task<utility::string_t> GetMeasurePlaybackModeAsync();
+    pplx::task<utility::string_t> PostMeasurePlaybackModeAsync(const web::json::value& content);
+    pplx::task<utility::string_t> GetMeasurePlaybackModeChoicesAsync();
+    pplx::task<utility::string_t> PostMeasureFilePlaybackStimulusAsync(const web::json::value& content);
+    pplx::task<utility::string_t> GetMeasureMeasurementModeAsync();
+    pplx::task<utility::string_t> PostMeasureMeasurementModeAsync(const web::json::value& content);
+    pplx::task<utility::string_t> GetMeasureMeasurementModeChoicesAsync();
+    pplx::task<utility::string_t> GetMeasureNumberOfRepetitionsAsync();
+    pplx::task<utility::string_t> PostMeasureNumberOfRepetitionsAsync(const web::json::value& content);
+    pplx::task<utility::string_t> GetMeasureSequentialChannelsAsync();
+    pplx::task<utility::string_t> PostMeasureSequentialChannelsAsync(const web::json::value& content);
+    pplx::task<utility::string_t> GetMeasureSequentialChoicesAsync();
+    pplx::task<utility::string_t> GetMeasureStartDelayAsync();
+    pplx::task<utility::string_t> PostMeasureStartDelayAsync(const web::json::value& content);
+    pplx::task<utility::string_t> GetMeasureInvertSecondOutputAsync();
+    pplx::task<utility::string_t> PostMeasureInvertSecondOutputAsync(const web::json::value& content);
+    pplx::task<utility::string_t> GetMeasureFillSilenceWithDitherAsync();
+    pplx::task<utility::string_t> PostMeasureFillSilenceWithDitherAsync(const web::json::value& content);
+    pplx::task<utility::string_t> GetMeasureCaptureNoiseFloorAsync();
+    pplx::task<utility::string_t> PostMeasureCaptureNoiseFloorAsync(const web::json::value& content);
+    pplx::task<utility::string_t> SubscribeMeasureAsync(const web::json::value& content);
+    pplx::task<utility::string_t> UnsubscribeMeasureAsync(const web::json::value& content);
+
 private:
     bool graphUpdateInhibited;
     bool blockingModeEnabled;
