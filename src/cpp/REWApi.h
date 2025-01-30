@@ -40,6 +40,11 @@ public:
     // Methods for handling EQ and filters
     pplx::task<utility::string_t> GetEQSettingsAsync();
     pplx::task<utility::string_t> UpdateEQSettingsAsync(const web::json::value& content);
+    pplx::task<utility::string_t> GetMeasurementEqualiserAsync(const utility::string_t& id);
+    pplx::task<utility::string_t> UpdateMeasurementEqualiserAsync(const utility::string_t& id, const web::json::value& content);
+    pplx::task<utility::string_t> GetAvailableEqualisersAsync();
+    pplx::task<utility::string_t> GetMeasurementFiltersAsync(const utility::string_t& id);
+    pplx::task<utility::string_t> UpdateMeasurementFilterAsync(const utility::string_t& id, const utility::string_t& filterId, const web::json::value& content);
 
     // Methods for handling SPL meter
     pplx::task<utility::string_t> GetSPLMeterAsync();

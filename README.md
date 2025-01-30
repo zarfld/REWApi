@@ -1634,3 +1634,106 @@ class REWApi {
     }
 }
 ```
+
+## EQ and Filter Endpoints
+
+The REW API now supports reading and modifying a measurement's EQ and filter settings through the following endpoints:
+
+### Measurement Equaliser
+
+To read a measurement's equaliser selection, make a GET request to the `/measurements/:id/equaliser` endpoint.
+
+Example:
+
+```json
+{
+  "equaliser": "Equaliser 1"
+}
+```
+
+To change a measurement's equaliser selection, make a POST request to the `/measurements/:id/equaliser` endpoint with a JSON body containing the new equaliser selection.
+
+Example:
+
+```json
+{
+  "equaliser": "Equaliser 2"
+}
+```
+
+### Available Equalisers
+
+To read the available equalisers, make a GET request to the `/eq/equalisers` endpoint.
+
+Example:
+
+```json
+[
+  "Equaliser 1",
+  "Equaliser 2",
+  "Equaliser 3"
+]
+```
+
+### Measurement Filters
+
+To read a measurement's filters, make a GET request to the `/measurements/:id/filters` endpoint. A list of `FilterSetting` objects is returned with the current settings for each filter of the measurement's equaliser.
+
+Example:
+
+```json
+[
+  {
+    "filterId": "Filter 1",
+    "type": "Low Pass",
+    "frequency": 1000,
+    "gain": -3,
+    "q": 0.707
+  },
+  {
+    "filterId": "Filter 2",
+    "type": "High Pass",
+    "frequency": 200,
+    "gain": 0,
+    "q": 1.0
+  }
+]
+```
+
+To change an individual filter's settings, make a PUT request to the `/measurements/:id/filters/:filterId` endpoint with a JSON body containing the new filter settings.
+
+Example:
+
+```json
+{
+  "type": "Low Pass",
+  "frequency": 1500,
+  "gain": -6,
+  "q": 0.5
+}
+```
+
+To change multiple (or all) filters, make a POST request to the `/measurements/:id/filters` endpoint with a JSON body containing a `FilterList` object.
+
+Example:
+
+```json
+[
+  {
+    "filterId": "Filter 1",
+    "type": "Low Pass",
+    "frequency": 1500,
+    "gain": -6,
+    "q": 0.5
+  },
+  {
+    "filterId": "Filter 2",
+    "type": "High Pass",
+    "frequency": 300,
+    "gain": 0,
+    "q": 1.0
+  }
+]
+```
+
+These new endpoints provide comprehensive support for managing a measurement's EQ and filter settings through the REW API.

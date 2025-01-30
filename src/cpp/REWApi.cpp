@@ -592,6 +592,31 @@ public:
         return PutAsync(U("/eq/settings"), content);
     }
 
+    pplx::task<utility::string_t> GetMeasurementEqualiserAsync(const utility::string_t& id)
+    {
+        return GetAsync(U("/measurements/") + id + U("/equaliser"));
+    }
+
+    pplx::task<utility::string_t> UpdateMeasurementEqualiserAsync(const utility::string_t& id, const json::value& content)
+    {
+        return PostAsync(U("/measurements/") + id + U("/equaliser"), content);
+    }
+
+    pplx::task<utility::string_t> GetAvailableEqualisersAsync()
+    {
+        return GetAsync(U("/eq/equalisers"));
+    }
+
+    pplx::task<utility::string_t> GetMeasurementFiltersAsync(const utility::string_t& id)
+    {
+        return GetAsync(U("/measurements/") + id + U("/filters"));
+    }
+
+    pplx::task<utility::string_t> UpdateMeasurementFilterAsync(const utility::string_t& id, const utility::string_t& filterId, const json::value& content)
+    {
+        return PutAsync(U("/measurements/") + id + U("/filters/") + filterId, content);
+    }
+
     // Methods for handling SPL meter
     pplx::task<utility::string_t> GetSPLMeterAsync()
     {

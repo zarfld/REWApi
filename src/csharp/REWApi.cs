@@ -291,6 +291,31 @@ public class REWApi
         return await PutAsync("http://localhost:4735/eq/settings", content);
     }
 
+    public async Task<string> GetMeasurementEqualiserAsync(string id)
+    {
+        return await GetAsync($"http://localhost:4735/measurements/{id}/equaliser");
+    }
+
+    public async Task<string> UpdateMeasurementEqualiserAsync(string id, HttpContent content)
+    {
+        return await PostAsync($"http://localhost:4735/measurements/{id}/equaliser", content);
+    }
+
+    public async Task<string> GetAvailableEqualisersAsync()
+    {
+        return await GetAsync("http://localhost:4735/eq/equalisers");
+    }
+
+    public async Task<string> GetMeasurementFiltersAsync(string id)
+    {
+        return await GetAsync($"http://localhost:4735/measurements/{id}/filters");
+    }
+
+    public async Task<string> UpdateMeasurementFilterAsync(string id, string filterId, HttpContent content)
+    {
+        return await PutAsync($"http://localhost:4735/measurements/{id}/filters/{filterId}", content);
+    }
+
     // Methods for handling SPL meter
     public async Task<string> GetSPLMeterAsync()
     {
