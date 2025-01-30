@@ -1574,4 +1574,28 @@ public:
     {
         return PostAsync(U("/measure/unsubscribe"), content);
     }
+
+    // Methods for handling the /alignment-tool endpoint
+    pplx::task<utility::string_t> GetAlignmentToolCommandsAsync()
+    {
+        json::value commands = json::value::array();
+        commands[0] = json::value::string(U("Align SPL"));
+        commands[1] = json::value::string(U("Arithmetic"));
+        return pplx::task_from_result(commands.serialize());
+    }
+
+    pplx::task<utility::string_t> PostAlignmentToolCommandAsync(const json::value& content)
+    {
+        return PostAsync(U("/alignment-tool/command"), content);
+    }
+
+    pplx::task<utility::string_t> GetAlignmentToolModeAsync()
+    {
+        return GetAsync(U("/alignment-tool/mode"));
+    }
+
+    pplx::task<utility::string_t> PostAlignmentToolModeAsync(const json::value& content)
+    {
+        return PostAsync(U("/alignment-tool/mode"), content);
+    }
 };

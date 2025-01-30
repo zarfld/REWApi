@@ -321,6 +321,12 @@ public:
     pplx::task<utility::string_t> SubscribeMeasureAsync(const web::json::value& content);
     pplx::task<utility::string_t> UnsubscribeMeasureAsync(const web::json::value& content);
 
+    // Methods for handling the /alignment-tool endpoint
+    pplx::task<utility::string_t> GetAlignmentToolCommandsAsync();
+    pplx::task<utility::string_t> PostAlignmentToolCommandAsync(const web::json::value& content);
+    pplx::task<utility::string_t> GetAlignmentToolModeAsync();
+    pplx::task<utility::string_t> PostAlignmentToolModeAsync(const web::json::value& content);
+
 private:
     bool graphUpdateInhibited;
     bool blockingModeEnabled;

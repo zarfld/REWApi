@@ -1312,4 +1312,26 @@ public class REWApi
     {
         return await PostAsync("/measure/unsubscribe", content);
     }
+
+    // Methods for handling the /alignment-tool endpoint
+    public async Task<string> GetAlignmentToolCommandsAsync()
+    {
+        var commands = new[] { "Align SPL", "Arithmetic" };
+        return await Task.FromResult(string.Join(",", commands));
+    }
+
+    public async Task<string> PostAlignmentToolCommandAsync(HttpContent content)
+    {
+        return await PostAsync("/alignment-tool/command", content);
+    }
+
+    public async Task<string> GetAlignmentToolModeAsync()
+    {
+        return await GetAsync("/alignment-tool/mode");
+    }
+
+    public async Task<string> PostAlignmentToolModeAsync(HttpContent content)
+    {
+        return await PostAsync("/alignment-tool/mode", content);
+    }
 }
