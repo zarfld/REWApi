@@ -342,6 +342,27 @@ public:
     pplx::task<utility::string_t> GetMatchTargetSettingsAsync();
     pplx::task<utility::string_t> UpdateMatchTargetSettingsAsync(const web::json::value& content);
 
+    // Methods for handling the /generator endpoint
+    pplx::task<utility::string_t> GetGeneratorStatusAsync();
+    pplx::task<utility::string_t> GetGeneratorSignalAsync();
+    pplx::task<utility::string_t> SetGeneratorSignalAsync(const web::json::value& content);
+    pplx::task<utility::string_t> GetGeneratorSignalsAsync();
+    pplx::task<utility::string_t> GetGeneratorSignalConfigurationAsync();
+    pplx::task<utility::string_t> SetGeneratorSignalConfigurationAsync(const web::json::value& content);
+    pplx::task<utility::string_t> GetGeneratorSignalCommandsAsync();
+    pplx::task<utility::string_t> SendGeneratorSignalCommandAsync(const web::json::value& content);
+    pplx::task<utility::string_t> GetGeneratorLevelAsync();
+    pplx::task<utility::string_t> SetGeneratorLevelAsync(const web::json::value& content);
+    pplx::task<utility::string_t> GetGeneratorLevelUnitsAsync();
+    pplx::task<utility::string_t> GetGeneratorFrequencyAsync();
+    pplx::task<utility::string_t> SetGeneratorFrequencyAsync(const web::json::value& content);
+    pplx::task<utility::string_t> GetGeneratorInvertSecondOutputAsync();
+    pplx::task<utility::string_t> SetGeneratorInvertSecondOutputAsync(const web::json::value& content);
+    pplx::task<utility::string_t> GetGeneratorProtectionAsync();
+    pplx::task<utility::string_t> SetGeneratorProtectionAsync(const web::json::value& content);
+    pplx::task<utility::string_t> StartGeneratorAsync();
+    pplx::task<utility::string_t> StopGeneratorAsync();
+    
 private:
     bool graphUpdateInhibited;
     bool blockingModeEnabled;
