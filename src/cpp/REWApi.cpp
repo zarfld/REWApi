@@ -143,6 +143,26 @@ public:
             }
         }
 
+        if (command == U("Generate RT60"))
+        {
+            if (!parameters.has_field(U("octaveFrac")) || !parameters.at(U("octaveFrac")).is_number())
+            {
+                return pplx::task_from_result(utility::string_t(U("Error: Missing or invalid 'octaveFrac' parameter for 'Generate RT60' command. Expected a number.")));
+            }
+            if (!parameters.has_field(U("filterOrder")) || !parameters.at(U("filterOrder")).is_number())
+            {
+                return pplx::task_from_result(utility::string_t(U("Error: Missing or invalid 'filterOrder' parameter for 'Generate RT60' command. Expected a number.")));
+            }
+            if (!parameters.has_field(U("zeroPhaseFiltered")) || !parameters.at(U("zeroPhaseFiltered")).is_boolean())
+            {
+                return pplx::task_from_result(utility::string_t(U("Error: Missing or invalid 'zeroPhaseFiltered' parameter for 'Generate RT60' command. Expected a boolean.")));
+            }
+            if (!parameters.has_field(U("reverseFiltered")) || !parameters.at(U("reverseFiltered")).is_boolean())
+            {
+                return pplx::task_from_result(utility::string_t(U("Error: Missing or invalid 'reverseFiltered' parameter for 'Generate RT60' command. Expected a boolean.")));
+            }
+        }
+
         json::value content;
         content[U("command")] = json::value::string(command);
         content[U("parameters")] = parameters;
@@ -1005,7 +1025,7 @@ public:
         commands[13] = json::value::string(U("Offset t=0"));
         commands[14] = json::value::string(U("Add SPL offset"));
         commands[15] = json::value::string(U("Invert"));
-        commands[16] = json::value::string(U("Generate RT60 data"));
+        commands[16] = json::value::string(U("Generate RT60"));
         return pplx::task_from_result(commands.serialize());
     }
 

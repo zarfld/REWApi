@@ -90,6 +90,30 @@ class REWApi {
             }
         }
 
+        if (command === "Offset t=0") {
+            if (!parameters.hasOwnProperty("offset") || typeof parameters["offset"] !== "string") {
+                return "Error: Missing or invalid 'offset' parameter for 'Offset t=0' command. Expected a string.";
+            }
+            if (!parameters.hasOwnProperty("unit") || typeof parameters["unit"] !== "string") {
+                return "Error: Missing or invalid 'unit' parameter for 'Offset t=0' command. Expected a string.";
+            }
+        }
+
+        if (command === "Generate RT60") {
+            if (!parameters.hasOwnProperty("octaveFrac") || typeof parameters["octaveFrac"] !== "number") {
+                return "Error: Missing or invalid 'octaveFrac' parameter for 'Generate RT60' command. Expected a number.";
+            }
+            if (!parameters.hasOwnProperty("filterOrder") || typeof parameters["filterOrder"] !== "number") {
+                return "Error: Missing or invalid 'filterOrder' parameter for 'Generate RT60' command. Expected a number.";
+            }
+            if (!parameters.hasOwnProperty("zeroPhaseFiltered") || typeof parameters["zeroPhaseFiltered"] !== "boolean") {
+                return "Error: Missing or invalid 'zeroPhaseFiltered' parameter for 'Generate RT60' command. Expected a boolean.";
+            }
+            if (!parameters.hasOwnProperty("reverseFiltered") || typeof parameters["reverseFiltered"] !== "boolean") {
+                return "Error: Missing or invalid 'reverseFiltered' parameter for 'Generate RT60' command. Expected a boolean.";
+            }
+        }
+
         const content = {
             command: command,
             parameters: parameters
@@ -662,7 +686,7 @@ class REWApi {
             "Offset t=0",
             "Add SPL offset",
             "Invert",
-            "Generate RT60 data"
+            "Generate RT60"
         ];
         return commands;
     }

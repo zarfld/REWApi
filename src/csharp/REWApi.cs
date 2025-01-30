@@ -107,6 +107,26 @@ public class REWApi
             }
         }
 
+        if (command == "Generate RT60")
+        {
+            if (!parameters.Headers.Contains("octaveFrac") || !int.TryParse(parameters.Headers.GetValues("octaveFrac").FirstOrDefault(), out _))
+            {
+                return "Error: Missing or invalid 'octaveFrac' parameter for 'Generate RT60' command. Expected a number.";
+            }
+            if (!parameters.Headers.Contains("filterOrder") || !int.TryParse(parameters.Headers.GetValues("filterOrder").FirstOrDefault(), out _))
+            {
+                return "Error: Missing or invalid 'filterOrder' parameter for 'Generate RT60' command. Expected a number.";
+            }
+            if (!parameters.Headers.Contains("zeroPhaseFiltered") || !bool.TryParse(parameters.Headers.GetValues("zeroPhaseFiltered").FirstOrDefault(), out _))
+            {
+                return "Error: Missing or invalid 'zeroPhaseFiltered' parameter for 'Generate RT60' command. Expected a boolean.";
+            }
+            if (!parameters.Headers.Contains("reverseFiltered") || !bool.TryParse(parameters.Headers.GetValues("reverseFiltered").FirstOrDefault(), out _))
+            {
+                return "Error: Missing or invalid 'reverseFiltered' parameter for 'Generate RT60' command. Expected a boolean.";
+            }
+        }
+
         var content = new StringContent("{\"command\":\"" + command + "\",\"parameters\":" + parameters.ReadAsStringAsync().Result + "}", Encoding.UTF8, "application/json");
         string endpoint = $"/measurements/{id}/command";
         return await PostAsync(endpoint, content);
@@ -688,7 +708,7 @@ public class REWApi
     // Methods for handling measurement commands
     public async Task<string> GetMeasurementCommandsAsync()
     {
-        var commands = new[] { "Load", "Save all", "Save", "Generate minimum phase version", "Generate excess phase version", "Generate Mic in box correction", "Make response copy", "Merge cal data to IR", "Trim IR to windows", "Smooth", "Generate waterfalls", "Generate spectrograms", "Estimate IR delay", "Offset t=0", "Add SPL offset", "Invert", "Generate RT60 data" };
+        var commands = new[] { "Load", "Save all", "Save", "Generate minimum phase version", "Generate excess phase version", "Generate Mic in box correction", "Make response copy", "Merge cal data to IR", "Trim IR to windows", "Smooth", "Generate waterfalls", "Generate spectrograms", "Estimate IR delay", "Offset t=0", "Add SPL offset", "Invert", "Generate RT60" };
         return await Task.FromResult(string.Join(",", commands));
     }
 
