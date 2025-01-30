@@ -327,6 +327,21 @@ public:
     pplx::task<utility::string_t> GetAlignmentToolModeAsync();
     pplx::task<utility::string_t> PostAlignmentToolModeAsync(const web::json::value& content);
 
+    // Methods for handling default EQ settings
+    pplx::task<utility::string_t> GetDefaultEqualiserAsync();
+    pplx::task<utility::string_t> UpdateDefaultEqualiserAsync(const web::json::value& content);
+    pplx::task<utility::string_t> GetDefaultTargetSettingsAsync();
+    pplx::task<utility::string_t> UpdateDefaultTargetSettingsAsync(const web::json::value& content);
+    pplx::task<utility::string_t> GetDefaultTargetLevelAsync();
+    pplx::task<utility::string_t> UpdateDefaultTargetLevelAsync(const web::json::value& content);
+    pplx::task<utility::string_t> GetDefaultRoomCurveSettingsAsync();
+    pplx::task<utility::string_t> UpdateDefaultRoomCurveSettingsAsync(const web::json::value& content);
+    pplx::task<utility::string_t> GetHouseCurveAsync();
+    pplx::task<utility::string_t> UpdateHouseCurveAsync(const web::json::value& content);
+    pplx::task<utility::string_t> ClearHouseCurveAsync();
+    pplx::task<utility::string_t> GetMatchTargetSettingsAsync();
+    pplx::task<utility::string_t> UpdateMatchTargetSettingsAsync(const web::json::value& content);
+
 private:
     bool graphUpdateInhibited;
     bool blockingModeEnabled;

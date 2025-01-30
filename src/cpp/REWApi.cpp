@@ -1598,4 +1598,70 @@ public:
     {
         return PostAsync(U("/alignment-tool/mode"), content);
     }
+
+    // Methods for handling default EQ settings
+    pplx::task<utility::string_t> GetDefaultEqualiserAsync()
+    {
+        return GetAsync(U("/eq/default-equaliser"));
+    }
+
+    pplx::task<utility::string_t> UpdateDefaultEqualiserAsync(const json::value& content)
+    {
+        return PostAsync(U("/eq/default-equaliser"), content);
+    }
+
+    pplx::task<utility::string_t> GetDefaultTargetSettingsAsync()
+    {
+        return GetAsync(U("/eq/default-target-settings"));
+    }
+
+    pplx::task<utility::string_t> UpdateDefaultTargetSettingsAsync(const json::value& content)
+    {
+        return PostAsync(U("/eq/default-target-settings"), content);
+    }
+
+    pplx::task<utility::string_t> GetDefaultTargetLevelAsync()
+    {
+        return GetAsync(U("/eq/default-target-level"));
+    }
+
+    pplx::task<utility::string_t> UpdateDefaultTargetLevelAsync(const json::value& content)
+    {
+        return PostAsync(U("/eq/default-target-level"), content);
+    }
+
+    pplx::task<utility::string_t> GetDefaultRoomCurveSettingsAsync()
+    {
+        return GetAsync(U("/eq/default-room-curve-settings"));
+    }
+
+    pplx::task<utility::string_t> UpdateDefaultRoomCurveSettingsAsync(const json::value& content)
+    {
+        return PostAsync(U("/eq/default-room-curve-settings"), content);
+    }
+
+    pplx::task<utility::string_t> GetHouseCurveAsync()
+    {
+        return GetAsync(U("/eq/house-curve"));
+    }
+
+    pplx::task<utility::string_t> UpdateHouseCurveAsync(const json::value& content)
+    {
+        return PostAsync(U("/eq/house-curve"), content);
+    }
+
+    pplx::task<utility::string_t> ClearHouseCurveAsync()
+    {
+        return PostAsync(U("/eq/house-curve"), json::value::string(U("")));
+    }
+
+    pplx::task<utility::string_t> GetMatchTargetSettingsAsync()
+    {
+        return GetAsync(U("/eq/match-target-settings"));
+    }
+
+    pplx::task<utility::string_t> UpdateMatchTargetSettingsAsync(const json::value& content)
+    {
+        return PostAsync(U("/eq/match-target-settings"), content);
+    }
 };
