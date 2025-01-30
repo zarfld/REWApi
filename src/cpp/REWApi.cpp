@@ -1338,4 +1338,240 @@ public:
     {
         return PostAsync(U("http://localhost:4735/application/command"), json::value::parse(U("{\"command\":\"run\",\"args\":\"-nogui\"}")));
     }
+
+    // Methods for handling the /measure endpoint
+    pplx::task<utility::string_t> GetMeasureCommandsAsync()
+    {
+        return GetAsync(U("/measure/commands"));
+    }
+
+    pplx::task<utility::string_t> PostMeasureCommandAsync(const json::value& content)
+    {
+        return PostAsync(U("/measure/command"), content);
+    }
+
+    pplx::task<utility::string_t> GetMeasureNamingAsync()
+    {
+        return GetAsync(U("/measure/naming"));
+    }
+
+    pplx::task<utility::string_t> PostMeasureNamingAsync(const json::value& content)
+    {
+        return PostAsync(U("/measure/naming"), content);
+    }
+
+    pplx::task<utility::string_t> PutMeasureNamingAsync(const json::value& content)
+    {
+        return PutAsync(U("/measure/naming"), content);
+    }
+
+    pplx::task<utility::string_t> GetMeasureNamingOptionsAsync()
+    {
+        return GetAsync(U("/measure/naming/naming-options"));
+    }
+
+    pplx::task<utility::string_t> GetMeasureDateTimeFormatsAsync()
+    {
+        return GetAsync(U("/measure/naming/date-time-formats"));
+    }
+
+    pplx::task<utility::string_t> GetMeasureNotesAsync()
+    {
+        return GetAsync(U("/measure/notes"));
+    }
+
+    pplx::task<utility::string_t> PostMeasureNotesAsync(const json::value& content)
+    {
+        return PostAsync(U("/measure/notes"), content);
+    }
+
+    pplx::task<utility::string_t> GetMeasureLevelAsync()
+    {
+        return GetAsync(U("/measure/level"));
+    }
+
+    pplx::task<utility::string_t> PostMeasureLevelAsync(const json::value& content)
+    {
+        return PostAsync(U("/measure/level"), content);
+    }
+
+    pplx::task<utility::string_t> GetMeasureLevelUnitsAsync()
+    {
+        return GetAsync(U("/measure/level/units"));
+    }
+
+    pplx::task<utility::string_t> GetMeasureProtectionOptionsAsync()
+    {
+        return GetAsync(U("/measure/protection-options"));
+    }
+
+    pplx::task<utility::string_t> PostMeasureProtectionOptionsAsync(const json::value& content)
+    {
+        return PostAsync(U("/measure/protection-options"), content);
+    }
+
+    pplx::task<utility::string_t> PutMeasureProtectionOptionsAsync(const json::value& content)
+    {
+        return PutAsync(U("/measure/protection-options"), content);
+    }
+
+    pplx::task<utility::string_t> GetMeasureSweepConfigurationAsync()
+    {
+        return GetAsync(U("/measure/sweep/configuration"));
+    }
+
+    pplx::task<utility::string_t> PostMeasureSweepConfigurationAsync(const json::value& content)
+    {
+        return PostAsync(U("/measure/sweep/configuration"), content);
+    }
+
+    pplx::task<utility::string_t> PutMeasureSweepConfigurationAsync(const json::value& content)
+    {
+        return PutAsync(U("/measure/sweep/configuration"), content);
+    }
+
+    pplx::task<utility::string_t> GetMeasureSweepRepetitionsAsync()
+    {
+        return GetAsync(U("/measure/sweep/repetitions"));
+    }
+
+    pplx::task<utility::string_t> PostMeasureSweepRepetitionsAsync(const json::value& content)
+    {
+        return PostAsync(U("/measure/sweep/repetitions"), content);
+    }
+
+    pplx::task<utility::string_t> GetMeasureTimingAsync()
+    {
+        return GetAsync(U("/measure/timing"));
+    }
+
+    pplx::task<utility::string_t> PostMeasureTimingAsync(const json::value& content)
+    {
+        return PostAsync(U("/measure/timing"), content);
+    }
+
+    pplx::task<utility::string_t> PutMeasureTimingAsync(const json::value& content)
+    {
+        return PutAsync(U("/measure/timing"), content);
+    }
+
+    pplx::task<utility::string_t> GetMeasureTimingOffsetAsync()
+    {
+        return GetAsync(U("/measure/timing-offset"));
+    }
+
+    pplx::task<utility::string_t> PostMeasureTimingOffsetAsync(const json::value& content)
+    {
+        return PostAsync(U("/measure/timing-offset"), content);
+    }
+
+    pplx::task<utility::string_t> GetMeasurePlaybackModeAsync()
+    {
+        return GetAsync(U("/measure/playback-mode"));
+    }
+
+    pplx::task<utility::string_t> PostMeasurePlaybackModeAsync(const json::value& content)
+    {
+        return PostAsync(U("/measure/playback-mode"), content);
+    }
+
+    pplx::task<utility::string_t> GetMeasurePlaybackModeChoicesAsync()
+    {
+        return GetAsync(U("/measure/playback-mode/choices"));
+    }
+
+    pplx::task<utility::string_t> PostMeasureFilePlaybackStimulusAsync(const json::value& content)
+    {
+        return PostAsync(U("/measure/file-playback-stimulus"), content);
+    }
+
+    pplx::task<utility::string_t> GetMeasureMeasurementModeAsync()
+    {
+        return GetAsync(U("/measure/measurement-mode"));
+    }
+
+    pplx::task<utility::string_t> PostMeasureMeasurementModeAsync(const json::value& content)
+    {
+        return PostAsync(U("/measure/measurement-mode"), content);
+    }
+
+    pplx::task<utility::string_t> GetMeasureMeasurementModeChoicesAsync()
+    {
+        return GetAsync(U("/measure/measurement-mode/choices"));
+    }
+
+    pplx::task<utility::string_t> GetMeasureNumberOfRepetitionsAsync()
+    {
+        return GetAsync(U("/measure/number-of-repetitions"));
+    }
+
+    pplx::task<utility::string_t> PostMeasureNumberOfRepetitionsAsync(const json::value& content)
+    {
+        return PostAsync(U("/measure/number-of-repetitions"), content);
+    }
+
+    pplx::task<utility::string_t> GetMeasureSequentialChannelsAsync()
+    {
+        return GetAsync(U("/measure/sequential-channels"));
+    }
+
+    pplx::task<utility::string_t> PostMeasureSequentialChannelsAsync(const json::value& content)
+    {
+        return PostAsync(U("/measure/sequential-channels"), content);
+    }
+
+    pplx::task<utility::string_t> GetMeasureSequentialChoicesAsync()
+    {
+        return GetAsync(U("/measure/sequential-choices"));
+    }
+
+    pplx::task<utility::string_t> GetMeasureStartDelayAsync()
+    {
+        return GetAsync(U("/measure/start-delay"));
+    }
+
+    pplx::task<utility::string_t> PostMeasureStartDelayAsync(const json::value& content)
+    {
+        return PostAsync(U("/measure/start-delay"), content);
+    }
+
+    pplx::task<utility::string_t> GetMeasureInvertSecondOutputAsync()
+    {
+        return GetAsync(U("/measure/invert-second-output"));
+    }
+
+    pplx::task<utility::string_t> PostMeasureInvertSecondOutputAsync(const json::value& content)
+    {
+        return PostAsync(U("/measure/invert-second-output"), content);
+    }
+
+    pplx::task<utility::string_t> GetMeasureFillSilenceWithDitherAsync()
+    {
+        return GetAsync(U("/measure/fill-silence-with-dither"));
+    }
+
+    pplx::task<utility::string_t> PostMeasureFillSilenceWithDitherAsync(const json::value& content)
+    {
+        return PostAsync(U("/measure/fill-silence-with-dither"), content);
+    }
+
+    pplx::task<utility::string_t> GetMeasureCaptureNoiseFloorAsync()
+    {
+        return GetAsync(U("/measure/capture-noise-floor"));
+    }
+
+    pplx::task<utility::string_t> PostMeasureCaptureNoiseFloorAsync(const json::value& content)
+    {
+        return PostAsync(U("/measure/capture-noise-floor"), content);
+    }
+
+    pplx::task<utility::string_t> SubscribeMeasureAsync(const json::value& content)
+    {
+        return PostAsync(U("/measure/subscribe"), content);
+    }
+
+    pplx::task<utility::string_t> UnsubscribeMeasureAsync(const json::value& content)
+    {
+        return PostAsync(U("/measure/unsubscribe"), content);
+    }
 };
