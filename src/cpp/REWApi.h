@@ -48,6 +48,14 @@ public:
 
     // Methods for handling SPL meter
     pplx::task<utility::string_t> GetSPLMeterAsync();
+    pplx::task<utility::string_t> GetSPLMeterCommandsAsync();
+    pplx::task<utility::string_t> PostSPLMeterCommandAsync(const utility::string_t& id, const web::json::value& content);
+    pplx::task<utility::string_t> GetSPLMeterConfigurationAsync(const utility::string_t& id);
+    pplx::task<utility::string_t> PostSPLMeterConfigurationAsync(const utility::string_t& id, const web::json::value& content);
+    pplx::task<utility::string_t> GetSPLMeterModesAsync();
+    pplx::task<utility::string_t> GetSPLMeterWeightingsAsync();
+    pplx::task<utility::string_t> GetSPLMeterFiltersAsync();
+    pplx::task<utility::string_t> GetSPLMeterLevelsAsync(const utility::string_t& id);
 
     // Methods for handling RTA
     pplx::task<utility::string_t> GetRTAAsync();

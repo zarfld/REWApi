@@ -623,6 +623,46 @@ public:
         return GetAsync(U("http://localhost:4735/splmeter"));
     }
 
+    pplx::task<utility::string_t> GetSPLMeterCommandsAsync()
+    {
+        return GetAsync(U("/spl-meter/commands"));
+    }
+
+    pplx::task<utility::string_t> PostSPLMeterCommandAsync(const utility::string_t& id, const json::value& content)
+    {
+        return PostAsync(U("/spl-meter/") + id + U("/command"), content);
+    }
+
+    pplx::task<utility::string_t> GetSPLMeterConfigurationAsync(const utility::string_t& id)
+    {
+        return GetAsync(U("/spl-meter/") + id + U("/configuration"));
+    }
+
+    pplx::task<utility::string_t> PostSPLMeterConfigurationAsync(const utility::string_t& id, const json::value& content)
+    {
+        return PostAsync(U("/spl-meter/") + id + U("/configuration"), content);
+    }
+
+    pplx::task<utility::string_t> GetSPLMeterModesAsync()
+    {
+        return GetAsync(U("/spl-meter/modes"));
+    }
+
+    pplx::task<utility::string_t> GetSPLMeterWeightingsAsync()
+    {
+        return GetAsync(U("/spl-meter/weightings"));
+    }
+
+    pplx::task<utility::string_t> GetSPLMeterFiltersAsync()
+    {
+        return GetAsync(U("/spl-meter/filters"));
+    }
+
+    pplx::task<utility::string_t> GetSPLMeterLevelsAsync(const utility::string_t& id)
+    {
+        return GetAsync(U("/spl-meter/") + id + U("/levels"));
+    }
+
     // Methods for handling RTA
     pplx::task<utility::string_t> GetRTAAsync()
     {

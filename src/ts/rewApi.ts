@@ -330,6 +330,38 @@ class REWApi {
         return await this.get("http://localhost:4735/splmeter");
     }
 
+    async getSPLMeterCommands(): Promise<any> {
+        return await this.get("http://localhost:4735/spl-meter/commands");
+    }
+
+    async postSPLMeterCommand(id: string, data: any): Promise<any> {
+        return await this.post(`http://localhost:4735/spl-meter/${id}/command`, data);
+    }
+
+    async getSPLMeterConfiguration(id: string): Promise<any> {
+        return await this.get(`http://localhost:4735/spl-meter/${id}/configuration`);
+    }
+
+    async postSPLMeterConfiguration(id: string, data: any): Promise<any> {
+        return await this.post(`http://localhost:4735/spl-meter/${id}/configuration`, data);
+    }
+
+    async getSPLMeterModes(): Promise<any> {
+        return await this.get("http://localhost:4735/spl-meter/modes");
+    }
+
+    async getSPLMeterWeightings(): Promise<any> {
+        return await this.get("http://localhost:4735/spl-meter/weightings");
+    }
+
+    async getSPLMeterFilters(): Promise<any> {
+        return await this.get("http://localhost:4735/spl-meter/filters");
+    }
+
+    async getSPLMeterLevels(id: string): Promise<any> {
+        return await this.get(`http://localhost:4735/spl-meter/${id}/levels`);
+    }
+
     // Methods for handling RTA
     async getRTA(): Promise<any> {
         return await this.get("http://localhost:4735/rta");
