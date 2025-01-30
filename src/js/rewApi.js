@@ -86,6 +86,21 @@ class REWApi {
             }
         }
 
+        if (command === "Smooth") {
+            if (!parameters.hasOwnProperty("smoothing") || typeof parameters["smoothing"] !== "string") {
+                return "Error: Missing or invalid 'smoothing' parameter for 'Smooth' command. Expected a string.";
+            }
+        }
+
+        if (command === "Offset t=0") {
+            if (!parameters.hasOwnProperty("offset") || typeof parameters["offset"] !== "string") {
+                return "Error: Missing or invalid 'offset' parameter for 'Offset t=0' command. Expected a string.";
+            }
+            if (!parameters.hasOwnProperty("unit") || typeof parameters["unit"] !== "string") {
+                return "Error: Missing or invalid 'unit' parameter for 'Offset t=0' command. Expected a string.";
+            }
+        }
+
         const content = {
             command: command,
             parameters: parameters

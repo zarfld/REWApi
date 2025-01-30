@@ -95,6 +95,18 @@ public class REWApi
             }
         }
 
+        if (command == "Offset t=0")
+        {
+            if (!parameters.Headers.Contains("offset") || string.IsNullOrEmpty(parameters.Headers.GetValues("offset").FirstOrDefault()))
+            {
+                return "Error: Missing or invalid 'offset' parameter for 'Offset t=0' command. Expected a string.";
+            }
+            if (!parameters.Headers.Contains("unit") || string.IsNullOrEmpty(parameters.Headers.GetValues("unit").FirstOrDefault()))
+            {
+                return "Error: Missing or invalid 'unit' parameter for 'Offset t=0' command. Expected a string.";
+            }
+        }
+
         var content = new StringContent("{\"command\":\"" + command + "\",\"parameters\":" + parameters.ReadAsStringAsync().Result + "}", Encoding.UTF8, "application/json");
         string endpoint = $"/measurements/{id}/command";
         return await PostAsync(endpoint, content);

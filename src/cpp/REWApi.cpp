@@ -131,6 +131,18 @@ public:
             }
         }
 
+        if (command == U("Offset t=0"))
+        {
+            if (!parameters.has_field(U("offset")) || !parameters.at(U("offset")).is_string())
+            {
+                return pplx::task_from_result(utility::string_t(U("Error: Missing or invalid 'offset' parameter for 'Offset t=0' command. Expected a string.")));
+            }
+            if (!parameters.has_field(U("unit")) || !parameters.at(U("unit")).is_string())
+            {
+                return pplx::task_from_result(utility::string_t(U("Error: Missing or invalid 'unit' parameter for 'Offset t=0' command. Expected a string.")));
+            }
+        }
+
         json::value content;
         content[U("command")] = json::value::string(command);
         content[U("parameters")] = parameters;
