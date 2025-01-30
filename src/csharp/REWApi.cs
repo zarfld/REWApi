@@ -87,6 +87,14 @@ public class REWApi
             }
         }
 
+        if (command == "Smooth")
+        {
+            if (!parameters.Headers.Contains("smoothing") || string.IsNullOrEmpty(parameters.Headers.GetValues("smoothing").FirstOrDefault()))
+            {
+                return "Error: Missing or invalid 'smoothing' parameter for 'Smooth' command. Expected a string.";
+            }
+        }
+
         var content = new StringContent("{\"command\":\"" + command + "\",\"parameters\":" + parameters.ReadAsStringAsync().Result + "}", Encoding.UTF8, "application/json");
         string endpoint = $"/measurements/{id}/command";
         return await PostAsync(endpoint, content);
