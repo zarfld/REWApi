@@ -1334,4 +1334,70 @@ public class REWApi
     {
         return await PostAsync("/alignment-tool/mode", content);
     }
+
+    // Methods for handling default EQ settings
+    public async Task<string> GetDefaultEqualiserAsync()
+    {
+        return await GetAsync("/eq/default-equaliser");
+    }
+
+    public async Task<string> UpdateDefaultEqualiserAsync(HttpContent content)
+    {
+        return await PostAsync("/eq/default-equaliser", content);
+    }
+
+    public async Task<string> GetDefaultTargetSettingsAsync()
+    {
+        return await GetAsync("/eq/default-target-settings");
+    }
+
+    public async Task<string> UpdateDefaultTargetSettingsAsync(HttpContent content)
+    {
+        return await PostAsync("/eq/default-target-settings", content);
+    }
+
+    public async Task<string> GetDefaultTargetLevelAsync()
+    {
+        return await GetAsync("/eq/default-target-level");
+    }
+
+    public async Task<string> UpdateDefaultTargetLevelAsync(HttpContent content)
+    {
+        return await PostAsync("/eq/default-target-level", content);
+    }
+
+    public async Task<string> GetDefaultRoomCurveSettingsAsync()
+    {
+        return await GetAsync("/eq/default-room-curve-settings");
+    }
+
+    public async Task<string> UpdateDefaultRoomCurveSettingsAsync(HttpContent content)
+    {
+        return await PostAsync("/eq/default-room-curve-settings", content);
+    }
+
+    public async Task<string> GetHouseCurveAsync()
+    {
+        return await GetAsync("/eq/house-curve");
+    }
+
+    public async Task<string> UpdateHouseCurveAsync(HttpContent content)
+    {
+        return await PostAsync("/eq/house-curve", content);
+    }
+
+    public async Task<string> ClearHouseCurveAsync()
+    {
+        return await PostAsync("/eq/house-curve", new StringContent("", Encoding.UTF8, "application/json"));
+    }
+
+    public async Task<string> GetMatchTargetSettingsAsync()
+    {
+        return await GetAsync("/eq/match-target-settings");
+    }
+
+    public async Task<string> UpdateMatchTargetSettingsAsync(HttpContent content)
+    {
+        return await PostAsync("/eq/match-target-settings", content);
+    }
 }
