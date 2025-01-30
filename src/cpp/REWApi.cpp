@@ -1664,4 +1664,100 @@ public:
     {
         return PostAsync(U("/eq/match-target-settings"), content);
     }
+
+    // Methods for handling the /generator endpoint
+    pplx::task<utility::string_t> GetGeneratorStatusAsync()
+    {
+        return GetAsync(U("/generator/status"));
+    }
+
+    pplx::task<utility::string_t> GetGeneratorSignalAsync()
+    {
+        return GetAsync(U("/generator/signal"));
+    }
+
+    pplx::task<utility::string_t> SetGeneratorSignalAsync(const json::value& content)
+    {
+        return PutAsync(U("/generator/signal"), content);
+    }
+
+    pplx::task<utility::string_t> GetGeneratorSignalsAsync()
+    {
+        return GetAsync(U("/generator/signals"));
+    }
+
+    pplx::task<utility::string_t> GetGeneratorSignalConfigurationAsync()
+    {
+        return GetAsync(U("/generator/signal/configuration"));
+    }
+
+    pplx::task<utility::string_t> SetGeneratorSignalConfigurationAsync(const json::value& content)
+    {
+        return PostAsync(U("/generator/signal/configuration"), content);
+    }
+
+    pplx::task<utility::string_t> GetGeneratorSignalCommandsAsync()
+    {
+        return GetAsync(U("/generator/signal/commands"));
+    }
+
+    pplx::task<utility::string_t> SendGeneratorSignalCommandAsync(const json::value& content)
+    {
+        return PostAsync(U("/generator/signal/command"), content);
+    }
+
+    pplx::task<utility::string_t> GetGeneratorLevelAsync()
+    {
+        return GetAsync(U("/generator/level"));
+    }
+
+    pplx::task<utility::string_t> SetGeneratorLevelAsync(const json::value& content)
+    {
+        return PostAsync(U("/generator/level"), content);
+    }
+
+    pplx::task<utility::string_t> GetGeneratorLevelUnitsAsync()
+    {
+        return GetAsync(U("/generator/level/units"));
+    }
+
+    pplx::task<utility::string_t> GetGeneratorFrequencyAsync()
+    {
+        return GetAsync(U("/generator/frequency"));
+    }
+
+    pplx::task<utility::string_t> SetGeneratorFrequencyAsync(const json::value& content)
+    {
+        return PostAsync(U("/generator/frequency"), content);
+    }
+
+    pplx::task<utility::string_t> GetGeneratorInvertSecondOutputAsync()
+    {
+        return GetAsync(U("/generator/invert-second-output"));
+    }
+
+    pplx::task<utility::string_t> SetGeneratorInvertSecondOutputAsync(const json::value& content)
+    {
+        return PostAsync(U("/generator/invert-second-output"), content);
+    }
+
+    pplx::task<utility::string_t> GetGeneratorProtectionAsync()
+    {
+        return GetAsync(U("/generator/protection"));
+    }
+
+    pplx::task<utility::string_t> SetGeneratorProtectionAsync(const json::value& content)
+    {
+        return PostAsync(U("/generator/protection"), content);
+    }
+
+    pplx::task<utility::string_t> StartGeneratorAsync()
+    {
+        return PostAsync(U("/generator/commands"), json::value::parse(U("{\"command\":\"start\"}")));
+    }
+
+    pplx::task<utility::string_t> StopGeneratorAsync()
+    {
+        return PostAsync(U("/generator/commands"), json::value::parse(U("{\"command\":\"stop\"}")));
+    }
 };

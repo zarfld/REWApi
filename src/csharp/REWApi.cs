@@ -1400,4 +1400,102 @@ public class REWApi
     {
         return await PostAsync("/eq/match-target-settings", content);
     }
+
+    // Methods for handling the /generator endpoint
+    public async Task<string> GetGeneratorStatusAsync()
+    {
+        return await GetAsync("/generator/status");
+    }
+
+    public async Task<string> GetGeneratorSignalAsync()
+    {
+        return await GetAsync("/generator/signal");
+    }
+
+    public async Task<string> SetGeneratorSignalAsync(HttpContent content)
+    {
+        return await PutAsync("/generator/signal", content);
+    }
+
+    public async Task<string> GetGeneratorSignalsAsync()
+    {
+        return await GetAsync("/generator/signals");
+    }
+
+    public async Task<string> GetGeneratorSignalConfigurationAsync()
+    {
+        return await GetAsync("/generator/signal/configuration");
+    }
+
+    public async Task<string> SetGeneratorSignalConfigurationAsync(HttpContent content)
+    {
+        return await PostAsync("/generator/signal/configuration", content);
+    }
+
+    public async Task<string> GetGeneratorSignalCommandsAsync()
+    {
+        return await GetAsync("/generator/signal/commands");
+    }
+
+    public async Task<string> SendGeneratorSignalCommandAsync(HttpContent content)
+    {
+        return await PostAsync("/generator/signal/command", content);
+    }
+
+    public async Task<string> GetGeneratorLevelAsync()
+    {
+        return await GetAsync("/generator/level");
+    }
+
+    public async Task<string> SetGeneratorLevelAsync(HttpContent content)
+    {
+        return await PostAsync("/generator/level", content);
+    }
+
+    public async Task<string> GetGeneratorLevelUnitsAsync()
+    {
+        return await GetAsync("/generator/level/units");
+    }
+
+    public async Task<string> GetGeneratorFrequencyAsync()
+    {
+        return await GetAsync("/generator/frequency");
+    }
+
+    public async Task<string> SetGeneratorFrequencyAsync(HttpContent content)
+    {
+        return await PostAsync("/generator/frequency", content);
+    }
+
+    public async Task<string> GetGeneratorInvertSecondOutputAsync()
+    {
+        return await GetAsync("/generator/invert-second-output");
+    }
+
+    public async Task<string> SetGeneratorInvertSecondOutputAsync(HttpContent content)
+    {
+        return await PostAsync("/generator/invert-second-output", content);
+    }
+
+    public async Task<string> GetGeneratorProtectionAsync()
+    {
+        return await GetAsync("/generator/protection");
+    }
+
+    public async Task<string> SetGeneratorProtectionAsync(HttpContent content)
+    {
+        return await PostAsync("/generator/protection", content);
+    }
+
+    public async Task<string> StartGeneratorAsync()
+    {
+        var content = new StringContent("{\"command\":\"start\"}", System.Text.Encoding.UTF8, "application/json");
+        return await PostAsync("/generator/commands", content);
+    }
+
+    public async Task<string> StopGeneratorAsync()
+    {
+        var content = new StringContent("{\"command\":\"stop\"}", System.Text.Encoding.UTF8, "application/json");
+        return await PostAsync("/generator/commands", content);
+    }
 }
