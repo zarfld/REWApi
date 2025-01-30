@@ -291,6 +291,47 @@ public class REWApi
         return await PutAsync("http://localhost:4735/eq/settings", content);
     }
 
+    public async Task<string> GetEqualiserAsync(string id)
+    {
+        return await GetAsync($"/measurements/{id}/equaliser");
+    }
+
+    public async Task<string> UpdateEqualiserAsync(string id, HttpContent content)
+    {
+        return await PostAsync($"/measurements/{id}/equaliser", content);
+    }
+
+    public async Task<string> GetFiltersAsync(string id)
+    {
+        return await GetAsync($"/measurements/{id}/filters");
+    }
+
+    public async Task<string> UpdateFilterAsync(string id, HttpContent content)
+    {
+        return await PutAsync($"/measurements/{id}/filters", content);
+    }
+
+    public async Task<string> UpdateFiltersAsync(string id, HttpContent content)
+    {
+        return await PostAsync($"/measurements/{id}/filters", content);
+    }
+
+    public async Task<string> GetEQFrequencyResponseAsync(string id, string unit = "SPL", string smoothing = "default", int ppo = 0)
+    {
+        string endpoint = $"/measurements/{id}/eq/frequency-response?unit={unit}&smoothing={smoothing}";
+        if (ppo > 0)
+        {
+            endpoint += $"&ppo={ppo}";
+        }
+        var response = await GetAsync(endpoint);
+        if (ppo > 0 && smoothing == "default")
+        {
+            // Apply smoothing to ppo/2 if greater smoothing has not already been applied
+            // This is a placeholder for the actual smoothing logic
+        }
+        return response;
+    }
+
     // Methods for handling SPL meter
     public async Task<string> GetSPLMeterAsync()
     {

@@ -592,6 +592,48 @@ public:
         return PutAsync(U("/eq/settings"), content);
     }
 
+    pplx::task<utility::string_t> GetEqualiserAsync(const utility::string_t& id)
+    {
+        return GetAsync(U("/measurements/") + id + U("/equaliser"));
+    }
+
+    pplx::task<utility::string_t> UpdateEqualiserAsync(const utility::string_t& id, const json::value& content)
+    {
+        return PostAsync(U("/measurements/") + id + U("/equaliser"), content);
+    }
+
+    pplx::task<utility::string_t> GetFiltersAsync(const utility::string_t& id)
+    {
+        return GetAsync(U("/measurements/") + id + U("/filters"));
+    }
+
+    pplx::task<utility::string_t> UpdateFilterAsync(const utility::string_t& id, const json::value& content)
+    {
+        return PutAsync(U("/measurements/") + id + U("/filters"), content);
+    }
+
+    pplx::task<utility::string_t> UpdateFiltersAsync(const utility::string_t& id, const json::value& content)
+    {
+        return PostAsync(U("/measurements/") + id + U("/filters"), content);
+    }
+
+    pplx::task<utility::string_t> GetEQFrequencyResponseAsync(const utility::string_t& id, const utility::string_t& unit = U("SPL"), const utility::string_t& smoothing = U("default"), int ppo = 0)
+    {
+        utility::string_t endpoint = U("/measurements/") + id + U("/eq/frequency-response?unit=") + unit + U("&smoothing=") + smoothing;
+        if (ppo > 0)
+        {
+            endpoint += U("&ppo=") + std::to_wstring(ppo);
+        }
+        return GetAsync(endpoint).then([this, ppo, smoothing](utility::string_t response) {
+            if (ppo > 0 && smoothing == U("default"))
+            {
+                // Apply smoothing to ppo/2 if greater smoothing has not already been applied
+                // This is a placeholder for the actual smoothing logic
+            }
+            return response;
+        });
+    }
+
     // Methods for handling SPL meter
     pplx::task<utility::string_t> GetSPLMeterAsync()
     {

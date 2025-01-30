@@ -1634,3 +1634,278 @@ class REWApi {
     }
 }
 ```
+
+## EQ and Filter Endpoints
+
+The REW API now supports endpoints for reading and modifying a measurement's EQ and filter settings. The following endpoints are available:
+
+### Get Equaliser
+
+To get a measurement's equaliser settings, make a GET request to the `/measurements/:id/equaliser` endpoint.
+
+Example:
+
+```json
+{
+  "equaliser": {
+    "type": "Parametric",
+    "bands": [
+      {
+        "frequency": 1000,
+        "gain": -3,
+        "q": 1.0
+      },
+      {
+        "frequency": 2000,
+        "gain": 2,
+        "q": 0.7
+      }
+    ]
+  }
+}
+```
+
+### Update Equaliser
+
+To update a measurement's equaliser settings, make a POST request to the `/measurements/:id/equaliser` endpoint with a JSON body containing the equaliser settings.
+
+Example:
+
+```json
+{
+  "equaliser": {
+    "type": "Parametric",
+    "bands": [
+      {
+        "frequency": 1000,
+        "gain": -3,
+        "q": 1.0
+      },
+      {
+        "frequency": 2000,
+        "gain": 2,
+        "q": 0.7
+      }
+    ]
+  }
+}
+```
+
+### Get Filters
+
+To get a measurement's filter settings, make a GET request to the `/measurements/:id/filters` endpoint.
+
+Example:
+
+```json
+{
+  "filters": [
+    {
+      "type": "LowPass",
+      "frequency": 500,
+      "q": 0.7
+    },
+    {
+      "type": "HighPass",
+      "frequency": 2000,
+      "q": 1.0
+    }
+  ]
+}
+```
+
+### Update Filter
+
+To update an individual filter setting, make a PUT request to the `/measurements/:id/filters` endpoint with a JSON body containing the filter settings.
+
+Example:
+
+```json
+{
+  "filter": {
+    "type": "LowPass",
+    "frequency": 500,
+    "q": 0.7
+  }
+}
+```
+
+### Update Filters
+
+To update multiple (or all) filter settings, make a POST request to the `/measurements/:id/filters` endpoint with a JSON body containing the filter settings.
+
+Example:
+
+```json
+{
+  "filters": [
+    {
+      "type": "LowPass",
+      "frequency": 500,
+      "q": 0.7
+    },
+    {
+      "type": "HighPass",
+      "frequency": 2000,
+      "q": 1.0
+    }
+  ]
+}
+```
+
+### Get EQ Frequency Response
+
+To get the frequency response for the predicted result of a measurement's EQ filters, make a GET request to the `/measurements/:id/eq/frequency-response` endpoint.
+
+Example:
+
+```json
+{
+  "frequencyResponse": {
+    "smoothing": "1/3",
+    "startFrequency": 20,
+    "pointsPerOctave": 48,
+    "magnitudes": "Base64-encoded string of response magnitudes",
+    "phases": "Base64-encoded string of response phases"
+  }
+}
+```
+
+## New Methods for Handling EQ and Filters
+
+The following methods have been added to handle EQ and filter settings:
+
+### C++
+
+```cpp
+class REWApi
+{
+public:
+    pplx::task<utility::string_t> GetEqualiserAsync(const utility::string_t& id)
+    {
+        return GetAsync(U("/measurements/") + id + U("/equaliser"));
+    }
+
+    pplx::task<utility::string_t> UpdateEqualiserAsync(const utility::string_t& id, const json::value& content)
+    {
+        return PostAsync(U("/measurements/") + id + U("/equaliser"), content);
+    }
+
+    pplx::task<utility::string_t> GetFiltersAsync(const utility::string_t& id)
+    {
+        return GetAsync(U("/measurements/") + id + U("/filters"));
+    }
+
+    pplx::task<utility::string_t> UpdateFilterAsync(const utility::string_t& id, const json::value& content)
+    {
+        return PutAsync(U("/measurements/") + id + U("/filters"), content);
+    }
+
+    pplx::task<utility::string_t> UpdateFiltersAsync(const utility::string_t& id, const json::value& content)
+    {
+        return PostAsync(U("/measurements/") + id + U("/filters"), content);
+    }
+
+    pplx::task<utility::string_t> GetEQFrequencyResponseAsync(const utility::string_t& id)
+    {
+        return GetAsync(U("/measurements/") + id + U("/eq/frequency-response"));
+    }
+};
+```
+
+### C#
+
+```csharp
+public class REWApi
+{
+    public async Task<string> GetEqualiserAsync(string id)
+    {
+        return await GetAsync($"http://localhost:4735/measurements/{id}/equaliser");
+    }
+
+    public async Task<string> UpdateEqualiserAsync(string id, HttpContent content)
+    {
+        return await PostAsync($"http://localhost:4735/measurements/{id}/equaliser", content);
+    }
+
+    public async Task<string> GetFiltersAsync(string id)
+    {
+        return await GetAsync($"http://localhost:4735/measurements/{id}/filters");
+    }
+
+    public async Task<string> UpdateFilterAsync(string id, HttpContent content)
+    {
+        return await PutAsync($"http://localhost:4735/measurements/{id}/filters", content);
+    }
+
+    public async Task<string> UpdateFiltersAsync(string id, HttpContent content)
+    {
+        return await PostAsync($"http://localhost:4735/measurements/{id}/filters", content);
+    }
+
+    public async Task<string> GetEQFrequencyResponseAsync(string id)
+    {
+        return await GetAsync($"http://localhost:4735/measurements/{id}/eq/frequency-response");
+    }
+}
+```
+
+### JavaScript
+
+```javascript
+class REWApi {
+    async getEqualiser(id) {
+        return await this.get(`http://localhost:4735/measurements/${id}/equaliser`);
+    }
+
+    async updateEqualiser(id, data) {
+        return await this.post(`http://localhost:4735/measurements/${id}/equaliser`, data);
+    }
+
+    async getFilters(id) {
+        return await this.get(`http://localhost:4735/measurements/${id}/filters`);
+    }
+
+    async updateFilter(id, data) {
+        return await this.put(`http://localhost:4735/measurements/${id}/filters`, data);
+    }
+
+    async updateFilters(id, data) {
+        return await this.post(`http://localhost:4735/measurements/${id}/filters`, data);
+    }
+
+    async getEQFrequencyResponse(id) {
+        return await this.get(`http://localhost:4735/measurements/${id}/eq/frequency-response`);
+    }
+}
+```
+
+### TypeScript
+
+```typescript
+class REWApi {
+    async getEqualiser(id: string): Promise<any> {
+        return await this.get(`http://localhost:4735/measurements/${id}/equaliser`);
+    }
+
+    async updateEqualiser(id: string, data: any): Promise<any> {
+        return await this.post(`http://localhost:4735/measurements/${id}/equaliser`, data);
+    }
+
+    async getFilters(id: string): Promise<any> {
+        return await this.get(`http://localhost:4735/measurements/${id}/filters`);
+    }
+
+    async updateFilter(id: string, data: any): Promise<any> {
+        return await this.put(`http://localhost:4735/measurements/${id}/filters`, data);
+    }
+
+    async updateFilters(id: string, data: any): Promise<any> {
+        return await this.post(`http://localhost:4735/measurements/${id}/filters`, data);
+    }
+
+    async getEQFrequencyResponse(id: string): Promise<any> {
+        return await this.get(`http://localhost:4735/measurements/${id}/eq/frequency-response`);
+    }
+}
+```

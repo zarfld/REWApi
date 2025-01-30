@@ -325,6 +325,39 @@ class REWApi {
         return await this.put("http://localhost:4735/eq/settings", data);
     }
 
+    async getEqualiser(id: string): Promise<any> {
+        return await this.get(`/measurements/${id}/equaliser`);
+    }
+
+    async updateEqualiser(id: string, data: any): Promise<any> {
+        return await this.post(`/measurements/${id}/equaliser`, data);
+    }
+
+    async getFilters(id: string): Promise<any> {
+        return await this.get(`/measurements/${id}/filters`);
+    }
+
+    async updateFilter(id: string, data: any): Promise<any> {
+        return await this.put(`/measurements/${id}/filters`, data);
+    }
+
+    async updateFilters(id: string, data: any): Promise<any> {
+        return await this.post(`/measurements/${id}/filters`, data);
+    }
+
+    async getEQFrequencyResponse(id: string, unit: string = "SPL", smoothing: string = "default", ppo: number = 0): Promise<any> {
+        let endpoint = `/measurements/${id}/eq/frequency-response?unit=${unit}&smoothing=${smoothing}`;
+        if (ppo > 0) {
+            endpoint += `&ppo=${ppo}`;
+        }
+        const response = await this.get(endpoint);
+        if (ppo > 0 && smoothing === "default") {
+            // Apply smoothing to ppo/2 if greater smoothing has not already been applied
+            // This is a placeholder for the actual smoothing logic
+        }
+        return response;
+    }
+
     // Methods for handling SPL meter
     async getSPLMeter(): Promise<any> {
         return await this.get("http://localhost:4735/splmeter");
