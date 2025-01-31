@@ -1103,6 +1103,27 @@ class REWApi {
         return await this.post("http://localhost:4735/stepped-measurement/frequency-span", data);
     }
 
+    // Methods for handling import endpoints
+    async importFrequencyResponse(data) {
+        return await this.post("http://localhost:4735/import/frequency-response", data);
+    }
+
+    async importImpulseResponse(data) {
+        return await this.post("http://localhost:4735/import/impulse-response", data);
+    }
+
+    async importRTAFile(data) {
+        return await this.post("http://localhost:4735/import/rta-file", data);
+    }
+
+    async importSweepRecordings(data) {
+        return await this.post("http://localhost:4735/import/sweep-recordings", data);
+    }
+
+    async getLastImportedFilePath() {
+        return await this.get("http://localhost:4735/import/last-imported-file-path");
+    }
+
     // Private method to notify subscribers
     async _notifySubscribers(endpoint, content) {
         const subscribers = await this.getSubscribers();

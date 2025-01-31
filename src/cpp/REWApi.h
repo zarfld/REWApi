@@ -393,7 +393,14 @@ public:
     pplx::task<utility::string_t> PostSteppedMeasurementTypeAsync(const web::json::value& content);
     pplx::task<utility::string_t> GetSteppedMeasurementFrequencySpanAsync();
     pplx::task<utility::string_t> PostSteppedMeasurementFrequencySpanAsync(const web::json::value& content);
-    
+
+    // Methods for handling import endpoints
+    pplx::task<utility::string_t> ImportFrequencyResponseAsync(const web::json::value& content);
+    pplx::task<utility::string_t> ImportImpulseResponseAsync(const web::json::value& content);
+    pplx::task<utility::string_t> ImportRTAFileAsync(const web::json::value& content);
+    pplx::task<utility::string_t> ImportSweepRecordingsAsync(const web::json::value& content);
+    pplx::task<utility::string_t> GetLastImportedFilePathAsync();
+
 private:
     bool graphUpdateInhibited;
     bool blockingModeEnabled;
