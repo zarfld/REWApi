@@ -472,6 +472,38 @@ class REWApi {
         return await this.get("http://localhost:4735/roomsimulator");
     }
 
+    async getRoomSize() {
+        return await this.get("/roomsim/room-size");
+    }
+
+    async setRoomSize(data) {
+        return await this.post("/roomsim/room-size", data);
+    }
+
+    async getRoomIsSealed() {
+        return await this.get("/roomsim/room-is-sealed");
+    }
+
+    async setRoomIsSealed(data) {
+        return await this.post("/roomsim/room-is-sealed", data);
+    }
+
+    async getRoomSurfaceAbsorptions() {
+        return await this.get("/roomsim/absorptions");
+    }
+
+    async setRoomSurfaceAbsorptions(data) {
+        return await this.post("/roomsim/absorptions", data);
+    }
+
+    async getRoomSources() {
+        return await this.get("/roomsim/sources");
+    }
+
+    async setRoomSources(data) {
+        return await this.post("/roomsim/sources", data);
+    }
+
     // Method for handling shutdown command
     async shutdown() {
         return await this.post("http://localhost:4735/application/command", { command: "shutdown" });
