@@ -1737,3 +1737,40 @@ Example:
 ```
 
 These new endpoints provide comprehensive support for managing a measurement's EQ and filter settings through the REW API.
+
+## RTA Endpoint
+
+The `/rta` endpoint provides control of REW's [RTA](https://www.roomeqwizard.com/help/help_en-GB/html/spectrum.html). A GET at the `/rta/commands` endpoint returns the list of commands, to issue a command POST it to the `/rta/command` endpoint.
+
+The RTA setup can be queried or set via the `/rta/configuration`, `/rta/appearance-configuration` and `/rta/distortion-configuration` endpoints.
+
+The current status of the RTA (whether it is enabled and whether it is running) can be read from the `/rta/status` endpoint. Rather than polling status with GET a [subscription](https://www.roomeqwizard.com/help/help_en-GB/html/api.html#subscriptions) can be added to be notified whenever the RTA status is updated. There are no parameters for status updates.
+
+The current RTA input level can be read from the `/rta/levels` endpoint, that returns a list of RTALevel structures. The list has one RTALevel entry unless stereo inputs are being captured, when there are two. The data has a nanosecond timestamp and a running sum of the number of samples processed by the RTA since it was last started or restarted. The default unit for the level data is SPL but other units can be requested by including a unit query value in the url, e.g. `?unit=dBFS`. The list of units available can be read from `/rta/levels/units`. Rather than polling levels with GET a [subscription](https://www.roomeqwizard.com/help/help_en-GB/html/api.html#subscriptions) can be added to be notified whenever the RTA levels are updated. The subscription parameters can contain the required unit, for example:
+
+```json
+{
+  "url": "http://127.0.0.1:5374/levels",
+  "parameters": {"unit": "dBFS"}
+}
+```
+
+The rms and peak RTA responses can be read from the `/rta/captured-data` and `/rta/captured-peak-data` endpoints respectively. A FrequencyResponse object is returned, with a nanosecond timestamp, a running sum of the number of samples processed by the RTA since it was last started or restarted, a smoothing setting, a start frequency, a points-per-octave figure (for fractional octave RTA captures) or a frequency step value (for spectrum captures), and a Base64-encoded string of response magnitudes generated from the raw bytes of 32-bit float magnitude values at each frequency. The default unit for the magnitude data is SPL but other units can be requested by including a unit query value in the url, e.g. `?unit=dBFS`. The list of units available can be read from `/rta/captured-data/units`. Rather than polling with GET a [subscription](https://www.roomeqwizard.com/help/help_en-GB/html/api.html#subscriptions) can be added to be notified whenever the RTA captured or captured peak data are updated. The subscription parameters can contain the required unit, for example:
+
+```json
+{
+  "url": "http://127.0.0.1:5374/captured",
+  "parameters": {"unit": "dBFS"}
+}
+```
+
+When multiple inputs are being captured the parameters can contain an input index between 1 and the number of inputs, e.g index: 2. If there is no input index the rms average of the inputs is returned.
+
+The current RTA input distortion results can be read from the `/rta/distortion` endpoint, that returns a list of RTADistortion structures. The list has one RTADistortion entry unless stereo inputs are being captured, when there are two. The data has a nanosecond timestamp and a running sum of the number of samples processed by the RTA since it was last started or restarted. The default unit for the level values is SPL but other units can be requested by including a unit query value in the url, e.g. `?unit=dBFS`. The list of units available can be read from `/rta/distortion/units`. The default unit for the relative distortion values is dB but percent can be requested by including a distortion query value in the url, e.g. `?distortion=percent`. The list of relative distortion units available can be read from `/rta/distortion/relative-units`. Rather than polling with GET a [subscription](https://www.roomeqwizard.com/help/help_en-GB/html/api.html#subscriptions) can be added to be notified whenever the RTA distortion results are updated. The subscription parameters can contain the required units, for example:
+
+```json
+{
+  "url": "http://127.0.0.1:5374/distortion",
+  "parameters": {"unit": "dBFS", "distortion": "percent"}
+}
+```

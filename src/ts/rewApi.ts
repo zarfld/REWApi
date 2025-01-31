@@ -367,6 +367,74 @@ class REWApi {
         return await this.get("http://localhost:4735/rta");
     }
 
+    async getRTACommands(): Promise<any> {
+        return await this.get("http://localhost:4735/rta/commands");
+    }
+
+    async postRTACommand(data: any): Promise<any> {
+        return await this.post("http://localhost:4735/rta/command", data);
+    }
+
+    async getRTAConfiguration(): Promise<any> {
+        return await this.get("http://localhost:4735/rta/configuration");
+    }
+
+    async postRTAConfiguration(data: any): Promise<any> {
+        return await this.post("http://localhost:4735/rta/configuration", data);
+    }
+
+    async getRTAAppearanceConfiguration(): Promise<any> {
+        return await this.get("http://localhost:4735/rta/appearance-configuration");
+    }
+
+    async postRTAAppearanceConfiguration(data: any): Promise<any> {
+        return await this.post("http://localhost:4735/rta/appearance-configuration", data);
+    }
+
+    async getRTADistortionConfiguration(): Promise<any> {
+        return await this.get("http://localhost:4735/rta/distortion-configuration");
+    }
+
+    async postRTADistortionConfiguration(data: any): Promise<any> {
+        return await this.post("http://localhost:4735/rta/distortion-configuration", data);
+    }
+
+    async getRTAStatus(): Promise<any> {
+        return await this.get("http://localhost:4735/rta/status");
+    }
+
+    async getRTALevels(): Promise<any> {
+        return await this.get("http://localhost:4735/rta/levels");
+    }
+
+    async getRTALevelUnits(): Promise<any> {
+        return await this.get("http://localhost:4735/rta/levels/units");
+    }
+
+    async getRTACapturedData(): Promise<any> {
+        return await this.get("http://localhost:4735/rta/captured-data");
+    }
+
+    async getRTACapturedPeakData(): Promise<any> {
+        return await this.get("http://localhost:4735/rta/captured-peak-data");
+    }
+
+    async getRTACapturedDataUnits(): Promise<any> {
+        return await this.get("http://localhost:4735/rta/captured-data/units");
+    }
+
+    async getRTADistortion(): Promise<any> {
+        return await this.get("http://localhost:4735/rta/distortion");
+    }
+
+    async getRTADistortionUnits(): Promise<any> {
+        return await this.get("http://localhost:4735/rta/distortion/units");
+    }
+
+    async getRTADistortionRelativeUnits(): Promise<any> {
+        return await this.get("http://localhost:4735/rta/distortion/relative-units");
+    }
+
     // Methods for handling room simulator
     async getRoomSimulator(): Promise<any> {
         return await this.get("http://localhost:4735/roomsimulator");

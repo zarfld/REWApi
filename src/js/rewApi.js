@@ -362,9 +362,109 @@ class REWApi {
         return await this.get("http://localhost:4735/splmeter");
     }
 
+    async getSPLMeterCommands() {
+        return await this.get("http://localhost:4735/spl-meter/commands");
+    }
+
+    async postSPLMeterCommand(id, data) {
+        return await this.post(`http://localhost:4735/spl-meter/${id}/command`, data);
+    }
+
+    async getSPLMeterConfiguration(id) {
+        return await this.get(`http://localhost:4735/spl-meter/${id}/configuration`);
+    }
+
+    async postSPLMeterConfiguration(id, data) {
+        return await this.post(`http://localhost:4735/spl-meter/${id}/configuration`, data);
+    }
+
+    async getSPLMeterModes() {
+        return await this.get("http://localhost:4735/spl-meter/modes");
+    }
+
+    async getSPLMeterWeightings() {
+        return await this.get("http://localhost:4735/spl-meter/weightings");
+    }
+
+    async getSPLMeterFilters() {
+        return await this.get("http://localhost:4735/spl-meter/filters");
+    }
+
+    async getSPLMeterLevels(id) {
+        return await this.get(`http://localhost:4735/spl-meter/${id}/levels`);
+    }
+
     // Methods for handling RTA
     async getRTA() {
         return await this.get("http://localhost:4735/rta");
+    }
+
+    async getRTACommands() {
+        return await this.get("http://localhost:4735/rta/commands");
+    }
+
+    async postRTACommand(data) {
+        return await this.post("http://localhost:4735/rta/command", data);
+    }
+
+    async getRTAConfiguration() {
+        return await this.get("http://localhost:4735/rta/configuration");
+    }
+
+    async postRTAConfiguration(data) {
+        return await this.post("http://localhost:4735/rta/configuration", data);
+    }
+
+    async getRTAAppearanceConfiguration() {
+        return await this.get("http://localhost:4735/rta/appearance-configuration");
+    }
+
+    async postRTAAppearanceConfiguration(data) {
+        return await this.post("http://localhost:4735/rta/appearance-configuration", data);
+    }
+
+    async getRTADistortionConfiguration() {
+        return await this.get("http://localhost:4735/rta/distortion-configuration");
+    }
+
+    async postRTADistortionConfiguration(data) {
+        return await this.post("http://localhost:4735/rta/distortion-configuration", data);
+    }
+
+    async getRTAStatus() {
+        return await this.get("http://localhost:4735/rta/status");
+    }
+
+    async getRTALevels() {
+        return await this.get("http://localhost:4735/rta/levels");
+    }
+
+    async getRTALevelUnits() {
+        return await this.get("http://localhost:4735/rta/levels/units");
+    }
+
+    async getRTACapturedData() {
+        return await this.get("http://localhost:4735/rta/captured-data");
+    }
+
+    async getRTACapturedPeakData() {
+        return await this.get("http://localhost:4735/rta/captured-peak-data");
+    }
+
+    async getRTACapturedDataUnits() {
+        return await this.get("http://localhost:4735/rta/captured-data/units");
+    }
+
+    async getRTADistortion() {
+        return await this.get("http://localhost:4735/rta/distortion");
+    }
+
+    async getRTADistortionUnits() {
+        return await this.get("http://localhost:4735/rta/distortion/units");
+    }
+
+    async getRTADistortionRelativeUnits() {
+        return await this.get("http://localhost:4735/rta/distortion/relative-units");
     }
 
     // Methods for handling room simulator

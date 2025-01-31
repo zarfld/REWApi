@@ -25,8 +25,8 @@ public:
     // Methods for handling measurements
     pplx::task<utility::string_t> GetMeasurementsAsync();
     pplx::task<utility::string_t> AddMeasurementAsync(const web::json::value& content);
-    pplx::task<utility::string_t> DeleteMeasurementAsync(const utility::string_t& id); // Pd3fe
-    pplx::task<utility::string_t> DeleteAllMeasurementsAsync(); // P1900
+    pplx::task<utility::string_t> DeleteMeasurementAsync(const utility::string_t& id);
+    pplx::task<utility::string_t> DeleteAllMeasurementsAsync();
 
     // Methods for handling frequency response
     pplx::task<utility::string_t> GetFrequencyResponseAsync(const utility::string_t& id, const utility::string_t& unit = U("SPL"), const utility::string_t& smoothing = U("default"), int ppo = 0);
@@ -59,6 +59,23 @@ public:
 
     // Methods for handling RTA
     pplx::task<utility::string_t> GetRTAAsync();
+    pplx::task<utility::string_t> GetRTACommandsAsync();
+    pplx::task<utility::string_t> PostRTACommandAsync(const web::json::value& content);
+    pplx::task<utility::string_t> GetRTAConfigurationAsync();
+    pplx::task<utility::string_t> PostRTAConfigurationAsync(const web::json::value& content);
+    pplx::task<utility::string_t> GetRTAAppearanceConfigurationAsync();
+    pplx::task<utility::string_t> PostRTAAppearanceConfigurationAsync(const web::json::value& content);
+    pplx::task<utility::string_t> GetRTADistortionConfigurationAsync();
+    pplx::task<utility::string_t> PostRTADistortionConfigurationAsync(const web::json::value& content);
+    pplx::task<utility::string_t> GetRTAStatusAsync();
+    pplx::task<utility::string_t> GetRTALevelsAsync();
+    pplx::task<utility::string_t> GetRTALevelUnitsAsync();
+    pplx::task<utility::string_t> GetRTACapturedDataAsync();
+    pplx::task<utility::string_t> GetRTACapturedPeakDataAsync();
+    pplx::task<utility::string_t> GetRTACapturedDataUnitsAsync();
+    pplx::task<utility::string_t> GetRTADistortionAsync();
+    pplx::task<utility::string_t> GetRTADistortionUnitsAsync();
+    pplx::task<utility::string_t> GetRTADistortionRelativeUnitsAsync();
 
     // Methods for handling room simulator
     pplx::task<utility::string_t> GetRoomSimulatorAsync();
@@ -188,7 +205,7 @@ public:
     pplx::task<utility::string_t> SubscribeInputLevelsAsync(const web::json::value& content);
     pplx::task<utility::string_t> UnsubscribeInputLevelsAsync(const web::json::value& content);
     pplx::task<utility::string_t> GetLastInputLevelsAsync();
-    pplx::task<utility::string_t> GetInputLevelUnitsAsync(); // P5c96
+    pplx::task<utility::string_t> GetInputLevelUnitsAsync();
 
     // Methods for handling selected measurement
     pplx::task<utility::string_t> SelectMeasurementByUUIDAsync(const web::json::value& content);
@@ -202,7 +219,6 @@ public:
     pplx::task<utility::string_t> IssueMeasurementCommandWithParamsAsync(const utility::string_t& id, const utility::string_t& command, const web::json::value& parameters);
 
     // Method to update a measurement's name and/or notes
-    // This method uses a MeasurementSummary object with the title and/or notes field set to the new value
     pplx::task<utility::string_t> UpdateMeasurementAsync(const utility::string_t& id, const web::json::value& content);
 
     // Methods for handling IR window settings
@@ -219,7 +235,7 @@ public:
     pplx::task<utility::string_t> GenerateWaterfallAsync(const utility::string_t& mode, int slices, const web::json::value& parameters);
 
     // Method to generate spectrogram
-    pplx::task<utility::string_t> GenerateSpectrogramAsync(const utility::string_t& mode, int slices, const utility::string_t& amplitude, const utility::string_t& ppo, const web::json::value& parameters);
+    pplx::task<utility::string_t> GenerateSpectrogramAsync(const utility::string_t& mode, int slices, const web::json::value& parameters);
 
     // Method to process measurements
     pplx::task<utility::string_t> ProcessMeasurementsAsync(const web::json::value& content);
