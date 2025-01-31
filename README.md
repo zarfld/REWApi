@@ -1822,3 +1822,27 @@ A [subscription](https://www.roomeqwizard.com/help/help_en-GB/html/api.html#subs
   "parameters": {unit: dBFS, distortion: percent}
 }
 ```
+
+## Import Endpoint
+
+The `/import` endpoint provides access to import functionality with subscription and blocking modes. The following sub-endpoints are available:
+
+### Import Frequency Response
+
+The `/import/frequency-response` endpoint allows the path to a text frequency response file to be set via a `FilePath` object. Note that backslashes in file paths must be escaped (meaning a double backslash is required), or forward slashes may be used. `FilePath` has a string for the path to the response file and an optional string for the channels that should be read from the file, not used for frequency response files. When the file is loaded it will generate a new measurement, that can be monitored by subscribing to the `/measurements` endpoint. The import may take some time. An import completed message will be posted to subscribers when an import has finished. A GET at the `/import/frequency-response` endpoint will return the path of the last file that finished importing. Any backslash in the path will be replaced by forward slash. An internal queue allows multiple imports to be requested without waiting for each to finish, up to 9 imports can be pending.
+
+### Import Impulse Response
+
+The `/import/impulse-response` endpoint allows the path to an impulse response file to be set via a `FilePath` object. Note that backslashes in file paths must be escaped (meaning a double backslash is required), or forward slashes may be used. `FilePath` has a string for the path to the response file and an optional string for the channels that should be read from the file if it has more than one channel. If the channels string is omitted or set to "All" all of the channels will be loaded, otherwise the specified channels will be loaded. Channels are numbered from 1 and channels to be loaded may be specified individually separated by commas or as a range separated by a dash, for example "1, 3, 5" or "2-4" or "1-3, 5, 7". As channels of data are loaded they will generate new measurements, that can be monitored by subscribing to the `/measurements` endpoint. The import may take some time. An import completed message will be posted to subscribers when an import has finished. A GET at the `/import/impulse-response` endpoint will return the path of the last file that finished importing. Any backslash in the path will be replaced by forward slash. An internal queue allows multiple imports to be requested without waiting for each to finish, up to 9 imports can be pending.
+
+### Import RTA File
+
+The `/import/rta-file` endpoint allows the path to a file for the RTA to process to be set via an `RTAFilePath` object. Note that backslashes in file paths must be escaped (meaning a double backslash is required), or forward slashes may be used. `FilePath` has a string for the path to the response file and an integer for the channel that should be read from the file. A string specifies the save option, whether the save the current, peak or both current and peak RTA results. Completion of RTA file import will generate a new measurement, that can be monitored by subscribing to the `/measurements` endpoint.
+
+RTA file import may take some time. Import progress and an import completed message will be posted to subscribers. The percentage completion can be read from the `/import/rta-file/progress` endpoint. A GET at the `/import/rta-file` endpoint will return the path of the last file that finished importing. Any backslash in the path will be replaced by forward slash. An internal queue allows multiple imports to be requested without waiting for each to finish, up to 9 imports can be pending.
+
+### Import Sweep Recordings
+
+The `/import/sweep-recordings/stimulus` endpoint allows the path to the sweep stimulus file to be read or set. If the file is set successfully the response will contain a summary of the stimulus parameters. If the path has not been set reading the endpoint will return an empty string, otherwise it will return the file path. Note that backslashes in file paths must be escaped (meaning a double backslash is required), or forward slashes may be used.
+
+The `/import/sweep-recordings/response` endpoint allows the path to the sweep response file to be read or set via a `FilePath` object. If the path has not been set reading the endpoint will return an empty string, otherwise it will return the last file path set. Note that backslashes in file paths must be escaped (meaning a double backslash is required), or forward slashes may be used. `FilePath` has a string for the path to the response file and an optional string for the channels that should be read from the file if it has more than one channel. If the channels string is omitted or set to "All" all of the channels will be loaded, otherwise the specified channels will be loaded. Channels are numbered from 1 and channels to be loaded may be specified individually separated by commas or as a range separated by a dash, for example "1, 3, 5" or "2-4" or "1-3, 5, 7". As channels of data are loaded they will generate new measurements, that can be monitored by subscribing to the `/measurements` endpoint. The import may take some time. An import completed message will be posted to subscribers when an import has finished. An internal queue allows multiple imports to be requested without waiting for each to finish, up to 9 imports can be pending.

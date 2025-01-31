@@ -1911,4 +1911,30 @@ public:
     {
         return PostAsync(U("/stepped-measurement/frequency-span"), content);
     }
+
+    // Methods for handling import endpoints
+    pplx::task<utility::string_t> ImportFrequencyResponseAsync(const json::value& content)
+    {
+        return PostAsync(U("/import/frequency-response"), content);
+    }
+
+    pplx::task<utility::string_t> ImportImpulseResponseAsync(const json::value& content)
+    {
+        return PostAsync(U("/import/impulse-response"), content);
+    }
+
+    pplx::task<utility::string_t> ImportRTAFileAsync(const json::value& content)
+    {
+        return PostAsync(U("/import/rta-file"), content);
+    }
+
+    pplx::task<utility::string_t> ImportSweepRecordingsAsync(const json::value& content)
+    {
+        return PostAsync(U("/import/sweep-recordings"), content);
+    }
+
+    pplx::task<utility::string_t> GetLastImportedFilePathAsync()
+    {
+        return GetAsync(U("/import/last-imported-file-path"));
+    }
 };
