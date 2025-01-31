@@ -760,6 +760,46 @@ public:
         return GetAsync(U("http://localhost:4735/roomsimulator"));
     }
 
+    pplx::task<utility::string_t> GetRoomSizeAsync()
+    {
+        return GetAsync(U("/roomsim/room-size"));
+    }
+
+    pplx::task<utility::string_t> SetRoomSizeAsync(const json::value& content)
+    {
+        return PostAsync(U("/roomsim/room-size"), content);
+    }
+
+    pplx::task<utility::string_t> GetRoomIsSealedAsync()
+    {
+        return GetAsync(U("/roomsim/room-is-sealed"));
+    }
+
+    pplx::task<utility::string_t> SetRoomIsSealedAsync(const json::value& content)
+    {
+        return PostAsync(U("/roomsim/room-is-sealed"), content);
+    }
+
+    pplx::task<utility::string_t> GetRoomSurfaceAbsorptionsAsync()
+    {
+        return GetAsync(U("/roomsim/absorptions"));
+    }
+
+    pplx::task<utility::string_t> SetRoomSurfaceAbsorptionsAsync(const json::value& content)
+    {
+        return PostAsync(U("/roomsim/absorptions"), content);
+    }
+
+    pplx::task<utility::string_t> GetRoomSourcesAsync()
+    {
+        return GetAsync(U("/roomsim/sources"));
+    }
+
+    pplx::task<utility::string_t> SetRoomSourcesAsync(const json::value& content)
+    {
+        return PostAsync(U("/roomsim/sources"), content);
+    }
+
     // Method for handling shutdown command
     pplx::task<utility::string_t> ShutdownAsync()
     {

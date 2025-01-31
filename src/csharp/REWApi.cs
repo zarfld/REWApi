@@ -334,6 +334,46 @@ public class REWApi
         return await GetAsync("http://localhost:4735/roomsimulator");
     }
 
+    public async Task<string> GetRoomSizeAsync()
+    {
+        return await GetAsync("/roomsim/room-size");
+    }
+
+    public async Task<string> SetRoomSizeAsync(HttpContent content)
+    {
+        return await PostAsync("/roomsim/room-size", content);
+    }
+
+    public async Task<string> GetRoomIsSealedAsync()
+    {
+        return await GetAsync("/roomsim/room-is-sealed");
+    }
+
+    public async Task<string> SetRoomIsSealedAsync(HttpContent content)
+    {
+        return await PostAsync("/roomsim/room-is-sealed", content);
+    }
+
+    public async Task<string> GetRoomSurfaceAbsorptionsAsync()
+    {
+        return await GetAsync("/roomsim/absorptions");
+    }
+
+    public async Task<string> SetRoomSurfaceAbsorptionsAsync(HttpContent content)
+    {
+        return await PostAsync("/roomsim/absorptions", content);
+    }
+
+    public async Task<string> GetRoomSourcesAsync()
+    {
+        return await GetAsync("/roomsim/sources");
+    }
+
+    public async Task<string> SetRoomSourcesAsync(HttpContent content)
+    {
+        return await PostAsync("/roomsim/sources", content);
+    }
+
     // Method for handling shutdown command
     public async Task<string> ShutdownAsync()
     {
