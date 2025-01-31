@@ -1885,4 +1885,30 @@ public:
     {
         return PostAsync(U("/generator/commands"), json::value::parse(U("{\"command\":\"stop\"}")));
     }
+
+    // Methods for handling stepped measurement
+    pplx::task<utility::string_t> GetSteppedMeasurementTypesAsync()
+    {
+        return GetAsync(U("/stepped-measurement/types"));
+    }
+
+    pplx::task<utility::string_t> GetSteppedMeasurementTypeAsync()
+    {
+        return GetAsync(U("/stepped-measurement/type"));
+    }
+
+    pplx::task<utility::string_t> PostSteppedMeasurementTypeAsync(const json::value& content)
+    {
+        return PostAsync(U("/stepped-measurement/type"), content);
+    }
+
+    pplx::task<utility::string_t> GetSteppedMeasurementFrequencySpanAsync()
+    {
+        return GetAsync(U("/stepped-measurement/frequency-span"));
+    }
+
+    pplx::task<utility::string_t> PostSteppedMeasurementFrequencySpanAsync(const json::value& content)
+    {
+        return PostAsync(U("/stepped-measurement/frequency-span"), content);
+    }
 };

@@ -386,6 +386,13 @@ public:
     pplx::task<utility::string_t> SetGeneratorProtectionAsync(const web::json::value& content);
     pplx::task<utility::string_t> StartGeneratorAsync();
     pplx::task<utility::string_t> StopGeneratorAsync();
+
+    // Methods for handling stepped measurement
+    pplx::task<utility::string_t> GetSteppedMeasurementTypesAsync();
+    pplx::task<utility::string_t> GetSteppedMeasurementTypeAsync();
+    pplx::task<utility::string_t> PostSteppedMeasurementTypeAsync(const web::json::value& content);
+    pplx::task<utility::string_t> GetSteppedMeasurementFrequencySpanAsync();
+    pplx::task<utility::string_t> PostSteppedMeasurementFrequencySpanAsync(const web::json::value& content);
     
 private:
     bool graphUpdateInhibited;
