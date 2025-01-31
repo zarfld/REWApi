@@ -669,6 +669,91 @@ public:
         return GetAsync(U("http://localhost:4735/rta"));
     }
 
+    pplx::task<utility::string_t> GetRTACommandsAsync()
+    {
+        return GetAsync(U("/rta/commands"));
+    }
+
+    pplx::task<utility::string_t> PostRTACommandAsync(const json::value& content)
+    {
+        return PostAsync(U("/rta/command"), content);
+    }
+
+    pplx::task<utility::string_t> GetRTAConfigurationAsync()
+    {
+        return GetAsync(U("/rta/configuration"));
+    }
+
+    pplx::task<utility::string_t> PostRTAConfigurationAsync(const json::value& content)
+    {
+        return PostAsync(U("/rta/configuration"), content);
+    }
+
+    pplx::task<utility::string_t> GetRTAAppearanceConfigurationAsync()
+    {
+        return GetAsync(U("/rta/appearance-configuration"));
+    }
+
+    pplx::task<utility::string_t> PostRTAAppearanceConfigurationAsync(const json::value& content)
+    {
+        return PostAsync(U("/rta/appearance-configuration"), content);
+    }
+
+    pplx::task<utility::string_t> GetRTADistortionConfigurationAsync()
+    {
+        return GetAsync(U("/rta/distortion-configuration"));
+    }
+
+    pplx::task<utility::string_t> PostRTADistortionConfigurationAsync(const json::value& content)
+    {
+        return PostAsync(U("/rta/distortion-configuration"), content);
+    }
+
+    pplx::task<utility::string_t> GetRTAStatusAsync()
+    {
+        return GetAsync(U("/rta/status"));
+    }
+
+    pplx::task<utility::string_t> GetRTALevelsAsync()
+    {
+        return GetAsync(U("/rta/levels"));
+    }
+
+    pplx::task<utility::string_t> GetRTALevelUnitsAsync()
+    {
+        return GetAsync(U("/rta/levels/units"));
+    }
+
+    pplx::task<utility::string_t> GetRTACapturedDataAsync()
+    {
+        return GetAsync(U("/rta/captured-data"));
+    }
+
+    pplx::task<utility::string_t> GetRTACapturedPeakDataAsync()
+    {
+        return GetAsync(U("/rta/captured-peak-data"));
+    }
+
+    pplx::task<utility::string_t> GetRTACapturedDataUnitsAsync()
+    {
+        return GetAsync(U("/rta/captured-data/units"));
+    }
+
+    pplx::task<utility::string_t> GetRTADistortionAsync()
+    {
+        return GetAsync(U("/rta/distortion"));
+    }
+
+    pplx::task<utility::string_t> GetRTADistortionUnitsAsync()
+    {
+        return GetAsync(U("/rta/distortion/units"));
+    }
+
+    pplx::task<utility::string_t> GetRTADistortionRelativeUnitsAsync()
+    {
+        return GetAsync(U("/rta/distortion/relative-units"));
+    }
+
     // Methods for handling room simulator
     pplx::task<utility::string_t> GetRoomSimulatorAsync()
     {
