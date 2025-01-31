@@ -1846,3 +1846,32 @@ RTA file import may take some time. Import progress and an import completed mess
 The `/import/sweep-recordings/stimulus` endpoint allows the path to the sweep stimulus file to be read or set. If the file is set successfully the response will contain a summary of the stimulus parameters. If the path has not been set reading the endpoint will return an empty string, otherwise it will return the file path. Note that backslashes in file paths must be escaped (meaning a double backslash is required), or forward slashes may be used.
 
 The `/import/sweep-recordings/response` endpoint allows the path to the sweep response file to be read or set via a `FilePath` object. If the path has not been set reading the endpoint will return an empty string, otherwise it will return the last file path set. Note that backslashes in file paths must be escaped (meaning a double backslash is required), or forward slashes may be used. `FilePath` has a string for the path to the response file and an optional string for the channels that should be read from the file if it has more than one channel. If the channels string is omitted or set to "All" all of the channels will be loaded, otherwise the specified channels will be loaded. Channels are numbered from 1 and channels to be loaded may be specified individually separated by commas or as a range separated by a dash, for example "1, 3, 5" or "2-4" or "1-3, 5, 7". As channels of data are loaded they will generate new measurements, that can be monitored by subscribing to the `/measurements` endpoint. The import may take some time. An import completed message will be posted to subscribers when an import has finished. An internal queue allows multiple imports to be requested without waiting for each to finish, up to 9 imports can be pending.
+
+## Object Model
+
+This section describes the new object model for the REW API, including core objects, domain-specific entities, utility classes, and service classes.
+
+### Core Objects
+
+- **`RewClient`**: The primary client class responsible for connecting to the REW API, handling authentication, and managing requests and responses.
+- **`RewConfiguration`**: Stores configuration settings like API endpoint, authentication tokens, and other relevant parameters for connecting to the REW API.
+- **`RewRequest`** and **`RewResponse`**: Base classes for handling request and response specifics, possibly with subclasses for specific API endpoints.
+
+### Domain-Specific Entities
+
+- **`Measurement`**: Represents measurement data, with properties for frequency, amplitude, phase, and other measurement-specific details.
+- **`RoomData`**: Contains details on room dimensions and properties relevant to acoustic measurement and optimization.
+- **`Filter`**: Represents individual filter settings or profiles, including types (e.g., EQ filters, shelving), frequencies, and gains.
+
+### Utility Classes
+
+- **`RewParser`**: A class for parsing and interpreting data from REW's responses, converting raw API data into usable objects.
+- **`FileHandler`**: If file operations are required, this can manage loading, saving, and interpreting data files used by REW.
+
+### Service and Helper Classes
+
+- **`MeasurementService`**: Manages all actions related to measurements, such as fetching, updating, and filtering.
+- **`RoomAnalysisService`**: Handles computations based on room dimensions, calculates ideal EQ settings, and generates room-specific recommendations.
+- **`FilterService`**: Handles the configuration of filters and interacts with the `MeasurementService` and `RoomAnalysisService` to apply filter adjustments.
+
+This structure organizes API actions around core REW functions and maintains flexibility for extending capabilities in a modular, manageable way.

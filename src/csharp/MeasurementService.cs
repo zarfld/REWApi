@@ -6,11 +6,11 @@ using Newtonsoft.Json.Linq;
 
 public class MeasurementService
 {
-    private readonly HttpClient _httpClient;
+    private readonly RewClient _rewClient;
 
-    public MeasurementService(HttpClient httpClient)
+    public MeasurementService(RewClient rewClient)
     {
-        _httpClient = httpClient;
+        _rewClient = rewClient;
     }
 
     public async Task<string> IssueMeasurementCommandWithParamsAsync(string id, string command, JObject parameters)
@@ -100,7 +100,7 @@ public class MeasurementService
 
         var content = new StringContent("{\"command\":\"" + command + "\",\"parameters\":" + parameters.ToString() + "}", Encoding.UTF8, "application/json");
         string endpoint = $"/measurements/{id}/command";
-        return await PostAsync(endpoint, content);
+        return await _rewClient.SendRequestAsync(new RewRequest(endpoint, HttpMethod.Post, content));
     }
 
     public async Task<string> GenerateWaterfallAsync(string mode, int slices, JObject parameters)
@@ -135,7 +135,7 @@ public class MeasurementService
         }
 
         var content = new StringContent("{\"command\":\"Generate waterfall\",\"parameters\":{\"mode\":\"" + mode + "\",\"slices\":" + slices + "," + parameters.ToString() + "}}", Encoding.UTF8, "application/json");
-        return await PostAsync("http://localhost:4735/waterfalls", content);
+        return await _rewClient.SendRequestAsync(new RewRequest("/waterfalls", HttpMethod.Post, content));
     }
 
     public async Task<string> GenerateSpectrogramAsync(string mode, int slices, JObject parameters)
@@ -201,13 +201,6 @@ public class MeasurementService
         }
 
         var content = new StringContent("{\"command\":\"Generate spectrogram\",\"parameters\":{\"mode\":\"" + mode + "\",\"slices\":" + slices + "," + parameters.ToString() + "}}", Encoding.UTF8, "application/json");
-        return await PostAsync("http://localhost:4735/spectrograms", content);
-    }
-
-    private async Task<string> PostAsync(string endpoint, HttpContent content)
-    {
-        HttpResponseMessage response = await _httpClient.PostAsync(endpoint, content);
-        response.EnsureSuccessStatusCode();
-        return await response.Content.ReadAsStringAsync();
+        return await _rewClient.SendRequestAsync(new RewRequest("/spectrograms", HttpMethod.Post, content));
     }
 }

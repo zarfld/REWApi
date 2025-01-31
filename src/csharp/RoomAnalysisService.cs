@@ -3,48 +3,34 @@ using System.Threading.Tasks;
 
 public class RoomAnalysisService
 {
-    private readonly HttpClient _httpClient;
+    private readonly RewClient _rewClient;
 
-    public RoomAnalysisService(HttpClient httpClient)
+    public RoomAnalysisService(RewClient rewClient)
     {
-        _httpClient = httpClient;
+        _rewClient = rewClient;
     }
 
     public async Task<string> GetRoomSizeAsync()
     {
-        string endpoint = "/roomsim/room-size";
-        return await GetAsync(endpoint);
+        RewRequest request = new RewRequest("/roomsim/room-size", HttpMethod.Get);
+        return await _rewClient.SendRequestAsync(request);
     }
 
     public async Task<string> SetRoomSizeAsync(HttpContent content)
     {
-        string endpoint = "/roomsim/room-size";
-        return await PostAsync(endpoint, content);
+        RewRequest request = new RewRequest("/roomsim/room-size", HttpMethod.Post, content);
+        return await _rewClient.SendRequestAsync(request);
     }
 
     public async Task<string> GetRoomIsSealedAsync()
     {
-        string endpoint = "/roomsim/room-is-sealed";
-        return await GetAsync(endpoint);
+        RewRequest request = new RewRequest("/roomsim/room-is-sealed", HttpMethod.Get);
+        return await _rewClient.SendRequestAsync(request);
     }
 
     public async Task<string> SetRoomIsSealedAsync(HttpContent content)
     {
-        string endpoint = "/roomsim/room-is-sealed";
-        return await PostAsync(endpoint, content);
-    }
-
-    private async Task<string> GetAsync(string endpoint)
-    {
-        HttpResponseMessage response = await _httpClient.GetAsync(endpoint);
-        response.EnsureSuccessStatusCode();
-        return await response.Content.ReadAsStringAsync();
-    }
-
-    private async Task<string> PostAsync(string endpoint, HttpContent content)
-    {
-        HttpResponseMessage response = await _httpClient.PostAsync(endpoint, content);
-        response.EnsureSuccessStatusCode();
-        return await response.Content.ReadAsStringAsync();
+        RewRequest request = new RewRequest("/roomsim/room-is-sealed", HttpMethod.Post, content);
+        return await _rewClient.SendRequestAsync(request);
     }
 }
