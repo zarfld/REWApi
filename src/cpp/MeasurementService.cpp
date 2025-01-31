@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include "RewClient.h"
+#include "RewRequest.h"
 
 using namespace web;
 using namespace web::http;
@@ -13,6 +15,8 @@ using namespace pplx;
 class MeasurementService
 {
 public:
+    MeasurementService(RewClient& client) : client_(client) {}
+
     task<utility::string_t> IssueMeasurementCommandWithParamsAsync(const utility::string_t& id, const utility::string_t& command, const json::value& parameters)
     {
         // Validate boolean parameters
@@ -102,9 +106,9 @@ public:
         content[U("command")] = json::value::string(command);
         content[U("parameters")] = parameters;
 
-        utility::string_t endpoint = U("/measurements/") + id + U("/command");
-        return PostAsync(endpoint, content).then([this, endpoint, content](utility::string_t response) {
-            return NotifySubscribers(endpoint, content).then([response]() {
+        RewRequest request(U("/measurements/") + id + U("/command"), methods::POST, content);
+        return client_.SendRequestAsync(request).then([this, request, content](utility::string_t response) {
+            return NotifySubscribers(request.endpoint(), content).then([response]() {
                 return response;
             });
         });
@@ -151,7 +155,8 @@ public:
             content[U("parameters")][param.first] = param.second;
         }
 
-        return PostAsync(U("/waterfalls"), content).then([this, content](utility::string_t response) {
+        RewRequest request(U("/waterfalls"), methods::POST, content);
+        return client_.SendRequestAsync(request).then([this, content](utility::string_t response) {
             return NotifySubscribers(U("/waterfalls"), content).then([response]() {
                 return response;
             });
@@ -230,7 +235,8 @@ public:
             content[U("parameters")][param.first] = param.second;
         }
 
-        return PostAsync(U("/spectrograms"), content).then([this, content](utility::string_t response) {
+        RewRequest request(U("/spectrograms"), methods::POST, content);
+        return client_.SendRequestAsync(request).then([this, content](utility::string_t response) {
             return NotifySubscribers(U("/spectrograms"), content).then([response]() {
                 return response;
             });
@@ -238,14 +244,6 @@ public:
     }
 
 private:
-    task<utility::string_t> PostAsync(const utility::string_t& endpoint, const json::value& content)
-    {
-        http_client client(U("http://localhost:4735"));
-        return client.request(methods::POST, endpoint, content).then([](http_response response) {
-            return response.extract_string();
-        });
-    }
-
     task<utility::string_t> NotifySubscribers(const utility::string_t& endpoint, const json::value& content)
     {
         return GetSubscribersAsync().then([this, endpoint, content](utility::string_t subscribers) {
@@ -254,7 +252,8 @@ private:
             for (const auto& subscriber : subscribersJson.as_array())
             {
                 utility::string_t url = subscriber.at(U("url")).as_string();
-                tasks.push_back(PostAsync(url + endpoint, content).then([](utility::string_t response) {
+                RewRequest request(url + endpoint, methods::POST, content);
+                tasks.push_back(client_.SendRequestAsync(request).then([](utility::string_t response) {
                     // Handle response if needed
                 }));
             }
@@ -266,9 +265,9 @@ private:
 
     task<utility::string_t> GetSubscribersAsync()
     {
-        http_client client(U("http://localhost:4735"));
-        return client.request(methods::GET, U("/subscribers")).then([](http_response response) {
-            return response.extract_string();
-        });
+        RewRequest request(U("/subscribers"), methods::GET);
+        return client_.SendRequestAsync(request);
     }
+
+    RewClient& client_;
 };
