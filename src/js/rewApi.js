@@ -1082,6 +1082,27 @@ class REWApi {
         return await this.post(url, data);
     }
 
+    // Methods for handling the /stepped-measurement endpoint
+    async getSteppedMeasurementTypes() {
+        return await this.get("http://localhost:4735/stepped-measurement/types");
+    }
+
+    async getSteppedMeasurementType() {
+        return await this.get("http://localhost:4735/stepped-measurement/type");
+    }
+
+    async postSteppedMeasurementType(data) {
+        return await this.post("http://localhost:4735/stepped-measurement/type", data);
+    }
+
+    async getSteppedMeasurementFrequencySpan() {
+        return await this.get("http://localhost:4735/stepped-measurement/frequency-span");
+    }
+
+    async postSteppedMeasurementFrequencySpan(data) {
+        return await this.post("http://localhost:4735/stepped-measurement/frequency-span", data);
+    }
+
     // Private method to notify subscribers
     async _notifySubscribers(endpoint, content) {
         const subscribers = await this.getSubscribers();

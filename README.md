@@ -1774,3 +1774,51 @@ The current RTA input distortion results can be read from the `/rta/distortion` 
   "parameters": {"unit": "dBFS", "distortion": "percent"}
 }
 ```
+
+## Stepped Measurement Endpoint
+
+The `/stepped-measurement` endpoint provides control of REW's [Stepped measurement](https://www.roomeqwizard.com/help/help_en-GB/html/spectrum.html#steppedsine) features.
+
+A GET at the `/stepped-measurement/types` endpoint returns the list of measurement types. A GET at the `/stepped-measurement/type` endpoint returns the currently selected type, to select a type POST it to the `/stepped-measurement/type` endpoint.
+
+A GET at the `/stepped-measurement/frequency-span` endpoint returns the current start frequency (Hz), end frequency (Hz) and PPO step for a measurement vs frequency as a SteppedFreqSpan object. To change the span POST a SteppedFreqSpan object to the `/stepped-measurement/frequency-span` endpoint. The list of accepted PPO values can be read from `/stepped-measurement/ppo-values`.
+
+A GET at the `/stepped-measurement/level-span` endpoint returns the current start level (dBFS), end level (dBFS) and level step (dB) for a measurement vs level as a SteppedLevelSpan object. To change the span POST a SteppedLevelSpan object to the `/stepped-measurement/level-span` endpoint.
+
+A GET at the `/stepped-measurement/fft-configuration` endpoint returns the current FFT configuration for stepped measurements. To change the configuration POST a SteppedFFTConfiguration object to the `/stepped-measurement/fft-configuration` endpoint.
+
+A GET at the `/stepped-measurement/options` endpoint returns the current option settings for stepped measurements. To change the options POST a SteppedOptions object to the `/stepped-measurement/options` endpoint. Other RTA-related options such as distortion HP or LP should be configured through the `/rta` endpoint.
+
+A GET at the `/stepped-measurement/commands` endpoint returns the list of commands, to issue a command POST it to the `/stepped-measurement/command` endpoint. The Start command requires a settlingTimems parameter and either a leveldBFS, frequencyHz or imdStimulus parameter depending on the type of measurement. Here is an example of starting a THD vs frequency measurement:
+
+```json
+{
+  "command": "start",
+  "parameters": {
+    "settlingTimems": 0,
+    "leveldBFS": -1.0
+  }
+}
+```
+
+The progress of a stepped measurement can be read from the `/stepped-measurement/progress` endpoint. That returns a SteppedProgress object, like the example below
+
+```json
+{
+  "point": 5,
+  "points": 31,
+  "message": "5/31, approx 1m 8s remaining",
+  "timeRemainingSeconds": 68
+}
+```
+
+Rather than polling for progress, a [subscription](https://www.roomeqwizard.com/help/help_en-GB/html/api.html#subscriptions) can be added to be notified of progress updates. There are no parameters for progress subscriptions.
+
+A [subscription](https://www.roomeqwizard.com/help/help_en-GB/html/api.html#subscriptions) can be added to be notified of the distortion results for each point as they are generated. That is done by making a POST to the `/stepped-measurement/results/subscribe` endpoint. The results are returned as RTADistortion objects, see the [RTA section](https://www.roomeqwizard.com/help/help_en-GB/html/api.html#rtadistortion) for the associated parameters. For example, to have updates posted to a `/stepped-results` endpoint a subscription could be:
+
+```json
+{
+  "url": "http://127.0.0.1:5374/stepped-results",
+  "parameters": {unit: dBFS, distortion: percent}
+}
+```
