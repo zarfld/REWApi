@@ -595,14 +595,12 @@ Scenario: Unsubscribe from notifications
 
 | Requirement ID | REW API Endpoint | C# Implementation | C++ Implementation | JS Implementation | TS Implementation |
 |---|---|---|---|---|---|
-| REQ-F-HTTP-001.1 | Various GET endpoints | GetAsync() | GetAsync() | get() | get() |
-| REQ-F-HTTP-001.3 | Various POST endpoints | PostAsync() | PostAsync() | post() | post() |
-| REQ-F-DATA-001.1 | Array transfer | EncodeArray() | EncodeArray() | encodeArray() | encodeArray() |
-| REQ-F-MEASURE-001.1 | /measurements | GetMeasurementsAsync() | GetMeasurementsAsync() | getMeasurements() | getMeasurements() |
-| REQ-F-MEASURE-001.2 | /measurements/{id}/command | IssueMeasurementCommandWithParamsAsync() | IssueMeasurementCommandAsync() | issueMeasurementCommand() | issueMeasurementCommand() |
-| REQ-F-FILTER-001.1 | /measurements/{id}/filters | FilterService methods | FilterService methods | EQ methods | EQ methods |
-| REQ-F-SPL-001.1 | /spl-meter/{id}/command | PostSPLMeterCommandAsync() | PostSPLMeterCommandAsync() | postSPLMeterCommand() | postSPLMeterCommand() |
-| REQ-F-CTRL-001.1 | N/A (client-side) | SetGraphUpdateInhibition() | SetGraphUpdateInhibition() | setGraphUpdateInhibition() | setGraphUpdateInhibition() |
+| REQ-F-001.1 | Various GET endpoints | GetAsync() | GetAsync() | get() | get() |
+| REQ-F-001.3 | Various POST endpoints | PostAsync() | PostAsync() | post() | post() |
+| REQ-F-002.1 | Array transfer | EncodeArray() | EncodeArray() | encodeArray() | encodeArray() |
+| REQ-F-004.1 | /measurements | GetMeasurementsAsync() | GetMeasurementsAsync() | getMeasurements() | getMeasurements() |
+| REQ-F-004.2 | /measurements/{id}/command | IssueMeasurementCommandWithParamsAsync() | IssueMeasurementCommandAsync() | issueMeasurementCommand() | issueMeasurementCommand() |
+| REQ-F-005.1 | /measurements/{id}/filters | FilterService methods | FilterService methods | EQ methods | EQ methods |
 
 ## 🧪 Test Requirements
 
