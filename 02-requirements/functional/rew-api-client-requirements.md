@@ -1,13 +1,20 @@
 ---
 title: "REW API Client Library - Functional Requirements"
 specType: requirements
+standard: "ISO/IEC/IEEE 29148:2018"
 phase: 02-requirements  
 version: 1.0.0
-status: derived-from-code
+status: approved
 author: code-to-requirements-analysis
-date: 2025-10-06
+date: "2025-10-06"
 source: "Reverse engineered from existing C#, C++, JavaScript, and TypeScript implementations"
 traceability:
+  stakeholderRequirements:
+    - StR-001
+    - StR-002
+    - StR-003
+    - StR-004
+    - StR-005
   source_implementations:
     - src/csharp/REWApi.cs
     - src/cpp/REWApi.cpp
@@ -32,9 +39,9 @@ The REW API Client Library provides a standards-compliant software interface for
 
 ## 📋 Functional Requirements
 
-### REQ-F-HTTP-001: HTTP Communication Core
+### REQ-F-001: HTTP Communication Core
 
-**ID**: REQ-F-HTTP-001  
+**ID**: REQ-F-001  
 **Priority**: Critical (P0)  
 **Source**: Derived from HTTP client implementations across all languages  
 **Implementation**: REWApi.cs:16-40, REWApi.cpp:12-45, rewApi.js:18-65, rewApi.ts:18-65
@@ -44,7 +51,7 @@ The system shall provide HTTP communication capabilities to interact with REW's 
 
 #### Sub-Requirements
 
-##### REQ-F-HTTP-001.1: GET Operations
+##### REQ-F-001.1: GET Operations
 **Implementation**: C# GetAsync(), C++ GetAsync(), JS get(), TS get()  
 The system shall support HTTP GET operations for retrieving data from REW API endpoints.
 
@@ -62,7 +69,7 @@ Scenario: GET request with graph update inhibition
   Then the request should return null without contacting the server
 ```
 
-##### REQ-F-HTTP-001.2: PUT Operations  
+##### REQ-F-001.2: PUT Operations  
 **Implementation**: C# PutAsync(), C++ PutAsync(), JS put(), TS put()  
 The system shall support HTTP PUT operations for updating REW API resources.
 
@@ -76,7 +83,7 @@ Scenario: Successful PUT request
   And the resource should be updated with the provided data
 ```
 
-##### REQ-F-HTTP-001.3: POST Operations
+##### REQ-F-001.3: POST Operations
 **Implementation**: C# PostAsync(), C++ PostAsync(), JS post(), TS post()  
 The system shall support HTTP POST operations for creating resources and issuing commands.
 
@@ -96,7 +103,7 @@ Scenario: POST with blocking mode enabled
   And the response should include ProcessResult data
 ```
 
-##### REQ-F-HTTP-001.4: Error Handling
+##### REQ-F-001.4: Error Handling
 **Implementation**: response.EnsureSuccessStatusCode() patterns  
 The system shall handle HTTP errors gracefully and provide meaningful error messages.
 
@@ -109,9 +116,9 @@ Scenario: HTTP error response
   And the error message should include HTTP status information
 ```
 
-### REQ-F-DATA-001: Base64 Array Encoding/Decoding
+### REQ-F-002: Base64 Array Encoding/Decoding
 
-**ID**: REQ-F-DATA-001  
+**ID**: REQ-F-002  
 **Priority**: High (P1)  
 **Source**: REW API documentation requirement for array data transfer  
 **Implementation**: REWApi.cs:384-396, rewApi.js:encodeArray/decodeArray, rewApi.ts:encodeArray/decodeArray
@@ -121,7 +128,7 @@ The system shall provide Base64 encoding and decoding capabilities for transferr
 
 #### Sub-Requirements
 
-##### REQ-F-DATA-001.1: Array Encoding
+##### REQ-F-002.1: Array Encoding
 **Implementation**: C# EncodeArray(), JS encodeArray(), TS encodeArray()  
 The system shall encode float arrays to Base64 strings for transmission to REW API.
 
@@ -154,7 +161,7 @@ Scenario: Encode empty array
   Then the result should be an empty Base64 string
 ```
 
-##### REQ-F-DATA-001.2: Array Decoding  
+##### REQ-F-002.2: Array Decoding  
 **Implementation**: C# DecodeArray(), JS decodeArray(), TS decodeArray()  
 The system shall decode Base64 strings received from REW API back to float arrays.
 
@@ -187,9 +194,9 @@ Scenario: Decode invalid Base64
   Then an appropriate exception should be thrown
 ```
 
-### REQ-F-AUDIO-001: Audio System Control
+### REQ-F-003: Audio System Control
 
-**ID**: REQ-F-AUDIO-001  
+**ID**: REQ-F-003  
 **Priority**: High (P1)  
 **Source**: Audio settings methods across implementations  
 **Implementation**: GetAudioSettingsAsync/UpdateAudioSettingsAsync patterns
@@ -199,7 +206,7 @@ The system shall provide interfaces for configuring REW's audio input/output set
 
 #### Sub-Requirements
 
-##### REQ-F-AUDIO-001.1: Audio Settings Retrieval
+##### REQ-F-003.1: Audio Settings Retrieval
 The system shall retrieve current audio configuration from REW.
 
 **API Endpoints**: `/audio/settings`, `/audio/driver`, `/audio/samplerate`
@@ -212,7 +219,7 @@ Scenario: Get audio settings
   Then current driver, sample rate, and device information should be returned
 ```
 
-##### REQ-F-AUDIO-001.2: Audio Settings Update
+##### REQ-F-003.2: Audio Settings Update
 The system shall update REW's audio configuration settings.
 
 **Acceptance Criteria**:
@@ -224,9 +231,9 @@ Scenario: Update audio driver
   And available devices should be updated accordingly
 ```
 
-### REQ-F-MEASURE-001: Measurement Operations
+### REQ-F-004: Measurement Operations
 
-**ID**: REQ-F-MEASURE-001  
+**ID**: REQ-F-004  
 **Priority**: Critical (P0)  
 **Source**: Extensive measurement-related methods in all implementations  
 **Implementation**: REWApi.cs:GetMeasurementsAsync, measurement command patterns
@@ -236,7 +243,7 @@ The system shall provide comprehensive measurement management capabilities inclu
 
 #### Sub-Requirements
 
-##### REQ-F-MEASURE-001.1: Measurement Retrieval
+##### REQ-F-004.1: Measurement Retrieval
 **Implementation**: GetMeasurementsAsync(), GetMeasurement(id) patterns  
 The system shall retrieve measurement data and metadata from REW.
 
@@ -257,7 +264,7 @@ Scenario: Get specific measurement
   Including frequency response, impulse response, and settings
 ```
 
-##### REQ-F-MEASURE-001.2: Measurement Commands
+##### REQ-F-004.2: Measurement Commands
 **Implementation**: IssueMeasurementCommandWithParamsAsync() with extensive validation  
 The system shall execute measurement processing commands with parameter validation.
 
@@ -307,7 +314,7 @@ Scenario: Generate minimum phase version
   Then a new measurement should be created with minimum phase characteristics
 ```
 
-##### REQ-F-MEASURE-001.3: Frequency Response Data
+##### REQ-F-004.3: Frequency Response Data
 **Implementation**: GetFrequencyResponse() methods with unit/smoothing options  
 The system shall retrieve frequency response data with configurable units and smoothing.
 
@@ -330,7 +337,7 @@ Scenario: Get frequency response with smoothing
   Then the response should be smoothed to 1/3 octave resolution
 ```
 
-##### REQ-F-MEASURE-001.4: Impulse Response Data
+##### REQ-F-004.4: Impulse Response Data
 **Implementation**: GetImpulseResponse() methods  
 The system shall retrieve impulse response data with configurable options.
 
@@ -349,7 +356,7 @@ Scenario: Get non-normalized impulse response
   Then raw impulse response data should be returned without normalization
 ```
 
-### REQ-F-FILTER-001: Filter and EQ Management
+### REQ-F-005: Filter and EQ Management
 
 **ID**: REQ-F-FILTER-001  
 **Priority**: High (P1)  

@@ -1,12 +1,20 @@
 ---
 title: "REW API Client Library - Non-Functional Requirements"
 specType: requirements
+standard: "ISO/IEC/IEEE 29148:2018"
 phase: 02-requirements  
 version: 1.0.0
-status: derived-from-code
+status: approved
 author: code-to-requirements-analysis
-date: 2025-10-06
+date: "2025-10-06"
 source: "Reverse engineered from implementation patterns and REW API constraints"
+traceability:
+  stakeholderRequirements:
+    - StR-001
+    - StR-002
+    - StR-003
+    - StR-004
+    - StR-005
 description: "Non-functional requirements specification derived from code analysis"
 ---
 
@@ -18,8 +26,8 @@ description: "Non-functional requirements specification derived from code analys
 
 ## Performance Requirements
 
-### REQ-NF-PERF-001: HTTP Response Time
-**ID**: REQ-NF-PERF-001  
+### REQ-NF-001: HTTP Response Time
+**ID**: REQ-NF-001  
 **Priority**: High (P1)  
 **Source**: Derived from async/await patterns and timeout handling
 
@@ -28,7 +36,7 @@ The system shall provide responsive HTTP communication with REW API server.
 
 #### Requirements
 
-##### REQ-NF-PERF-001.1: Standard API Calls
+##### REQ-NF-001.1: Standard API Calls
 **Derived From**: async/await patterns in all implementations  
 **Traces to**: StR-002.1 (Test automation requirements)
 
@@ -69,19 +77,19 @@ Scenario: Standard GET operation performance
   And all responses should contain valid data
 ```
 
-##### REQ-NF-PERF-001.2: Long-Running Operations  
+##### REQ-NF-001.2: Long-Running Operations  
 **Derived From**: blocking mode implementation and 202 Accepted handling  
 The system shall support long-running operations (measurements, analysis) that may take 30+ seconds with appropriate progress indication.
 
-### REQ-NF-PERF-002: Data Transfer Efficiency
-**ID**: REQ-NF-PERF-002  
+### REQ-NF-002: Data Transfer Efficiency
+**ID**: REQ-NF-002  
 **Priority**: Medium (P2)  
 **Source**: Base64 encoding patterns and large array handling
 
 #### Description
 The system shall efficiently handle large measurement datasets.
 
-##### REQ-NF-PERF-002.1: Array Encoding Performance
+##### REQ-NF-002.1: Array Encoding Performance
 **Derived From**: Base64 encoding implementation  
 **Traces to**: StR-002.2 (Measurement result validation), StR-004.1 (Quality measurements)
 
@@ -134,25 +142,25 @@ Scenario: Memory efficiency validation
   And no memory leaks should be detected over 1000 operations
 ```
 
-##### REQ-NF-PERF-002.2: Memory Management
+##### REQ-NF-002.2: Memory Management
 **Derived From**: HttpClient reuse patterns  
 The system shall reuse HTTP client instances to minimize connection overhead.
 
 ## Reliability Requirements
 
-### REQ-NF-REL-001: Error Handling
-**ID**: REQ-NF-REL-001  
+### REQ-NF-003: Error Handling
+**ID**: REQ-NF-003  
 **Priority**: Critical (P0)  
 **Source**: EnsureSuccessStatusCode() and parameter validation patterns
 
 #### Description
 The system shall handle all error conditions gracefully without crashing.
 
-##### REQ-NF-REL-001.1: HTTP Error Recovery
+##### REQ-NF-003.1: HTTP Error Recovery
 **Derived From**: response.EnsureSuccessStatusCode() implementation  
 The system shall throw appropriate exceptions for HTTP errors with meaningful error messages.
 
-##### REQ-NF-REL-001.2: Parameter Validation
+##### REQ-NF-003.2: Parameter Validation
 **Derived From**: Extensive validation in IssueMeasurementCommandWithParamsAsync()  
 The system shall validate all parameters before sending requests to prevent server errors.
 
@@ -162,8 +170,8 @@ The system shall validate all parameters before sending requests to prevent serv
 - Required parameter dependency validation
 - String format validation
 
-### REQ-NF-REL-002: System Reliability and Availability
-**ID**: REQ-NF-REL-002  
+### REQ-NF-004: System Reliability and Availability
+**ID**: REQ-NF-004  
 **Priority**: Critical (P0)  
 **Source**: Static HttpClient usage and operational requirements  
 **Traces to**: StR-002.1 (Test automation reliability), StR-004.1 (Quality measurement consistency)
@@ -171,7 +179,7 @@ The system shall validate all parameters before sending requests to prevent serv
 #### Description
 The system shall provide reliable operation with quantified availability, failure recovery, and stability metrics suitable for production automated testing environments.
 
-##### REQ-NF-REL-002.1: System Availability and Uptime
+##### REQ-NF-004.1: System Availability and Uptime
 **Derived From**: Production automation requirements  
 The system shall maintain high availability for continuous automated testing operations.
 
@@ -202,7 +210,7 @@ Scenario: System availability measurement
   And planned maintenance should be ≤2 hours
 ```
 
-##### REQ-NF-REL-002.2: Failure Recovery and Network Resilience
+##### REQ-NF-004.2: Failure Recovery and Network Resilience
 **Derived From**: Automated testing environment requirements  
 The system shall recover automatically from network interruptions and service failures.
 
@@ -249,7 +257,7 @@ Scenario: Sustained operation reliability
   And all failures should be logged with correlation IDs
 ```
 
-##### REQ-NF-REL-002.3: Connection Stability and Performance
+##### REQ-NF-004.3: Connection Stability and Performance
 **Derived From**: static readonly HttpClient client pattern  
 The system shall maintain efficient, stable connections with optimal resource utilization.
 
@@ -284,19 +292,19 @@ Scenario: Connection health monitoring
 
 ## Security Requirements
 
-### REQ-NF-SEC-001: Local Network Communication
-**ID**: REQ-NF-SEC-001  
+### REQ-NF-005: Local Network Communication
+**ID**: REQ-NF-005  
 **Priority**: Medium (P2)  
 **Source**: REW API limitation to localhost communication
 
 #### Description
 The system shall operate within REW's security constraints for local-only API access.
 
-##### REQ-NF-SEC-001.1: Localhost Only
+##### REQ-NF-005.1: Localhost Only
 **Derived From**: REW API documentation - "accessible over http at localhost (127.0.0.1)"  
 The system shall only communicate with REW API on localhost/127.0.0.1 as per REW security model.
 
-##### REQ-NF-SEC-001.2: No Authentication Required
+##### REQ-NF-005.2: No Authentication Required
 **Derived From**: Absence of authentication patterns in code  
 The system operates without authentication requirements as REW API relies on localhost restriction for security.
 
