@@ -46,15 +46,52 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      - name: Install Python dependencies
+        run: |
+          pip install pyyaml jsonschema
+      - name: Create build directory
+        run: |
+          mkdir -p build
       - name: Generate spec index
         run: |
-          ALLOW_EMPTY_SPECS=1 python scripts/generators/spec_parser.py
+          echo "🔍 Generating spec index..."
+          ALLOW_EMPTY_SPECS=1 python scripts/generators/spec_parser.py || {
+            echo "❌ Failed to generate spec index"
+            exit 1
+          }
+          echo "✅ Spec index generated"
+          ls -la build/
       - name: Build traceability JSON
         run: |
-          ALLOW_EMPTY_SPECS=1 python scripts/generators/build_trace_json.py
+          echo "🔗 Building traceability JSON..."
+          ALLOW_EMPTY_SPECS=1 python scripts/generators/build_trace_json.py || {
+            echo "❌ Failed to build traceability JSON"
+            exit 1
+          }
+          echo "✅ Traceability JSON built"
+          ls -la build/
       - name: Generate requirement test skeletons
         run: |
-          ALLOW_EMPTY_SPECS=1 python scripts/generators/gen_tests.py
+          echo "🧪 Generating test skeletons..."
+          ALLOW_EMPTY_SPECS=1 python scripts/generators/gen_tests.py || {
+            echo "❌ Failed to generate test skeletons"
+            exit 1
+          }
+          echo "✅ Test skeletons generated"
+      - name: Verify artifacts before upload
+        run: |
+          echo "📁 Verifying artifacts exist..."
+          if [ ! -f build/spec-index.json ]; then
+            echo "❌ Missing build/spec-index.json"
+            exit 1
+          fi
+          if [ ! -f build/traceability.json ]; then
+            echo "❌ Missing build/traceability.json"
+            exit 1
+          fi
+          echo "✅ All required artifacts present"
+          echo "Contents of build/:"
+          ls -la build/
       - name: Upload generated artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -173,9 +210,27 @@ jobs:
         with:
           name: spec-generated-artifacts
           path: build
+      - name: Verify downloaded artifacts
+        run: |
+          echo "📁 Verifying downloaded artifacts..."
+          ls -la build/ || echo "Build directory not found"
+          if [ ! -f build/traceability.json ]; then
+            echo "❌ Missing build/traceability.json after download"
+            echo "Available files in build/:"
+            ls -la build/ || echo "No build directory"
+            exit 1
+          fi
+          echo "✅ traceability.json found"
+          echo "File size: $(stat -c%s build/traceability.json) bytes"
       - name: Enforce requirement linkage coverage
         run: |
-          ALLOW_EMPTY_SPECS=1 python scripts/validate-trace-coverage.py --min-req ${{ env.MIN_REQ_LINKAGE_COVERAGE }}
+          echo "📊 Running traceability coverage validation..."
+          ALLOW_EMPTY_SPECS=1 python scripts/validate-trace-coverage.py --min-req ${{ env.MIN_REQ_LINKAGE_COVERAGE }} || {
+            echo "❌ Traceability coverage validation failed"
+            echo "Current coverage results:"
+            ALLOW_EMPTY_SPECS=1 python scripts/validate-trace-coverage.py --min-req 0 || echo "Cannot run coverage check"
+            exit 1
+          }
 
   integrity-scan:
     name: Integrity Level Scan
