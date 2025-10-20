@@ -14,8 +14,8 @@ export default {
   
   // Test file patterns
   testMatch: [
-    '**/tests/unit/**/*.test.js',
-    '**/tests/integration/**/*.test.js'
+    '**/unit/**/*.test.js',
+    '**/integration/**/*.test.js'
   ],
   
   // Module file extensions
@@ -83,9 +83,9 @@ export default {
   
   // Module name mapping for test fixtures
   moduleNameMapper: {
-    '^@fixtures/(.*)$': '<rootDir>/tests/fixtures/$1',
-    '^@src/(.*)$': '<rootDir>/src/$1',
-    '^@tests/(.*)$': '<rootDir>/tests/$1'
+    '^@fixtures/(.*)$': '<rootDir>/fixtures/$1',
+    '^@src/(.*)$': '<rootDir>/../src/$1',
+    '^@tests/(.*)$': '<rootDir>/$1'
   },
   
   // Globals
