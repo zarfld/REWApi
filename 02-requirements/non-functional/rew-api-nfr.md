@@ -290,6 +290,11 @@ Scenario: Connection health monitoring
   And new connections should be established when server recovers
 ```
 
+**Architecture Traceability**:
+- **Architecture Components**: ARC-C-001 - REW Client Service Component, ARC-C-007 - Connection Pool Manager
+- **Design Elements**: HTTP connection pooling and reliability mechanisms
+- **Related ADRs**: ADR-002 - Parameter validation strategy (for network error handling)
+
 ## Security Requirements
 
 ### REQ-NF-005: Local Network Communication
@@ -307,6 +312,11 @@ The system shall only communicate with REW API on localhost/127.0.0.1 as per REW
 ##### REQ-NF-005.2: No Authentication Required
 **Derived From**: Absence of authentication patterns in code  
 The system operates without authentication requirements as REW API relies on localhost restriction for security.
+
+**Architecture Traceability**:
+- **Architecture Components**: ARC-C-001 - REW Client Service Component
+- **Design Elements**: Network security configuration and localhost-only communication
+- **Related ADRs**: ADR-001 - HTTP client architecture (for security boundaries)
 
 ### REQ-NF-SEC-002: Input Sanitization
 **ID**: REQ-NF-SEC-002  

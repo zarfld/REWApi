@@ -194,6 +194,11 @@ Scenario: Decode invalid Base64
   Then an appropriate exception should be thrown
 ```
 
+**Architecture Traceability**:
+- **Architecture Components**: ARC-C-001 - REW Client Service Component
+- **Design Elements**: Base64 encoding/decoding utility classes
+- **Implementation**: Cross-platform data serialization layer
+
 ### REQ-F-003: Audio System Control
 
 **ID**: REQ-F-003  
@@ -230,6 +235,11 @@ Scenario: Update audio driver
   Then REW should switch to the specified driver
   And available devices should be updated accordingly
 ```
+
+**Architecture Traceability**:
+- **Architecture Components**: ARC-C-001 - REW Client Service Component
+- **Design Elements**: Audio system configuration interfaces
+- **Implementation**: Audio driver management and device enumeration
 
 ### REQ-F-004: Measurement Operations
 
