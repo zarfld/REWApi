@@ -127,7 +127,7 @@ jobs:
       - name: Install dependencies
         run: |
           echo "📦 Installing Node.js dependencies..."
-          npm install
+          npm install --workspaces
           npm install -g eslint prettier markdownlint-cli
 
       - name: Run linting (Coding Standards)
