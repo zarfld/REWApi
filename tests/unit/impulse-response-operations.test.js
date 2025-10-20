@@ -14,7 +14,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
-import { REWApi } from '../../src/js/rewApi.js';
+import { REWApi } from '../../src/js/rewApi.esm.js';
 import { testFixtures } from '../fixtures/impulse-response-fixtures.js';
 
 describe('Impulse Response Operations - REQ-F-006 (Phase 1)', () => {

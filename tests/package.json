@@ -4,17 +4,17 @@
   "description": "Phase 1 Test Suite for REW API - Core Measurement Operations",
   "type": "module",
   "scripts": {
-    "test": "jest --config jest.config.js",
-    "test:watch": "jest --config jest.config.js --watch",
-    "test:coverage": "jest --config jest.config.js --coverage",
-    "test:unit": "jest --config jest.config.js tests/unit",
-    "test:integration": "jest --config jest.config.js tests/integration",
-    "test:phase1": "jest --config jest.config.js --testNamePattern='Phase 1'",
-    "test:measurement": "jest --config jest.config.js tests/unit/measurement-operations.test.js",
-    "test:frequency": "jest --config jest.config.js tests/unit/frequency-response-operations.test.js",
-    "test:impulse": "jest --config jest.config.js tests/unit/impulse-response-operations.test.js",
-    "test:ci": "jest --config jest.config.js --ci --coverage --watchAll=false",
-    "test:debug": "node --inspect-brk node_modules/.bin/jest --config jest.config.js --runInBand",
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --config jest.config.js",
+    "test:watch": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --config jest.config.js --watch",
+    "test:coverage": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --config jest.config.js --coverage",
+    "test:unit": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --config jest.config.js tests/unit",
+    "test:integration": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --config jest.config.js tests/integration",
+    "test:phase1": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --config jest.config.js --testNamePattern='Phase 1'",
+    "test:measurement": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --config jest.config.js tests/unit/measurement-operations.test.js",
+    "test:frequency": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --config jest.config.js tests/unit/frequency-response-operations.test.js",
+    "test:impulse": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --config jest.config.js tests/unit/impulse-response-operations.test.js",
+    "test:ci": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --config jest.config.js --ci --coverage --watchAll=false",
+    "test:debug": "cross-env NODE_OPTIONS=--experimental-vm-modules node --inspect-brk node_modules/.bin/jest --config jest.config.js --runInBand",
     "test:validate": "npm run test:unit && npm run test:coverage",
     "lint:tests": "eslint tests/**/*.js",
     "clean:coverage": "rimraf build/artifacts/coverage",
@@ -35,7 +35,8 @@
     "rimraf": "^5.0.5"
   },
   "dependencies": {
-    "cross-fetch": "^4.0.0"
+    "cross-fetch": "^4.0.0",
+    "cross-env": "^7.0.3"
   },
   "jest": {
     "preset": "./tests/jest.config.js"
@@ -48,10 +49,25 @@
           "targets": {
             "node": "18"
           },
-          "modules": "auto"
+          "modules": false
         }
       ]
-    ]
+    ],
+    "env": {
+      "test": {
+        "presets": [
+          [
+            "@babel/preset-env",
+            {
+              "targets": {
+                "node": "18"
+              },
+              "modules": "auto"
+            }
+          ]
+        ]
+      }
+    }
   },
   "eslintConfig": {
     "env": {

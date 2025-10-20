@@ -1183,4 +1183,11 @@ class REWApi {
     }
 }
 
-module.exports = REWApi;
+// Infrastructure compatibility: Support both CommonJS and ES modules
+// Only use module.exports if running in CommonJS mode
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = REWApi;
+}
+
+// ES module export
+export default REWApi;

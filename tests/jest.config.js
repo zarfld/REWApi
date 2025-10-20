@@ -27,7 +27,7 @@ export default {
   },
   
   // Setup files
-  setupFilesAfterEnv: ['<rootDir>/setup.js'],
+  // setupFilesAfterEnv: ['<rootDir>/setup.js'], // Disabled for ES module compatibility
   
   // Coverage configuration
   collectCoverage: true,

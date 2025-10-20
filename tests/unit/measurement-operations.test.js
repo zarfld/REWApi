@@ -14,7 +14,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
-import { REWApi } from '../../src/js/rewApi.js';
+import REWApi from '../../src/js/rewApi.js';
 import { testFixtures } from '../fixtures/measurement-fixtures.js';
 
 describe('Core Measurement Operations - REQ-F-004 (Phase 1)', () => {

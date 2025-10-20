@@ -1,619 +1,115 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testExecutions version="1">
-  <file path="D:\Repos\REWApi\tests\unit\impulse-response-operations.test.js">
-    <testCase name="Test Environment Setup should have proper test environment configured" duration="4"/>
-    <testCase name="Test Environment Setup should have test utilities available" duration="2"/>
-    <testCase name="Test Environment Setup should have test constants defined" duration="2"/>
-    <testCase name="Impulse Response Operations - REQ-F-006 (Phase 1) Impulse Response Data Retrieval - REQ-F-006.1 should retrieve impulse response data for measurement" duration="9">
-      <failure message="Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)"><![CDATA[Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)
-
-Expected: "http://localhost:4735/measurements/meas-123/impulse-response", ObjectContaining {"method": "GET"}
-
-Number of calls: 0
-    at Object.toHaveBeenCalledWith (D:\Repos\REWApi\tests\unit\impulse-response-operations.test.js:57:25)
-    at processTicksAndRejections (node:internal/process/task_queues:105:5)]]></failure>
-    </testCase>
-    <testCase name="Impulse Response Operations - REQ-F-006 (Phase 1) Impulse Response Data Retrieval - REQ-F-006.1 should handle impulse response request for non-existent measurement" duration="4">
-      <failure message="Error: expect(received).rejects.toThrow()"><![CDATA[Error: expect(received).rejects.toThrow()
-
-Matcher error: received value must be a promise or a function returning a promise
-
-Received has value: undefined
-    at Object.toThrow (D:\Repos\REWApi\tests\node_modules\expect\build\index.js:204:13)
-    at Object.toThrow (D:\Repos\REWApi\tests\unit\impulse-response-operations.test.js:80:67)
-    at Promise.then.completed (D:\Repos\REWApi\tests\node_modules\jest-circus\build\utils.js:298:28)
-    at new Promise (<anonymous>)
-    at callAsyncCircusFn (D:\Repos\REWApi\tests\node_modules\jest-circus\build\utils.js:231:10)
-    at _callCircusTest (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:316:40)
-    at processTicksAndRejections (node:internal/process/task_queues:105:5)
-    at _runTest (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:252:3)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:126:9)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:121:9)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:121:9)
-    at run (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:71:3)
-    at runAndTransformResultsToJestFormat (D:\Repos\REWApi\tests\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
-    at jestAdapter (D:\Repos\REWApi\tests\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
-    at runTestInternal (D:\Repos\REWApi\tests\node_modules\jest-runner\build\runTest.js:367:16)
-    at runTest (D:\Repos\REWApi\tests\node_modules\jest-runner\build\runTest.js:444:34)]]></failure>
-    </testCase>
-    <testCase name="Impulse Response Operations - REQ-F-006 (Phase 1) Impulse Response Data Retrieval - REQ-F-006.1 should validate impulse response data structure" duration="5">
-      <failure message="Error: expect(received).toHaveProperty(path)"><![CDATA[Error: expect(received).toHaveProperty(path)
-
-Matcher error: received value must not be null nor undefined
-
-Received has value: undefined
-    at Object.toHaveProperty (D:\Repos\REWApi\tests\unit\impulse-response-operations.test.js:97:22)
-    at processTicksAndRejections (node:internal/process/task_queues:105:5)]]></failure>
-    </testCase>
-    <testCase name="Impulse Response Operations - REQ-F-006 (Phase 1) Impulse Response Data Retrieval - REQ-F-006.1 should retrieve windowed impulse response data" duration="2">
-      <failure message="Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)"><![CDATA[Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)
-
-Expected: "http://localhost:4735/measurements/meas-123/impulse-response/windowed", ObjectContaining {"body": "{\"windowType\":\"hanning\",\"windowLength\":1024}", "headers": ObjectContaining {"Content-Type": "application/json"}, "method": "POST"}
-
-Number of calls: 0
-    at Object.toHaveBeenCalledWith (D:\Repos\REWApi\tests\unit\impulse-response-operations.test.js:123:25)
-    at processTicksAndRejections (node:internal/process/task_queues:105:5)]]></failure>
-    </testCase>
-    <testCase name="Impulse Response Operations - REQ-F-006 (Phase 1) Impulse Response Data Retrieval - REQ-F-006.1 should handle corrupted impulse response data" duration="3">
-      <failure message="Error: expect(received).rejects.toThrow()"><![CDATA[Error: expect(received).rejects.toThrow()
-
-Matcher error: received value must be a promise or a function returning a promise
-
-Received has value: undefined
-    at Object.toThrow (D:\Repos\REWApi\tests\node_modules\expect\build\index.js:204:13)
-    at Object.toThrow (D:\Repos\REWApi\tests\unit\impulse-response-operations.test.js:149:67)
-    at Promise.then.completed (D:\Repos\REWApi\tests\node_modules\jest-circus\build\utils.js:298:28)
-    at new Promise (<anonymous>)
-    at callAsyncCircusFn (D:\Repos\REWApi\tests\node_modules\jest-circus\build\utils.js:231:10)
-    at _callCircusTest (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:316:40)
-    at processTicksAndRejections (node:internal/process/task_queues:105:5)
-    at _runTest (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:252:3)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:126:9)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:121:9)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:121:9)
-    at run (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:71:3)
-    at runAndTransformResultsToJestFormat (D:\Repos\REWApi\tests\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
-    at jestAdapter (D:\Repos\REWApi\tests\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
-    at runTestInternal (D:\Repos\REWApi\tests\node_modules\jest-runner\build\runTest.js:367:16)
-    at runTest (D:\Repos\REWApi\tests\node_modules\jest-runner\build\runTest.js:444:34)]]></failure>
-    </testCase>
-    <testCase name="Impulse Response Operations - REQ-F-006 (Phase 1) Impulse Response Processing - REQ-F-006.2 should calculate RT60 reverberation time" duration="3">
-      <failure message="Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)"><![CDATA[Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)
-
-Expected: "http://localhost:4735/measurements/meas-123/impulse-response/rt60", ObjectContaining {"body": "{\"frequencyBands\":[\"125\",\"250\",\"500\",\"1000\",\"2000\",\"4000\"]}", "headers": ObjectContaining {"Content-Type": "application/json"}, "method": "POST"}
-
-Number of calls: 0
-    at Object.toHaveBeenCalledWith (D:\Repos\REWApi\tests\unit\impulse-response-operations.test.js:170:25)
-    at processTicksAndRejections (node:internal/process/task_queues:105:5)]]></failure>
-    </testCase>
-    <testCase name="Impulse Response Operations - REQ-F-006 (Phase 1) Impulse Response Processing - REQ-F-006.2 should calculate EDT (Early Decay Time)" duration="7">
-      <failure message="Error: expect(received).toHaveProperty(path)"><![CDATA[Error: expect(received).toHaveProperty(path)
-
-Matcher error: received value must not be null nor undefined
-
-Received has value: undefined
-    at Object.toHaveProperty (D:\Repos\REWApi\tests\unit\impulse-response-operations.test.js:202:22)
-    at processTicksAndRejections (node:internal/process/task_queues:105:5)]]></failure>
-    </testCase>
-    <testCase name="Impulse Response Operations - REQ-F-006 (Phase 1) Impulse Response Processing - REQ-F-006.2 should calculate C80 clarity values" duration="4">
-      <failure message="Error: expect(received).toHaveProperty(path)"><![CDATA[Error: expect(received).toHaveProperty(path)
-
-Matcher error: received value must not be null nor undefined
-
-Received has value: undefined
-    at Object.toHaveProperty (D:\Repos\REWApi\tests\unit\impulse-response-operations.test.js:224:22)
-    at processTicksAndRejections (node:internal/process/task_queues:105:5)]]></failure>
-    </testCase>
-    <testCase name="Impulse Response Operations - REQ-F-006 (Phase 1) Impulse Response Processing - REQ-F-006.2 should calculate D50 definition values" duration="2">
-      <failure message="Error: expect(received).toHaveProperty(path)"><![CDATA[Error: expect(received).toHaveProperty(path)
-
-Matcher error: received value must not be null nor undefined
-
-Received has value: undefined
-    at Object.toHaveProperty (D:\Repos\REWApi\tests\unit\impulse-response-operations.test.js:252:22)
-    at processTicksAndRejections (node:internal/process/task_queues:105:5)]]></failure>
-    </testCase>
-    <testCase name="Impulse Response Operations - REQ-F-006 (Phase 1) Impulse Response Processing - REQ-F-006.2 should calculate Center Time (Ts)" duration="1">
-      <failure message="Error: expect(received).toHaveProperty(path)"><![CDATA[Error: expect(received).toHaveProperty(path)
-
-Matcher error: received value must not be null nor undefined
-
-Received has value: undefined
-    at Object.toHaveProperty (D:\Repos\REWApi\tests\unit\impulse-response-operations.test.js:280:22)
-    at processTicksAndRejections (node:internal/process/task_queues:105:5)]]></failure>
-    </testCase>
-    <testCase name="Impulse Response Operations - REQ-F-006 (Phase 1) Impulse Response Analysis - REQ-F-006.3 should detect early reflections in impulse response" duration="2">
-      <failure message="Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)"><![CDATA[Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)
-
-Expected: "http://localhost:4735/measurements/meas-123/impulse-response/early-reflections", ObjectContaining {"body": "{\"threshold\":-20,\"timeWindow\":80}", "headers": ObjectContaining {"Content-Type": "application/json"}, "method": "POST"}
-
-Number of calls: 0
-    at Object.toHaveBeenCalledWith (D:\Repos\REWApi\tests\unit\impulse-response-operations.test.js:312:25)
-    at processTicksAndRejections (node:internal/process/task_queues:105:5)]]></failure>
-    </testCase>
-    <testCase name="Impulse Response Operations - REQ-F-006 (Phase 1) Impulse Response Analysis - REQ-F-006.3 should estimate room volume from impulse response" duration="2">
-      <failure message="Error: expect(received).toHaveProperty(path)"><![CDATA[Error: expect(received).toHaveProperty(path)
-
-Matcher error: received value must not be null nor undefined
-
-Received has value: undefined
-    at Object.toHaveProperty (D:\Repos\REWApi\tests\unit\impulse-response-operations.test.js:351:22)
-    at processTicksAndRejections (node:internal/process/task_queues:105:5)]]></failure>
-    </testCase>
-    <testCase name="Impulse Response Operations - REQ-F-006 (Phase 1) Impulse Response Analysis - REQ-F-006.3 should calculate IACC for stereo measurements" duration="2">
-      <failure message="Error: expect(received).toHaveProperty(path)"><![CDATA[Error: expect(received).toHaveProperty(path)
-
-Matcher error: received value must not be null nor undefined
-
-Received has value: undefined
-    at Object.toHaveProperty (D:\Repos\REWApi\tests\unit\impulse-response-operations.test.js:375:22)
-    at processTicksAndRejections (node:internal/process/task_queues:105:5)]]></failure>
-    </testCase>
-    <testCase name="Impulse Response Operations - REQ-F-006 (Phase 1) Impulse Response Analysis - REQ-F-006.3 should generate comprehensive impulse response report" duration="2">
-      <failure message="Error: expect(received).toHaveProperty(path)"><![CDATA[Error: expect(received).toHaveProperty(path)
-
-Matcher error: received value must not be null nor undefined
-
-Received has value: undefined
-    at Object.toHaveProperty (D:\Repos\REWApi\tests\unit\impulse-response-operations.test.js:411:22)
-    at processTicksAndRejections (node:internal/process/task_queues:105:5)]]></failure>
-    </testCase>
-    <testCase name="Impulse Response Operations - REQ-F-006 (Phase 1) Impulse Response Export and Comparison should export impulse response data in specified format" duration="2">
-      <failure message="Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)"><![CDATA[Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)
-
-Expected: "http://localhost:4735/measurements/meas-123/impulse-response/export", ObjectContaining {"body": "{\"format\":\"wav\"}", "headers": ObjectContaining {"Content-Type": "application/json"}, "method": "POST"}
-
-Number of calls: 0
-    at Object.toHaveBeenCalledWith (D:\Repos\REWApi\tests\unit\impulse-response-operations.test.js:446:25)
-    at processTicksAndRejections (node:internal/process/task_queues:105:5)]]></failure>
-    </testCase>
-    <testCase name="Impulse Response Operations - REQ-F-006 (Phase 1) Impulse Response Export and Comparison should compare two impulse responses" duration="4">
-      <failure message="Error: expect(received).toHaveProperty(path)"><![CDATA[Error: expect(received).toHaveProperty(path)
-
-Matcher error: received value must not be null nor undefined
-
-Received has value: undefined
-    at Object.toHaveProperty (D:\Repos\REWApi\tests\unit\impulse-response-operations.test.js:474:22)
-    at processTicksAndRejections (node:internal/process/task_queues:105:5)]]></failure>
-    </testCase>
-    <testCase name="Impulse Response Operations - REQ-F-006 (Phase 1) Edge Cases and Performance should handle very long impulse responses efficiently" duration="50">
-      <failure message="TypeError: Cannot read properties of undefined (reading &apos;timeData&apos;)"><![CDATA[TypeError: Cannot read properties of undefined (reading 'timeData')
-    at Object.timeData (D:\Repos\REWApi\tests\unit\impulse-response-operations.test.js:503:21)
-    at processTicksAndRejections (node:internal/process/task_queues:105:5)]]></failure>
-    </testCase>
-    <testCase name="Impulse Response Operations - REQ-F-006 (Phase 1) Edge Cases and Performance should handle very short impulse responses" duration="3">
-      <failure message="TypeError: Cannot read properties of undefined (reading &apos;timeData&apos;)"><![CDATA[TypeError: Cannot read properties of undefined (reading 'timeData')
-    at Object.timeData (D:\Repos\REWApi\tests\unit\impulse-response-operations.test.js:521:21)
-    at processTicksAndRejections (node:internal/process/task_queues:105:5)]]></failure>
-    </testCase>
-    <testCase name="Impulse Response Operations - REQ-F-006 (Phase 1) Edge Cases and Performance should handle impulse responses with very low signal levels" duration="4">
-      <failure message="TypeError: Cannot read properties of undefined (reading &apos;peakAmplitude&apos;)"><![CDATA[TypeError: Cannot read properties of undefined (reading 'peakAmplitude')
-    at Object.peakAmplitude (D:\Repos\REWApi\tests\unit\impulse-response-operations.test.js:539:21)
-    at processTicksAndRejections (node:internal/process/task_queues:105:5)]]></failure>
-    </testCase>
-    <testCase name="Impulse Response Operations - REQ-F-006 (Phase 1) Edge Cases and Performance should handle concurrent impulse response operations" duration="11">
-      <failure message="Error: expect(jest.fn()).toHaveBeenCalledTimes(expected)"><![CDATA[Error: expect(jest.fn()).toHaveBeenCalledTimes(expected)
-
-Expected number of calls: 3
-Received number of calls: 0
-    at Object.toHaveBeenCalledTimes (D:\Repos\REWApi\tests\unit\impulse-response-operations.test.js:566:25)
-    at processTicksAndRejections (node:internal/process/task_queues:105:5)]]></failure>
-    </testCase>
-    <testCase name="Impulse Response Operations - REQ-F-006 (Phase 1) Edge Cases and Performance should respect processing limits and timeouts" duration="2">
-      <failure message="Error: expect(received).toBeGreaterThan(expected)"><![CDATA[Error: expect(received).toBeGreaterThan(expected)
-
-Expected: > 1500
-Received:   0
-    at Object.toBeGreaterThan (D:\Repos\REWApi\tests\unit\impulse-response-operations.test.js:598:35)
-    at processTicksAndRejections (node:internal/process/task_queues:105:5)]]></failure>
-    </testCase>
-  </file>
-  <file path="D:\Repos\REWApi\tests\unit\frequency-response-operations.test.js">
-    <testCase name="Test Environment Setup should have proper test environment configured" duration="1"/>
-    <testCase name="Test Environment Setup should have test utilities available" duration="1"/>
-    <testCase name="Test Environment Setup should have test constants defined" duration="1"/>
-    <testCase name="Frequency Response Operations - REQ-F-005 (Phase 1) Frequency Response Data Retrieval - REQ-F-005.1 should retrieve frequency response data for measurement" duration="4">
-      <failure message="Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)"><![CDATA[Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)
-
-Expected: "http://localhost:4735/measurements/meas-123/frequency-response", ObjectContaining {"method": "GET"}
-
-Number of calls: 0
-    at Object.toHaveBeenCalledWith (D:\Repos\REWApi\tests\unit\frequency-response-operations.test.js:57:25)]]></failure>
-    </testCase>
-    <testCase name="Frequency Response Operations - REQ-F-005 (Phase 1) Frequency Response Data Retrieval - REQ-F-005.1 should handle frequency response request for non-existent measurement" duration="1">
-      <failure message="Error: expect(received).rejects.toThrow()"><![CDATA[Error: expect(received).rejects.toThrow()
-
-Matcher error: received value must be a promise or a function returning a promise
-
-Received has value: undefined
-    at Object.toThrow (D:\Repos\REWApi\tests\node_modules\expect\build\index.js:204:13)
-    at Object.toThrow (D:\Repos\REWApi\tests\unit\frequency-response-operations.test.js:80:69)
-    at Promise.then.completed (D:\Repos\REWApi\tests\node_modules\jest-circus\build\utils.js:298:28)
-    at new Promise (<anonymous>)
-    at callAsyncCircusFn (D:\Repos\REWApi\tests\node_modules\jest-circus\build\utils.js:231:10)
-    at _callCircusTest (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:316:40)
-    at _runTest (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:252:3)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:126:9)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:121:9)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:121:9)
-    at run (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:71:3)
-    at runAndTransformResultsToJestFormat (D:\Repos\REWApi\tests\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
-    at jestAdapter (D:\Repos\REWApi\tests\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
-    at runTestInternal (D:\Repos\REWApi\tests\node_modules\jest-runner\build\runTest.js:367:16)
-    at runTest (D:\Repos\REWApi\tests\node_modules\jest-runner\build\runTest.js:444:34)]]></failure>
-    </testCase>
-    <testCase name="Frequency Response Operations - REQ-F-005 (Phase 1) Frequency Response Data Retrieval - REQ-F-005.1 should validate frequency response data structure" duration="3">
-      <failure message="Error: expect(received).toHaveProperty(path)"><![CDATA[Error: expect(received).toHaveProperty(path)
-
-Matcher error: received value must not be null nor undefined
-
-Received has value: undefined
-    at Object.toHaveProperty (D:\Repos\REWApi\tests\unit\frequency-response-operations.test.js:97:22)]]></failure>
-    </testCase>
-    <testCase name="Frequency Response Operations - REQ-F-005 (Phase 1) Frequency Response Data Retrieval - REQ-F-005.1 should handle incomplete frequency response data" duration="2">
-      <failure message="Error: expect(received).rejects.toThrow()"><![CDATA[Error: expect(received).rejects.toThrow()
-
-Matcher error: received value must be a promise or a function returning a promise
-
-Received has value: undefined
-    at Object.toThrow (D:\Repos\REWApi\tests\node_modules\expect\build\index.js:204:13)
-    at Object.toThrow (D:\Repos\REWApi\tests\unit\frequency-response-operations.test.js:119:69)
-    at Promise.then.completed (D:\Repos\REWApi\tests\node_modules\jest-circus\build\utils.js:298:28)
-    at new Promise (<anonymous>)
-    at callAsyncCircusFn (D:\Repos\REWApi\tests\node_modules\jest-circus\build\utils.js:231:10)
-    at _callCircusTest (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:316:40)
-    at _runTest (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:252:3)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:126:9)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:121:9)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:121:9)
-    at run (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:71:3)
-    at runAndTransformResultsToJestFormat (D:\Repos\REWApi\tests\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
-    at jestAdapter (D:\Repos\REWApi\tests\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
-    at runTestInternal (D:\Repos\REWApi\tests\node_modules\jest-runner\build\runTest.js:367:16)
-    at runTest (D:\Repos\REWApi\tests\node_modules\jest-runner\build\runTest.js:444:34)]]></failure>
-    </testCase>
-    <testCase name="Frequency Response Operations - REQ-F-005 (Phase 1) Frequency Response Data Retrieval - REQ-F-005.1 should retrieve frequency response with frequency range parameters" duration="3">
-      <failure message="Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)"><![CDATA[Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)
-
-Expected: "http://localhost:4735/measurements/meas-123/frequency-response?startFreq=20&endFreq=20000", ObjectContaining {"method": "GET"}
-
-Number of calls: 0
-    at Object.toHaveBeenCalledWith (D:\Repos\REWApi\tests\unit\frequency-response-operations.test.js:138:25)]]></failure>
-    </testCase>
-    <testCase name="Frequency Response Operations - REQ-F-005 (Phase 1) Frequency Response Processing - REQ-F-005.2 should apply smoothing to frequency response data" duration="1">
-      <failure message="Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)"><![CDATA[Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)
-
-Expected: "http://localhost:4735/measurements/meas-123/frequency-response/smooth", ObjectContaining {"body": "{\"smoothingFactor\":6}", "headers": ObjectContaining {"Content-Type": "application/json"}, "method": "POST"}
-
-Number of calls: 0
-    at Object.toHaveBeenCalledWith (D:\Repos\REWApi\tests\unit\frequency-response-operations.test.js:164:25)]]></failure>
-    </testCase>
-    <testCase name="Frequency Response Operations - REQ-F-005 (Phase 1) Frequency Response Processing - REQ-F-005.2 should calculate frequency response statistics" duration="1">
-      <failure message="Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)"><![CDATA[Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)
-
-Expected: "http://localhost:4735/measurements/meas-123/frequency-response/statistics", ObjectContaining {"method": "GET"}
-
-Number of calls: 0
-    at Object.toHaveBeenCalledWith (D:\Repos\REWApi\tests\unit\frequency-response-operations.test.js:192:25)]]></failure>
-    </testCase>
-    <testCase name="Frequency Response Operations - REQ-F-005 (Phase 1) Frequency Response Processing - REQ-F-005.2 should compare two frequency responses" duration="1">
-      <failure message="Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)"><![CDATA[Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)
-
-Expected: "http://localhost:4735/frequency-response/compare", ObjectContaining {"body": "{\"measurement1\":\"meas-123\",\"measurement2\":\"meas-456\"}", "headers": ObjectContaining {"Content-Type": "application/json"}, "method": "POST"}
-
-Number of calls: 0
-    at Object.toHaveBeenCalledWith (D:\Repos\REWApi\tests\unit\frequency-response-operations.test.js:223:25)]]></failure>
-    </testCase>
-    <testCase name="Frequency Response Operations - REQ-F-005 (Phase 1) Frequency Response Processing - REQ-F-005.2 should export frequency response data in specified format" duration="3">
-      <failure message="Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)"><![CDATA[Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)
-
-Expected: "http://localhost:4735/measurements/meas-123/frequency-response/export", ObjectContaining {"body": "{\"format\":\"csv\"}", "headers": ObjectContaining {"Content-Type": "application/json"}, "method": "POST"}
-
-Number of calls: 0
-    at Object.toHaveBeenCalledWith (D:\Repos\REWApi\tests\unit\frequency-response-operations.test.js:264:25)]]></failure>
-    </testCase>
-    <testCase name="Frequency Response Operations - REQ-F-005 (Phase 1) Frequency Response Processing - REQ-F-005.2 should apply frequency response correction" duration="3">
-      <failure message="Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)"><![CDATA[Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)
-
-Expected: "http://localhost:4735/measurements/meas-123/frequency-response/correct", ObjectContaining {"body": "{\"correctionCurve\":{\"name\":\"Room Correction Curve A\",\"type\":\"parametric_eq\",\"filters\":[{\"frequency\":245,\"gain\":-8.2,\"q\":2.5,\"type\":\"peaking\"},{\"frequency\":3200,\"gain\":6.8,\"q\":1.8,\"type\":\"peaking\"},{\"frequency\":80,\"gain\":-2.1,\"q\":0.7,\"type\":\"high_shelf\"},{\"frequency\":12000,\"gain\":-3.5,\"q\":0.9,\"type\":\"low_shelf\"}],\"targetCurve\":\"flat\",\"frequencies\":[20,50,100,200,500,1000,2000,5000,10000,20000],\"correction\":[2.1,1.8,1.2,0.8,0.3,-0.2,-0.8,1.5,2,1.8]}}", "headers": ObjectContaining {"Content-Type": "application/json"}, "method": "POST"}
-
-Number of calls: 0
-    at Object.toHaveBeenCalledWith (D:\Repos\REWApi\tests\unit\frequency-response-operations.test.js:293:25)]]></failure>
-    </testCase>
-    <testCase name="Frequency Response Operations - REQ-F-005 (Phase 1) Frequency Response Analysis - REQ-F-005.3 should identify peaks in frequency response" duration="1">
-      <failure message="Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)"><![CDATA[Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)
-
-Expected: "http://localhost:4735/measurements/meas-123/frequency-response/peaks", ObjectContaining {"body": "{\"threshold\":3}", "headers": ObjectContaining {"Content-Type": "application/json"}, "method": "POST"}
-
-Number of calls: 0
-    at Object.toHaveBeenCalledWith (D:\Repos\REWApi\tests\unit\frequency-response-operations.test.js:326:25)]]></failure>
-    </testCase>
-    <testCase name="Frequency Response Operations - REQ-F-005 (Phase 1) Frequency Response Analysis - REQ-F-005.3 should identify dips in frequency response" duration="1">
-      <failure message="TypeError: Cannot read properties of undefined (reading &apos;dips&apos;)"><![CDATA[TypeError: Cannot read properties of undefined (reading 'dips')
-    at Object.dips (D:\Repos\REWApi\tests\unit\frequency-response-operations.test.js:362:35)]]></failure>
-    </testCase>
-    <testCase name="Frequency Response Operations - REQ-F-005 (Phase 1) Frequency Response Analysis - REQ-F-005.3 should calculate curve fitting for frequency response" duration="2">
-      <failure message="Error: expect(received).toHaveProperty(path)"><![CDATA[Error: expect(received).toHaveProperty(path)
-
-Matcher error: received value must not be null nor undefined
-
-Received has value: undefined
-    at Object.toHaveProperty (D:\Repos\REWApi\tests\unit\frequency-response-operations.test.js:387:22)]]></failure>
-    </testCase>
-    <testCase name="Frequency Response Operations - REQ-F-005 (Phase 1) Frequency Response Analysis - REQ-F-005.3 should generate comprehensive frequency response report" duration="2">
-      <failure message="Error: expect(received).toHaveProperty(path)"><![CDATA[Error: expect(received).toHaveProperty(path)
-
-Matcher error: received value must not be null nor undefined
-
-Received has value: undefined
-    at Object.toHaveProperty (D:\Repos\REWApi\tests\unit\frequency-response-operations.test.js:417:22)]]></failure>
-    </testCase>
-    <testCase name="Frequency Response Operations - REQ-F-005 (Phase 1) Edge Cases and Performance should handle large frequency response datasets efficiently" duration="30">
-      <failure message="TypeError: Cannot read properties of undefined (reading &apos;frequencies&apos;)"><![CDATA[TypeError: Cannot read properties of undefined (reading 'frequencies')
-    at Object.frequencies (D:\Repos\REWApi\tests\unit\frequency-response-operations.test.js:447:21)]]></failure>
-    </testCase>
-    <testCase name="Frequency Response Operations - REQ-F-005 (Phase 1) Edge Cases and Performance should handle extreme frequency ranges" duration="1">
-      <failure message="TypeError: Cannot read properties of undefined (reading &apos;frequencies&apos;)"><![CDATA[TypeError: Cannot read properties of undefined (reading 'frequencies')
-    at Object.frequencies (D:\Repos\REWApi\tests\unit\frequency-response-operations.test.js:467:21)]]></failure>
-    </testCase>
-    <testCase name="Frequency Response Operations - REQ-F-005 (Phase 1) Edge Cases and Performance should handle corrupted frequency response data" duration="4">
-      <failure message="Error: expect(received).rejects.toThrow()"><![CDATA[Error: expect(received).rejects.toThrow()
-
-Matcher error: received value must be a promise or a function returning a promise
-
-Received has value: undefined
-    at Object.toThrow (D:\Repos\REWApi\tests\node_modules\expect\build\index.js:204:13)
-    at Object.toThrow (D:\Repos\REWApi\tests\unit\frequency-response-operations.test.js:482:69)
-    at Promise.then.completed (D:\Repos\REWApi\tests\node_modules\jest-circus\build\utils.js:298:28)
-    at new Promise (<anonymous>)
-    at callAsyncCircusFn (D:\Repos\REWApi\tests\node_modules\jest-circus\build\utils.js:231:10)
-    at _callCircusTest (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:316:40)
-    at _runTest (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:252:3)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:126:9)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:121:9)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:121:9)
-    at run (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:71:3)
-    at runAndTransformResultsToJestFormat (D:\Repos\REWApi\tests\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
-    at jestAdapter (D:\Repos\REWApi\tests\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
-    at runTestInternal (D:\Repos\REWApi\tests\node_modules\jest-runner\build\runTest.js:367:16)
-    at runTest (D:\Repos\REWApi\tests\node_modules\jest-runner\build\runTest.js:444:34)]]></failure>
-    </testCase>
-    <testCase name="Frequency Response Operations - REQ-F-005 (Phase 1) Edge Cases and Performance should handle concurrent frequency response operations" duration="7">
-      <failure message="Error: expect(jest.fn()).toHaveBeenCalledTimes(expected)"><![CDATA[Error: expect(jest.fn()).toHaveBeenCalledTimes(expected)
-
-Expected number of calls: 3
-Received number of calls: 0
-    at Object.toHaveBeenCalledTimes (D:\Repos\REWApi\tests\unit\frequency-response-operations.test.js:508:25)]]></failure>
-    </testCase>
-    <testCase name="Frequency Response Operations - REQ-F-005 (Phase 1) Edge Cases and Performance should validate frequency response data integrity" duration="4">
-      <failure message="TypeError: Cannot read properties of undefined (reading &apos;frequencies&apos;)"><![CDATA[TypeError: Cannot read properties of undefined (reading 'frequencies')
-    at Object.frequencies (D:\Repos\REWApi\tests\unit\frequency-response-operations.test.js:529:34)]]></failure>
-    </testCase>
-  </file>
   <file path="D:\Repos\REWApi\tests\unit\measurement-operations.test.js">
-    <testCase name="Test Environment Setup should have proper test environment configured" duration="1"/>
-    <testCase name="Test Environment Setup should have test utilities available" duration="1"/>
-    <testCase name="Test Environment Setup should have test constants defined" duration="1"/>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Retrieval - REQ-F-004.1 should get all measurements successfully" duration="2">
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Retrieval - REQ-F-004.1 should get all measurements successfully" duration="45">
       <failure message="Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)"><![CDATA[Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)
 
 Expected: "http://localhost:4735/measurements", ObjectContaining {"method": "GET"}
 
 Number of calls: 0
-    at Object.toHaveBeenCalledWith (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:56:25)]]></failure>
+    at Object.toHaveBeenCalledWith (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:56:25)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)]]></failure>
     </testCase>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Retrieval - REQ-F-004.1 should handle empty measurement list gracefully" duration="2">
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Retrieval - REQ-F-004.1 should handle empty measurement list gracefully" duration="12">
       <failure message="Error: expect(received).toEqual(expected) // deep equality"><![CDATA[Error: expect(received).toEqual(expected) // deep equality
 
 Expected: []
-Received: undefined
-    at Object.toEqual (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:77:22)]]></failure>
+Received: {}
+    at Object.toEqual (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:77:22)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)]]></failure>
     </testCase>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Retrieval - REQ-F-004.1 should handle server errors appropriately" duration="4">
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Retrieval - REQ-F-004.1 should handle server errors appropriately" duration="6">
       <failure message="Error: expect(received).rejects.toThrow()"><![CDATA[Error: expect(received).rejects.toThrow()
 
-Matcher error: received value must be a promise or a function returning a promise
-
-Received has value: undefined
-    at Object.toThrow (D:\Repos\REWApi\tests\node_modules\expect\build\index.js:204:13)
-    at Object.toThrow (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:91:51)
-    at Promise.then.completed (D:\Repos\REWApi\tests\node_modules\jest-circus\build\utils.js:298:28)
+Received promise resolved instead of rejected
+Resolved to value: {}
+    at expect (D:\Repos\REWApi\node_modules\expect\build\index.js:113:15)
+    at Object.expect (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:91:13)
+    at Promise.then.completed (D:\Repos\REWApi\node_modules\jest-circus\build\utils.js:298:28)
     at new Promise (<anonymous>)
-    at callAsyncCircusFn (D:\Repos\REWApi\tests\node_modules\jest-circus\build\utils.js:231:10)
-    at _callCircusTest (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:316:40)
-    at _runTest (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:252:3)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:126:9)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:121:9)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:121:9)
-    at run (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:71:3)
-    at runAndTransformResultsToJestFormat (D:\Repos\REWApi\tests\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
-    at jestAdapter (D:\Repos\REWApi\tests\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
-    at runTestInternal (D:\Repos\REWApi\tests\node_modules\jest-runner\build\runTest.js:367:16)
-    at runTest (D:\Repos\REWApi\tests\node_modules\jest-runner\build\runTest.js:444:34)]]></failure>
+    at callAsyncCircusFn (D:\Repos\REWApi\node_modules\jest-circus\build\utils.js:231:10)
+    at _callCircusTest (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:316:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:252:3)
+    at _runTestsForDescribeBlock (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:126:9)
+    at _runTestsForDescribeBlock (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:121:9)
+    at _runTestsForDescribeBlock (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:121:9)
+    at run (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:71:3)
+    at runAndTransformResultsToJestFormat (D:\Repos\REWApi\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
+    at jestAdapter (D:\Repos\REWApi\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
+    at runTestInternal (D:\Repos\REWApi\node_modules\jest-runner\build\runTest.js:367:16)
+    at runTest (D:\Repos\REWApi\node_modules\jest-runner\build\runTest.js:444:34)]]></failure>
     </testCase>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Retrieval - REQ-F-004.1 should handle network failures" duration="1">
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Retrieval - REQ-F-004.1 should handle network failures" duration="7">
       <failure message="Error: expect(received).rejects.toThrow()"><![CDATA[Error: expect(received).rejects.toThrow()
 
-Matcher error: received value must be a promise or a function returning a promise
-
-Received has value: undefined
-    at Object.toThrow (D:\Repos\REWApi\tests\node_modules\expect\build\index.js:204:13)
-    at Object.toThrow (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:100:51)
-    at Promise.then.completed (D:\Repos\REWApi\tests\node_modules\jest-circus\build\utils.js:298:28)
+Received promise resolved instead of rejected
+Resolved to value: {}
+    at expect (D:\Repos\REWApi\node_modules\expect\build\index.js:113:15)
+    at Object.expect (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:100:13)
+    at Promise.then.completed (D:\Repos\REWApi\node_modules\jest-circus\build\utils.js:298:28)
     at new Promise (<anonymous>)
-    at callAsyncCircusFn (D:\Repos\REWApi\tests\node_modules\jest-circus\build\utils.js:231:10)
-    at _callCircusTest (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:316:40)
-    at _runTest (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:252:3)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:126:9)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:121:9)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:121:9)
-    at run (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:71:3)
-    at runAndTransformResultsToJestFormat (D:\Repos\REWApi\tests\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
-    at jestAdapter (D:\Repos\REWApi\tests\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
-    at runTestInternal (D:\Repos\REWApi\tests\node_modules\jest-runner\build\runTest.js:367:16)
-    at runTest (D:\Repos\REWApi\tests\node_modules\jest-runner\build\runTest.js:444:34)]]></failure>
+    at callAsyncCircusFn (D:\Repos\REWApi\node_modules\jest-circus\build\utils.js:231:10)
+    at _callCircusTest (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:316:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:252:3)
+    at _runTestsForDescribeBlock (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:126:9)
+    at _runTestsForDescribeBlock (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:121:9)
+    at _runTestsForDescribeBlock (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:121:9)
+    at run (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:71:3)
+    at runAndTransformResultsToJestFormat (D:\Repos\REWApi\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
+    at jestAdapter (D:\Repos\REWApi\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
+    at runTestInternal (D:\Repos\REWApi\node_modules\jest-runner\build\runTest.js:367:16)
+    at runTest (D:\Repos\REWApi\node_modules\jest-runner\build\runTest.js:444:34)]]></failure>
     </testCase>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Retrieval - REQ-F-004.1 should handle invalid JSON responses" duration="1">
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Retrieval - REQ-F-004.1 should handle invalid JSON responses" duration="5">
       <failure message="Error: expect(received).rejects.toThrow()"><![CDATA[Error: expect(received).rejects.toThrow()
 
-Matcher error: received value must be a promise or a function returning a promise
-
-Received has value: undefined
-    at Object.toThrow (D:\Repos\REWApi\tests\node_modules\expect\build\index.js:204:13)
-    at Object.toThrow (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:112:51)
-    at Promise.then.completed (D:\Repos\REWApi\tests\node_modules\jest-circus\build\utils.js:298:28)
+Received promise resolved instead of rejected
+Resolved to value: {}
+    at expect (D:\Repos\REWApi\node_modules\expect\build\index.js:113:15)
+    at Object.expect (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:112:13)
+    at Promise.then.completed (D:\Repos\REWApi\node_modules\jest-circus\build\utils.js:298:28)
     at new Promise (<anonymous>)
-    at callAsyncCircusFn (D:\Repos\REWApi\tests\node_modules\jest-circus\build\utils.js:231:10)
-    at _callCircusTest (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:316:40)
-    at _runTest (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:252:3)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:126:9)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:121:9)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:121:9)
-    at run (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:71:3)
-    at runAndTransformResultsToJestFormat (D:\Repos\REWApi\tests\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
-    at jestAdapter (D:\Repos\REWApi\tests\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
-    at runTestInternal (D:\Repos\REWApi\tests\node_modules\jest-runner\build\runTest.js:367:16)
-    at runTest (D:\Repos\REWApi\tests\node_modules\jest-runner\build\runTest.js:444:34)]]></failure>
+    at callAsyncCircusFn (D:\Repos\REWApi\node_modules\jest-circus\build\utils.js:231:10)
+    at _callCircusTest (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:316:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:252:3)
+    at _runTestsForDescribeBlock (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:126:9)
+    at _runTestsForDescribeBlock (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:121:9)
+    at _runTestsForDescribeBlock (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:121:9)
+    at run (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:71:3)
+    at runAndTransformResultsToJestFormat (D:\Repos\REWApi\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
+    at jestAdapter (D:\Repos\REWApi\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
+    at runTestInternal (D:\Repos\REWApi\node_modules\jest-runner\build\runTest.js:367:16)
+    at runTest (D:\Repos\REWApi\node_modules\jest-runner\build\runTest.js:444:34)]]></failure>
     </testCase>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Retrieval - REQ-F-004.1 should validate measurement data structure" duration="2">
-      <failure message="Error: expect(received).toBeDefined()"><![CDATA[Error: expect(received).toBeDefined()
-
-Received: undefined
-    at Object.toBeDefined (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:128:22)]]></failure>
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Retrieval - REQ-F-004.1 should validate measurement data structure" duration="7"/>
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Creation - REQ-F-004.2 should add new measurement with valid data" duration="6">
+      <failure message="Error: HTTP error! status: 404"><![CDATA[Error: HTTP error! status: 404
+    at REWApi.post (D:\Repos\REWApi\src\js\rewApi.js:63:19)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at REWApi.addMeasurement (D:\Repos\REWApi\src\js\rewApi.js:306:16)
+    at Object.<anonymous> (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:154:22)]]></failure>
     </testCase>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Creation - REQ-F-004.2 should add new measurement with valid data" duration="2">
-      <failure message="Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)"><![CDATA[Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)
-
-Expected: "http://localhost:4735/measurements", ObjectContaining {"body": "{\"name\":\"Test Measurement\",\"type\":\"impulse_response\",\"sampleRate\":48000,\"sweepLength\":10,\"channels\":[\"L\",\"R\"],\"metadata\":{\"room\":\"Test Room\",\"position\":\"Test Position\",\"microphone\":\"Test Microphone\"}}", "headers": ObjectContaining {"Content-Type": "application/json"}, "method": "POST"}
-
-Number of calls: 0
-    at Object.toHaveBeenCalledWith (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:157:25)]]></failure>
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Creation - REQ-F-004.2 should reject invalid measurement data" duration="6"/>
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Creation - REQ-F-004.2 should handle duplicate measurement names" duration="7"/>
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Creation - REQ-F-004.2 should validate required fields" duration="5"/>
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Deletion - REQ-F-004.3 should delete measurement by ID" duration="4">
+      <failure message="Error: HTTP error! status: 400"><![CDATA[Error: HTTP error! status: 400
+    at REWApi.deleteMeasurement (D:\Repos\REWApi\src\js\rewApi.js:316:19)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at Object.<anonymous> (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:224:22)]]></failure>
     </testCase>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Creation - REQ-F-004.2 should reject invalid measurement data" duration="2">
-      <failure message="Error: expect(received).rejects.toThrow()"><![CDATA[Error: expect(received).rejects.toThrow()
-
-Matcher error: received value must be a promise or a function returning a promise
-
-Received has value: undefined
-    at Object.toThrow (D:\Repos\REWApi\tests\node_modules\expect\build\index.js:204:13)
-    at Object.toThrow (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:182:68)
-    at Promise.then.completed (D:\Repos\REWApi\tests\node_modules\jest-circus\build\utils.js:298:28)
-    at new Promise (<anonymous>)
-    at callAsyncCircusFn (D:\Repos\REWApi\tests\node_modules\jest-circus\build\utils.js:231:10)
-    at _callCircusTest (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:316:40)
-    at _runTest (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:252:3)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:126:9)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:121:9)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:121:9)
-    at run (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:71:3)
-    at runAndTransformResultsToJestFormat (D:\Repos\REWApi\tests\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
-    at jestAdapter (D:\Repos\REWApi\tests\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
-    at runTestInternal (D:\Repos\REWApi\tests\node_modules\jest-runner\build\runTest.js:367:16)
-    at runTest (D:\Repos\REWApi\tests\node_modules\jest-runner\build\runTest.js:444:34)]]></failure>
-    </testCase>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Creation - REQ-F-004.2 should handle duplicate measurement names" duration="2">
-      <failure message="Error: expect(received).rejects.toThrow()"><![CDATA[Error: expect(received).rejects.toThrow()
-
-Matcher error: received value must be a promise or a function returning a promise
-
-Received has value: undefined
-    at Object.toThrow (D:\Repos\REWApi\tests\node_modules\expect\build\index.js:204:13)
-    at Object.toThrow (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:195:70)
-    at Promise.then.completed (D:\Repos\REWApi\tests\node_modules\jest-circus\build\utils.js:298:28)
-    at new Promise (<anonymous>)
-    at callAsyncCircusFn (D:\Repos\REWApi\tests\node_modules\jest-circus\build\utils.js:231:10)
-    at _callCircusTest (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:316:40)
-    at _runTest (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:252:3)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:126:9)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:121:9)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:121:9)
-    at run (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:71:3)
-    at runAndTransformResultsToJestFormat (D:\Repos\REWApi\tests\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
-    at jestAdapter (D:\Repos\REWApi\tests\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
-    at runTestInternal (D:\Repos\REWApi\tests\node_modules\jest-runner\build\runTest.js:367:16)
-    at runTest (D:\Repos\REWApi\tests\node_modules\jest-runner\build\runTest.js:444:34)]]></failure>
-    </testCase>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Creation - REQ-F-004.2 should validate required fields" duration="2">
-      <failure message="Error: expect(received).rejects.toThrow()"><![CDATA[Error: expect(received).rejects.toThrow()
-
-Matcher error: received value must be a promise or a function returning a promise
-
-Received has value: undefined
-    at Object.toThrow (D:\Repos\REWApi\tests\node_modules\expect\build\index.js:204:13)
-    at Object.toThrow (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:208:71)
-    at Promise.then.completed (D:\Repos\REWApi\tests\node_modules\jest-circus\build\utils.js:298:28)
-    at new Promise (<anonymous>)
-    at callAsyncCircusFn (D:\Repos\REWApi\tests\node_modules\jest-circus\build\utils.js:231:10)
-    at _callCircusTest (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:316:40)
-    at _runTest (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:252:3)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:126:9)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:121:9)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:121:9)
-    at run (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:71:3)
-    at runAndTransformResultsToJestFormat (D:\Repos\REWApi\tests\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
-    at jestAdapter (D:\Repos\REWApi\tests\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
-    at runTestInternal (D:\Repos\REWApi\tests\node_modules\jest-runner\build\runTest.js:367:16)
-    at runTest (D:\Repos\REWApi\tests\node_modules\jest-runner\build\runTest.js:444:34)]]></failure>
-    </testCase>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Deletion - REQ-F-004.3 should delete measurement by ID" duration="2">
-      <failure message="Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)"><![CDATA[Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)
-
-Expected: "http://localhost:4735/measurements/meas-123", ObjectContaining {"method": "DELETE"}
-
-Number of calls: 0
-    at Object.toHaveBeenCalledWith (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:227:25)]]></failure>
-    </testCase>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Deletion - REQ-F-004.3 should handle deletion of non-existent measurement" duration="2">
-      <failure message="Error: expect(received).rejects.toThrow()"><![CDATA[Error: expect(received).rejects.toThrow()
-
-Matcher error: received value must be a promise or a function returning a promise
-
-Received has value: undefined
-    at Object.toThrow (D:\Repos\REWApi\tests\node_modules\expect\build\index.js:204:13)
-    at Object.toThrow (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:244:66)
-    at Promise.then.completed (D:\Repos\REWApi\tests\node_modules\jest-circus\build\utils.js:298:28)
-    at new Promise (<anonymous>)
-    at callAsyncCircusFn (D:\Repos\REWApi\tests\node_modules\jest-circus\build\utils.js:231:10)
-    at _callCircusTest (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:316:40)
-    at _runTest (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:252:3)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:126:9)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:121:9)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:121:9)
-    at run (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:71:3)
-    at runAndTransformResultsToJestFormat (D:\Repos\REWApi\tests\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
-    at jestAdapter (D:\Repos\REWApi\tests\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
-    at runTestInternal (D:\Repos\REWApi\tests\node_modules\jest-runner\build\runTest.js:367:16)
-    at runTest (D:\Repos\REWApi\tests\node_modules\jest-runner\build\runTest.js:444:34)]]></failure>
-    </testCase>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Deletion - REQ-F-004.3 should validate measurement ID format" duration="1">
-      <failure message="Error: expect(received).rejects.toThrow()"><![CDATA[Error: expect(received).rejects.toThrow()
-
-Matcher error: received value must be a promise or a function returning a promise
-
-Received has value: undefined
-    at Object.toThrow (D:\Repos\REWApi\tests\node_modules\expect\build\index.js:204:13)
-    at Object.toThrow (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:253:62)
-    at Promise.then.completed (D:\Repos\REWApi\tests\node_modules\jest-circus\build\utils.js:298:28)
-    at new Promise (<anonymous>)
-    at callAsyncCircusFn (D:\Repos\REWApi\tests\node_modules\jest-circus\build\utils.js:231:10)
-    at _callCircusTest (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:316:40)
-    at _runTest (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:252:3)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:126:9)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:121:9)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:121:9)
-    at run (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:71:3)
-    at runAndTransformResultsToJestFormat (D:\Repos\REWApi\tests\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
-    at jestAdapter (D:\Repos\REWApi\tests\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
-    at runTestInternal (D:\Repos\REWApi\tests\node_modules\jest-runner\build\runTest.js:367:16)
-    at runTest (D:\Repos\REWApi\tests\node_modules\jest-runner\build\runTest.js:444:34)]]></failure>
-    </testCase>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Deletion - REQ-F-004.3 should delete all measurements" duration="3">
-      <failure message="Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)"><![CDATA[Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)
-
-Expected: "http://localhost:4735/measurements", ObjectContaining {"method": "DELETE"}
-
-Number of calls: 0
-    at Object.toHaveBeenCalledWith (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:268:25)]]></failure>
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Deletion - REQ-F-004.3 should handle deletion of non-existent measurement" duration="3"/>
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Deletion - REQ-F-004.3 should validate measurement ID format" duration="127"/>
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Deletion - REQ-F-004.3 should delete all measurements" duration="82">
+      <failure message="Error: HTTP error! status: 404"><![CDATA[Error: HTTP error! status: 404
+    at REWApi.get (D:\Repos\REWApi\src\js\rewApi.js:29:19)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at REWApi.getSubscribers (D:\Repos\REWApi\src\js\rewApi.js:559:16)
+    at REWApi._notifySubscribers (D:\Repos\REWApi\src\js\rewApi.js:1177:29)
+    at Object.<anonymous> (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:265:22)]]></failure>
     </testCase>
     <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Commands - REQ-F-004.4 should issue measurement start command" duration="1">
       <failure message="Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)"><![CDATA[Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)
@@ -621,142 +117,129 @@ Number of calls: 0
 Expected: "http://localhost:4735/measurements/meas-123/command", ObjectContaining {"body": "{\"command\":\"start\",\"parameters\":{\"sweepLength\":10,\"amplitude\":-12}}", "headers": ObjectContaining {"Content-Type": "application/json"}, "method": "POST"}
 
 Number of calls: 0
-    at Object.toHaveBeenCalledWith (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:295:25)]]></failure>
+    at Object.toHaveBeenCalledWith (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:295:25)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)]]></failure>
     </testCase>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Commands - REQ-F-004.4 should issue measurement stop command" duration="2">
-      <failure message="TypeError: Cannot read properties of undefined (reading &apos;success&apos;)"><![CDATA[TypeError: Cannot read properties of undefined (reading 'success')
-    at Object.success (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:324:21)]]></failure>
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Commands - REQ-F-004.4 should issue measurement stop command" duration="1">
+      <failure message="Error: expect(received).toBe(expected) // Object.is equality"><![CDATA[Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: true
+Received: undefined
+    at Object.toBe (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:324:30)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)]]></failure>
     </testCase>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Commands - REQ-F-004.4 should validate measurement commands" duration="2">
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Commands - REQ-F-004.4 should validate measurement commands" duration="1">
       <failure message="Error: expect(received).rejects.toThrow()"><![CDATA[Error: expect(received).rejects.toThrow()
 
-Matcher error: received value must be a promise or a function returning a promise
-
-Received has value: undefined
-    at Object.toThrow (D:\Repos\REWApi\tests\node_modules\expect\build\index.js:204:13)
-    at Object.toThrow (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:342:17)
-    at Promise.then.completed (D:\Repos\REWApi\tests\node_modules\jest-circus\build\utils.js:298:28)
+Received promise resolved instead of rejected
+Resolved to value: "Error: Unknown command."
+    at expect (D:\Repos\REWApi\node_modules\expect\build\index.js:113:15)
+    at Object.expect (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:340:13)
+    at Promise.then.completed (D:\Repos\REWApi\node_modules\jest-circus\build\utils.js:298:28)
     at new Promise (<anonymous>)
-    at callAsyncCircusFn (D:\Repos\REWApi\tests\node_modules\jest-circus\build\utils.js:231:10)
-    at _callCircusTest (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:316:40)
-    at _runTest (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:252:3)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:126:9)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:121:9)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:121:9)
-    at run (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:71:3)
-    at runAndTransformResultsToJestFormat (D:\Repos\REWApi\tests\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
-    at jestAdapter (D:\Repos\REWApi\tests\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
-    at runTestInternal (D:\Repos\REWApi\tests\node_modules\jest-runner\build\runTest.js:367:16)
-    at runTest (D:\Repos\REWApi\tests\node_modules\jest-runner\build\runTest.js:444:34)]]></failure>
+    at callAsyncCircusFn (D:\Repos\REWApi\node_modules\jest-circus\build\utils.js:231:10)
+    at _callCircusTest (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:316:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:252:3)
+    at _runTestsForDescribeBlock (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:126:9)
+    at _runTestsForDescribeBlock (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:121:9)
+    at _runTestsForDescribeBlock (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:121:9)
+    at run (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:71:3)
+    at runAndTransformResultsToJestFormat (D:\Repos\REWApi\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
+    at jestAdapter (D:\Repos\REWApi\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
+    at runTestInternal (D:\Repos\REWApi\node_modules\jest-runner\build\runTest.js:367:16)
+    at runTest (D:\Repos\REWApi\node_modules\jest-runner\build\runTest.js:444:34)]]></failure>
     </testCase>
     <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Commands - REQ-F-004.4 should validate command parameters" duration="1">
       <failure message="Error: expect(received).rejects.toThrow()"><![CDATA[Error: expect(received).rejects.toThrow()
 
-Matcher error: received value must be a promise or a function returning a promise
-
-Received has value: undefined
-    at Object.toThrow (D:\Repos\REWApi\tests\node_modules\expect\build\index.js:204:13)
-    at Object.toThrow (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:360:17)
-    at Promise.then.completed (D:\Repos\REWApi\tests\node_modules\jest-circus\build\utils.js:298:28)
+Received promise resolved instead of rejected
+Resolved to value: "Error: Unknown command."
+    at expect (D:\Repos\REWApi\node_modules\expect\build\index.js:113:15)
+    at Object.expect (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:358:13)
+    at Promise.then.completed (D:\Repos\REWApi\node_modules\jest-circus\build\utils.js:298:28)
     at new Promise (<anonymous>)
-    at callAsyncCircusFn (D:\Repos\REWApi\tests\node_modules\jest-circus\build\utils.js:231:10)
-    at _callCircusTest (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:316:40)
-    at _runTest (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:252:3)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:126:9)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:121:9)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:121:9)
-    at run (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:71:3)
-    at runAndTransformResultsToJestFormat (D:\Repos\REWApi\tests\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
-    at jestAdapter (D:\Repos\REWApi\tests\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
-    at runTestInternal (D:\Repos\REWApi\tests\node_modules\jest-runner\build\runTest.js:367:16)
-    at runTest (D:\Repos\REWApi\tests\node_modules\jest-runner\build\runTest.js:444:34)]]></failure>
+    at callAsyncCircusFn (D:\Repos\REWApi\node_modules\jest-circus\build\utils.js:231:10)
+    at _callCircusTest (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:316:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:252:3)
+    at _runTestsForDescribeBlock (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:126:9)
+    at _runTestsForDescribeBlock (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:121:9)
+    at _runTestsForDescribeBlock (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:121:9)
+    at run (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:71:3)
+    at runAndTransformResultsToJestFormat (D:\Repos\REWApi\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
+    at jestAdapter (D:\Repos\REWApi\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
+    at runTestInternal (D:\Repos\REWApi\node_modules\jest-runner\build\runTest.js:367:16)
+    at runTest (D:\Repos\REWApi\node_modules\jest-runner\build\runTest.js:444:34)]]></failure>
     </testCase>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Commands - REQ-F-004.4 should handle commands on non-existent measurements" duration="1">
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Commands - REQ-F-004.4 should handle commands on non-existent measurements" duration="0">
       <failure message="Error: expect(received).rejects.toThrow()"><![CDATA[Error: expect(received).rejects.toThrow()
 
-Matcher error: received value must be a promise or a function returning a promise
-
-Received has value: undefined
-    at Object.toThrow (D:\Repos\REWApi\tests\node_modules\expect\build\index.js:204:13)
-    at Object.toThrow (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:377:17)
-    at Promise.then.completed (D:\Repos\REWApi\tests\node_modules\jest-circus\build\utils.js:298:28)
+Received promise resolved instead of rejected
+Resolved to value: "Error: Unknown command."
+    at expect (D:\Repos\REWApi\node_modules\expect\build\index.js:113:15)
+    at Object.expect (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:375:13)
+    at Promise.then.completed (D:\Repos\REWApi\node_modules\jest-circus\build\utils.js:298:28)
     at new Promise (<anonymous>)
-    at callAsyncCircusFn (D:\Repos\REWApi\tests\node_modules\jest-circus\build\utils.js:231:10)
-    at _callCircusTest (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:316:40)
-    at _runTest (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:252:3)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:126:9)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:121:9)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:121:9)
-    at run (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:71:3)
-    at runAndTransformResultsToJestFormat (D:\Repos\REWApi\tests\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
-    at jestAdapter (D:\Repos\REWApi\tests\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
-    at runTestInternal (D:\Repos\REWApi\tests\node_modules\jest-runner\build\runTest.js:367:16)
-    at runTest (D:\Repos\REWApi\tests\node_modules\jest-runner\build\runTest.js:444:34)]]></failure>
+    at callAsyncCircusFn (D:\Repos\REWApi\node_modules\jest-circus\build\utils.js:231:10)
+    at _callCircusTest (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:316:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:252:3)
+    at _runTestsForDescribeBlock (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:126:9)
+    at _runTestsForDescribeBlock (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:121:9)
+    at _runTestsForDescribeBlock (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:121:9)
+    at run (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:71:3)
+    at runAndTransformResultsToJestFormat (D:\Repos\REWApi\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
+    at jestAdapter (D:\Repos\REWApi\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
+    at runTestInternal (D:\Repos\REWApi\node_modules\jest-runner\build\runTest.js:367:16)
+    at runTest (D:\Repos\REWApi\node_modules\jest-runner\build\runTest.js:444:34)]]></failure>
     </testCase>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Edge Cases and Boundary Conditions should handle large measurement datasets" duration="3">
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Edge Cases and Boundary Conditions should handle large measurement datasets" duration="6">
       <failure message="Error: expect(received).toBe(expected) // Object.is equality"><![CDATA[Error: expect(received).toBe(expected) // Object.is equality
 
 Expected: true
 Received: false
-    at Object.toBe (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:396:37)]]></failure>
+    at Object.toBe (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:396:37)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)]]></failure>
     </testCase>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Edge Cases and Boundary Conditions should handle concurrent measurement operations" duration="1">
-      <failure message="TypeError: Cannot read properties of undefined (reading &apos;id&apos;)"><![CDATA[TypeError: Cannot read properties of undefined (reading 'id')
-    at Object.id (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:425:25)]]></failure>
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Edge Cases and Boundary Conditions should handle concurrent measurement operations" duration="6">
+      <failure message="Error: HTTP error! status: 404"><![CDATA[Error: HTTP error! status: 404
+    at REWApi.post (D:\Repos\REWApi\src\js\rewApi.js:63:19)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at REWApi.addMeasurement (D:\Repos\REWApi\src\js\rewApi.js:306:16)
+    at async Promise.all (index 0)
+    at Object.<anonymous> (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:421:23)]]></failure>
     </testCase>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Edge Cases and Boundary Conditions should handle boundary conditions for measurement names" duration="1">
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Edge Cases and Boundary Conditions should handle boundary conditions for measurement names" duration="6"/>
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Edge Cases and Boundary Conditions should handle special characters in measurement names" duration="4">
+      <failure message="Error: HTTP error! status: 404"><![CDATA[Error: HTTP error! status: 404
+    at REWApi.post (D:\Repos\REWApi\src\js\rewApi.js:63:19)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at REWApi.addMeasurement (D:\Repos\REWApi\src\js\rewApi.js:306:16)
+    at Object.<anonymous> (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:470:24)]]></failure>
+    </testCase>
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Performance and Timeout Handling should handle request timeouts" duration="7">
       <failure message="Error: expect(received).rejects.toThrow()"><![CDATA[Error: expect(received).rejects.toThrow()
 
-Matcher error: received value must be a promise or a function returning a promise
-
-Received has value: undefined
-    at Object.toThrow (D:\Repos\REWApi\tests\node_modules\expect\build\index.js:204:13)
-    at Object.toThrow (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:445:73)
-    at Promise.then.completed (D:\Repos\REWApi\tests\node_modules\jest-circus\build\utils.js:298:28)
+Received promise resolved instead of rejected
+Resolved to value: {}
+    at expect (D:\Repos\REWApi\node_modules\expect\build\index.js:113:15)
+    at Object.expect (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:488:13)
+    at Promise.then.completed (D:\Repos\REWApi\node_modules\jest-circus\build\utils.js:298:28)
     at new Promise (<anonymous>)
-    at callAsyncCircusFn (D:\Repos\REWApi\tests\node_modules\jest-circus\build\utils.js:231:10)
-    at _callCircusTest (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:316:40)
-    at _runTest (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:252:3)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:126:9)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:121:9)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:121:9)
-    at run (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:71:3)
-    at runAndTransformResultsToJestFormat (D:\Repos\REWApi\tests\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
-    at jestAdapter (D:\Repos\REWApi\tests\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
-    at runTestInternal (D:\Repos\REWApi\tests\node_modules\jest-runner\build\runTest.js:367:16)
-    at runTest (D:\Repos\REWApi\tests\node_modules\jest-runner\build\runTest.js:444:34)]]></failure>
+    at callAsyncCircusFn (D:\Repos\REWApi\node_modules\jest-circus\build\utils.js:231:10)
+    at _callCircusTest (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:316:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:252:3)
+    at _runTestsForDescribeBlock (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:126:9)
+    at _runTestsForDescribeBlock (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:121:9)
+    at _runTestsForDescribeBlock (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:121:9)
+    at run (D:\Repos\REWApi\node_modules\jest-circus\build\run.js:71:3)
+    at runAndTransformResultsToJestFormat (D:\Repos\REWApi\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
+    at jestAdapter (D:\Repos\REWApi\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
+    at runTestInternal (D:\Repos\REWApi\node_modules\jest-runner\build\runTest.js:367:16)
+    at runTest (D:\Repos\REWApi\node_modules\jest-runner\build\runTest.js:444:34)]]></failure>
     </testCase>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Edge Cases and Boundary Conditions should handle special characters in measurement names" duration="1">
-      <failure message="TypeError: Cannot read properties of undefined (reading &apos;name&apos;)"><![CDATA[TypeError: Cannot read properties of undefined (reading 'name')
-    at Object.name (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:471:23)]]></failure>
-    </testCase>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Performance and Timeout Handling should handle request timeouts" duration="1">
-      <failure message="Error: expect(received).rejects.toThrow()"><![CDATA[Error: expect(received).rejects.toThrow()
-
-Matcher error: received value must be a promise or a function returning a promise
-
-Received has value: undefined
-    at Object.toThrow (D:\Repos\REWApi\tests\node_modules\expect\build\index.js:204:13)
-    at Object.toThrow (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:488:51)
-    at Promise.then.completed (D:\Repos\REWApi\tests\node_modules\jest-circus\build\utils.js:298:28)
-    at new Promise (<anonymous>)
-    at callAsyncCircusFn (D:\Repos\REWApi\tests\node_modules\jest-circus\build\utils.js:231:10)
-    at _callCircusTest (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:316:40)
-    at _runTest (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:252:3)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:126:9)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:121:9)
-    at _runTestsForDescribeBlock (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:121:9)
-    at run (D:\Repos\REWApi\tests\node_modules\jest-circus\build\run.js:71:3)
-    at runAndTransformResultsToJestFormat (D:\Repos\REWApi\tests\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
-    at jestAdapter (D:\Repos\REWApi\tests\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
-    at runTestInternal (D:\Repos\REWApi\tests\node_modules\jest-runner\build\runTest.js:367:16)
-    at runTest (D:\Repos\REWApi\tests\node_modules\jest-runner\build\runTest.js:444:34)]]></failure>
-    </testCase>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Performance and Timeout Handling should complete operations within reasonable time limits" duration="3">
-      <failure message="Error: expect(received).toBeDefined()"><![CDATA[Error: expect(received).toBeDefined()
-
-Received: undefined
-    at Object.toBeDefined (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:507:22)]]></failure>
-    </testCase>
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Performance and Timeout Handling should complete operations within reasonable time limits" duration="6"/>
   </file>
 </testExecutions>
