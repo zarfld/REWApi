@@ -513,7 +513,7 @@ class REWApi {
         const buffer = new ArrayBuffer(array.length * 4);
         const view = new DataView(buffer);
         for (let i = 0; i < array.length; i++) {
-            view.setFloat32(i * 4, array[i], true);
+            view.setFloat32(i * 4, array[i], false); // Use big-endian for REW compatibility
         }
         return Buffer.from(buffer).toString('base64');
     }
@@ -523,7 +523,7 @@ class REWApi {
         const view = new DataView(buffer.buffer);
         const array = new Float32Array(buffer.length / 4);
         for (let i = 0; i < array.length; i++) {
-            array[i] = view.getFloat32(i * 4, true);
+            array[i] = view.getFloat32(i * 4, false); // Use big-endian for REW compatibility
         }
         return array;
     }

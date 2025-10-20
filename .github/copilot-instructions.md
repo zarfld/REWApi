@@ -152,6 +152,40 @@ applyTo:
   - "**/docs/**"        # All documentation
 ```
 
+### Build Management
+
+**Standard Build Structure** (Always Use):
+```
+build/                  # Root build directory
+├── cpp/               # C++ builds (CMake out-of-source)
+│   ├── debug/         # Debug configuration
+│   ├── release/       # Release configuration
+│   └── test/          # Test executables
+├── csharp/            # .NET builds
+│   ├── bin/           # Compiled binaries
+│   └── obj/           # Object files
+├── js/                # JavaScript builds
+│   ├── dist/          # Distribution files
+│   └── coverage/      # Test coverage reports
+└── artifacts/         # Final build artifacts
+    ├── packages/      # Packaged distributions
+    ├── docs/          # Generated documentation
+    └── reports/       # Build and test reports
+```
+
+**Build Commands** (Language-Specific):
+- **C++**: Always use `build/cpp/debug` or `build/cpp/release` for CMake out-of-source builds
+- **C#**: Use `build/csharp/` for .NET build outputs
+- **JavaScript/TypeScript**: Use `build/js/` for transpiled and bundled outputs
+- **Python**: Use `build/python/` for package builds and virtual environments
+
+**Critical Build Rules**:
+✅ Always use out-of-source builds  
+✅ Separate debug/release configurations  
+✅ Use standardized folder structure  
+✅ Generate build artifacts in `build/artifacts/`  
+✅ Include test results in build reports  
+
 ## 🚨 Critical Rules
 
 ### Always Do

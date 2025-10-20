@@ -1,0 +1,108 @@
+{
+  "name": "rew-api-tests",
+  "version": "1.0.0",
+  "description": "Phase 1 Test Suite for REW API - Core Measurement Operations",
+  "type": "module",
+  "scripts": {
+    "test": "jest --config tests/jest.config.js",
+    "test:watch": "jest --config tests/jest.config.js --watch",
+    "test:coverage": "jest --config tests/jest.config.js --coverage",
+    "test:unit": "jest --config tests/jest.config.js tests/unit",
+    "test:integration": "jest --config tests/jest.config.js tests/integration",
+    "test:phase1": "jest --config tests/jest.config.js --testNamePattern='Phase 1'",
+    "test:measurement": "jest --config tests/jest.config.js tests/unit/measurement-operations.test.js",
+    "test:frequency": "jest --config tests/jest.config.js tests/unit/frequency-response-operations.test.js",
+    "test:impulse": "jest --config tests/jest.config.js tests/unit/impulse-response-operations.test.js",
+    "test:ci": "jest --config tests/jest.config.js --ci --coverage --watchAll=false",
+    "test:debug": "node --inspect-brk node_modules/.bin/jest --config tests/jest.config.js --runInBand",
+    "test:validate": "npm run test:unit && npm run test:coverage",
+    "lint:tests": "eslint tests/**/*.js",
+    "clean:coverage": "rimraf build/artifacts/coverage",
+    "clean:reports": "rimraf build/artifacts/reports",
+    "clean": "npm run clean:coverage && npm run clean:reports"
+  },
+  "devDependencies": {
+    "@jest/globals": "^29.7.0",
+    "jest": "^29.7.0",
+    "jest-environment-node": "^29.7.0",
+    "jest-junit": "^16.0.0",
+    "jest-sonar-reporter": "^2.0.0",
+    "jest-watch-typeahead": "^2.2.2",
+    "babel-jest": "^29.7.0",
+    "@babel/core": "^7.23.0",
+    "@babel/preset-env": "^7.23.0",
+    "eslint": "^8.55.0",
+    "rimraf": "^5.0.5"
+  },
+  "dependencies": {
+    "cross-fetch": "^4.0.0"
+  },
+  "jest": {
+    "preset": "./tests/jest.config.js"
+  },
+  "babel": {
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "targets": {
+            "node": "18"
+          },
+          "modules": "auto"
+        }
+      ]
+    ]
+  },
+  "eslintConfig": {
+    "env": {
+      "node": true,
+      "jest": true,
+      "es6": true
+    },
+    "extends": [
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "ecmaVersion": 2022,
+      "sourceType": "module"
+    },
+    "rules": {
+      "no-console": "warn",
+      "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+      "prefer-const": "error",
+      "no-var": "error"
+    },
+    "globals": {
+      "testUtils": "readonly",
+      "testConstants": "readonly"
+    }
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "keywords": [
+    "rew",
+    "api",
+    "testing",
+    "measurement",
+    "audio",
+    "frequency-response",
+    "impulse-response",
+    "acoustics",
+    "ieee-1012",
+    "tdd",
+    "phase1"
+  ],
+  "author": "REW API Development Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rew-project/rew-api.git",
+    "directory": "tests"
+  },
+  "bugs": {
+    "url": "https://github.com/rew-project/rew-api/issues"
+  },
+  "homepage": "https://github.com/rew-project/rew-api#readme"
+}

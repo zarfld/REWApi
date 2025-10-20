@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <cpprest/base64.h>
+#include <cstdint>  // For uint32_t
 
 using namespace web;
 using namespace web::http;
@@ -809,7 +810,28 @@ public:
     std::string encodeArray(const std::vector<float>& array)
     {
         std::vector<unsigned char> bytes(array.size() * sizeof(float));
-        std::memcpy(bytes.data(), array.data(), bytes.size());
+        
+        // Convert each float to big-endian bytes for REW API compatibility
+        for (size_t i = 0; i < array.size(); ++i)
+        {
+            union { float f; uint8_t bytes[4]; } converter;
+            converter.f = array[i];
+            
+            // On little-endian systems, reverse byte order to get big-endian
+            #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+                bytes[i * 4 + 0] = converter.bytes[3];
+                bytes[i * 4 + 1] = converter.bytes[2];
+                bytes[i * 4 + 2] = converter.bytes[1];
+                bytes[i * 4 + 3] = converter.bytes[0];
+            #else
+                // On big-endian systems, use bytes as-is
+                bytes[i * 4 + 0] = converter.bytes[0];
+                bytes[i * 4 + 1] = converter.bytes[1];
+                bytes[i * 4 + 2] = converter.bytes[2];
+                bytes[i * 4 + 3] = converter.bytes[3];
+            #endif
+        }
+        
         return utility::conversions::to_utf8string(utility::conversions::to_base64(bytes));
     }
 
@@ -817,7 +839,29 @@ public:
     {
         auto bytes = utility::conversions::from_base64(utility::conversions::to_string_t(base64Encoded));
         std::vector<float> array(bytes.size() / sizeof(float));
-        std::memcpy(array.data(), bytes.data(), bytes.size());
+        
+        // Convert each set of 4 big-endian bytes back to float
+        for (size_t i = 0; i < array.size(); ++i)
+        {
+            union { float f; uint8_t bytes[4]; } converter;
+            
+            // Convert from big-endian bytes to system byte order
+            #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+                converter.bytes[3] = bytes[i * 4 + 0]; // MSB
+                converter.bytes[2] = bytes[i * 4 + 1];
+                converter.bytes[1] = bytes[i * 4 + 2];
+                converter.bytes[0] = bytes[i * 4 + 3]; // LSB
+            #else
+                // On big-endian systems, use bytes as-is
+                converter.bytes[0] = bytes[i * 4 + 0];
+                converter.bytes[1] = bytes[i * 4 + 1];
+                converter.bytes[2] = bytes[i * 4 + 2];
+                converter.bytes[3] = bytes[i * 4 + 3];
+            #endif
+            
+            array[i] = converter.f;
+        }
+        
         return array;
     }
 
