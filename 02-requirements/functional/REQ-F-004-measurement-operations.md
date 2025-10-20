@@ -1,3 +1,16 @@
+---
+specType: requirements
+standard: "IEEE/ISO/IEC 29148:2018"
+phase: 02-requirements
+version: "1.0.0"
+author: "REW API Development Team"
+date: "2025-10-20"
+status: approved
+traceability:
+  stakeholderRequirements:
+    - StR-001
+---
+
 # REQ-F-004: Measurement Operations
 
 **Requirement ID**: REQ-F-004  
