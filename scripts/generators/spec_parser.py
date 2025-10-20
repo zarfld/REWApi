@@ -36,6 +36,7 @@ REF_PATTERN = re.compile(r'\b(?:StR|REQ|ARC|ADR|QA|TEST)-[A-Z0-9][A-Z0-9\-]*\b')
 SCAN_DIRS = [
     ROOT / '02-requirements',
     ROOT / '03-architecture',
+    ROOT / '07-verification-validation',
 ]
 
 # Additional directories (code/tests) where TEST-* identifiers and inline requirement references
