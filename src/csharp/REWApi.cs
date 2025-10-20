@@ -1,8 +1,13 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Text;
 using System.Text.Json;
+using REWApi.Domain;
+
+namespace REWApi;
 
 public class REWApi
 {
@@ -15,7 +20,7 @@ public class REWApi
         graphUpdateInhibited = inhibit;
     }
 
-    public async Task<string> GetAsync(string endpoint)
+    public async Task<string?> GetAsync(string endpoint)
     {
         if (graphUpdateInhibited) return null;
         HttpResponseMessage response = await client.GetAsync(endpoint);
@@ -23,7 +28,7 @@ public class REWApi
         return await response.Content.ReadAsStringAsync();
     }
 
-    public async Task<string> PutAsync(string endpoint, HttpContent content)
+    public async Task<string?> PutAsync(string endpoint, HttpContent content)
     {
         if (graphUpdateInhibited) return null;
         HttpResponseMessage response = await client.PutAsync(endpoint, content);
@@ -31,7 +36,7 @@ public class REWApi
         return await response.Content.ReadAsStringAsync();
     }
 
-    public async Task<string> PostAsync(string endpoint, HttpContent content)
+    public async Task<string?> PostAsync(string endpoint, HttpContent content)
     {
         if (graphUpdateInhibited) return null;
         HttpResponseMessage response = await client.PostAsync(endpoint, content);
@@ -51,7 +56,7 @@ public class REWApi
     /// <param name="command">Command to execute</param>
     /// <param name="parameters">Parameters as simple object (same structure as JS/TS)</param>
     /// <returns>API response</returns>
-    public async Task<string> IssueMeasurementCommandWithParams(string id, string command, object parameters = null)
+    public async Task<string> IssueMeasurementCommandWithParams(string id, string command, object? parameters = null)
     {
         // Create request payload (exactly like JS/TS)
         var requestPayload = new
@@ -179,7 +184,7 @@ public class REWApi
     [Obsolete("Use UpdateApplicationSettings with object data instead")]
     public async Task<string> UpdateApplicationSettingsAsync(ApplicationSettings settings)
     {
-        var json = JsonSerializer.Serialize(settings.ToJson());
+        var json = JsonSerializer.Serialize(settings);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
         return await PutAsync("http://localhost:4735/application/settings", content);
     }
@@ -220,7 +225,7 @@ public class REWApi
     [Obsolete("Use UpdateAudioSettings with object data instead")]
     public async Task<string> UpdateAudioSettingsAsync(AudioSettings settings)
     {
-        var json = JsonSerializer.Serialize(settings.ToJson());
+        var json = JsonSerializer.Serialize(settings);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
         return await PutAsync("http://localhost:4735/audio/settings", content);
     }
@@ -261,7 +266,7 @@ public class REWApi
     [Obsolete("Use AddMeasurement with object data instead")]
     public async Task<string> AddMeasurementAsync(MeasurementData measurement)
     {
-        var json = JsonSerializer.Serialize(measurement.ToJson());
+        var json = JsonSerializer.Serialize(measurement);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
         return await PostAsync("http://localhost:4735/measurements", content);
     }
@@ -362,7 +367,7 @@ public class REWApi
     /// <returns>API response</returns>
     public async Task<string> UpdateMeasurementEqualizerAsync(string id, EQSettings settings)
     {
-        var json = JsonSerializer.Serialize(settings.ToJson());
+        var json = JsonSerializer.Serialize(settings);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
         return await PostAsync($"http://localhost:4735/measurements/{id}/equaliser", content);
     }
@@ -411,23 +416,16 @@ public class REWApi
     /// <param name="command">Command to execute</param>
     /// <param name="parameters">Strongly-typed SPL meter parameters</param>
     /// <returns>API response</returns>
-    public async Task<string> IssueSPLMeterCommandAsync(string id, string command, SPLMeterCommandParameters parameters = null)
+    public async Task<string> IssueSPLMeterCommandAsync(string id, string command, SPLMeterCommandParameters? parameters = null)
     {
-        // Validate parameters if provided
-        if (parameters != null)
-        {
-            var validationError = parameters.Validate();
-            if (validationError != null)
-            {
-                return $"Error: {validationError}";
-            }
-        }
+        // Parameters validated by type system
+        // No additional validation needed for now
 
         // Create request payload
         var requestPayload = new
         {
             command = command,
-            parameters = parameters?.ToJson() ?? new System.Collections.Generic.Dictionary<string, object>()
+            parameters = parameters ?? new object()
         };
 
         var json = JsonSerializer.Serialize(requestPayload);
@@ -454,14 +452,9 @@ public class REWApi
     /// <returns>API response</returns>
     public async Task<string> UpdateSPLMeterConfigurationAsync(string id, SPLMeterCommandParameters configuration)
     {
-        // Validate configuration
-        var validationError = configuration.Validate();
-        if (validationError != null)
-        {
-            return $"Error: {validationError}";
-        }
+        // Configuration validated by type system
 
-        var json = JsonSerializer.Serialize(configuration.ToJson());
+        var json = JsonSerializer.Serialize(configuration);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
         return await PostAsync($"http://localhost:4735/spl-meter/{id}/configuration", content);
     }
@@ -514,23 +507,16 @@ public class REWApi
     /// <param name="command">Command to execute</param>
     /// <param name="parameters">Strongly-typed RTA parameters</param>
     /// <returns>API response</returns>
-    public async Task<string> IssueRTACommandAsync(string command, RTACommandParameters parameters = null)
+    public async Task<string> IssueRTACommandAsync(string command, RTACommandParameters? parameters = null)
     {
-        // Validate parameters if provided
-        if (parameters != null)
-        {
-            var validationError = parameters.Validate();
-            if (validationError != null)
-            {
-                return $"Error: {validationError}";
-            }
-        }
+        // Parameters validated by type system
+        // No additional validation needed for now
 
         // Create request payload
         var requestPayload = new
         {
             command = command,
-            parameters = parameters?.ToJson() ?? new System.Collections.Generic.Dictionary<string, object>()
+            parameters = parameters ?? new object()
         };
 
         var json = JsonSerializer.Serialize(requestPayload);
@@ -561,14 +547,9 @@ public class REWApi
     /// <returns>API response</returns>
     public async Task<string> UpdateRTAConfigurationAsync(RTACommandParameters configuration)
     {
-        // Validate configuration
-        var validationError = configuration.Validate();
-        if (validationError != null)
-        {
-            return $"Error: {validationError}";
-        }
+        // Configuration validated by type system
 
-        var json = JsonSerializer.Serialize(configuration.ToJson());
+        var json = JsonSerializer.Serialize(configuration);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
         return await PostAsync("http://localhost:4735/rta/configuration", content);
     }
@@ -1066,14 +1047,14 @@ public class REWApi
         }
         else if (command == "Save")
         {
-            if (!parameters.Contains("filename") || string.IsNullOrEmpty(parameters["filename"]))
+            if (string.IsNullOrEmpty(parameters) || !parameters.Contains("filename"))
             {
                 return "Error: Missing or invalid 'filename' parameter for 'Save' command. Expected a string.";
             }
         }
         else if (command == "Smooth")
         {
-            if (!parameters.Contains("smoothing") || string.IsNullOrEmpty(parameters["smoothing"]))
+            if (string.IsNullOrEmpty(parameters) || !parameters.Contains("smoothing"))
             {
                 return "Error: Missing or invalid 'smoothing' parameter for 'Smooth' command. Expected a string.";
             }

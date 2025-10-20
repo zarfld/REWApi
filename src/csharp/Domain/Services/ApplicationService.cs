@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using REWApi.Infrastructure;
+using REWApi.Domain;
 
 namespace REWApi.Domain.Services
 {
@@ -82,36 +83,109 @@ namespace REWApi.Domain.Services
         /// Get current application status
         /// Maps to GET /version and various /application/* endpoints
         /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Current application status</returns>
+        /// <exception cref="REWApiException">Thrown if API calls fail</exception>
         public async Task<ApplicationStatus> GetStatus(CancellationToken cancellationToken = default)
         {
-            // Get version information
-            var versionResponse = await _httpClient.GetAsync($"{_baseUrl}/version", cancellationToken);
-            versionResponse.EnsureSuccessStatusCode();
-            var versionJson = await versionResponse.Content.ReadAsStringAsync(cancellationToken);
-            var versionData = JsonSerializer.Deserialize<JsonElement>(versionJson);
-            var version = versionData.GetProperty("message").GetString() ?? string.Empty;
-
-            // Get blocking mode
-            var blockingResponse = await _httpClient.GetAsync($"{_baseUrl}/application/blocking", cancellationToken);
-            blockingResponse.EnsureSuccessStatusCode();
-            var blockingJson = await blockingResponse.Content.ReadAsStringAsync(cancellationToken);
-            var blockingMode = JsonSerializer.Deserialize<bool>(blockingJson);
-
-            // Get logging status
-            var loggingResponse = await _httpClient.GetAsync($"{_baseUrl}/application/logging", cancellationToken);
-            loggingResponse.EnsureSuccessStatusCode();
-            var loggingJson = await loggingResponse.Content.ReadAsStringAsync(cancellationToken);
-            var loggingEnabled = JsonSerializer.Deserialize<bool>(loggingJson);
-
-            return new ApplicationStatus
+            try
             {
-                Version = version,
-                BlockingMode = blockingMode,
-                CommandInProgress = false, // TODO: Need to find correct endpoint for this
-                CurrentCommand = null,     // TODO: Need to find correct endpoint for this
-                LoggingEnabled = loggingEnabled,
-                LogFilePath = null         // TODO: Need to find correct endpoint for this
-            };
+                _logger?.LogDebug("Getting REW application status");
+
+                // Get version information
+                var versionResponse = await _httpClient.GetAsync($"{_baseUrl}/version", cancellationToken);
+                if (!versionResponse.IsSuccessStatusCode)
+                {
+                    throw new REWApiException($"Failed to get version: {versionResponse.StatusCode} {versionResponse.ReasonPhrase}");
+                }
+
+                var versionJson = await versionResponse.Content.ReadAsStringAsync(cancellationToken);
+                if (string.IsNullOrWhiteSpace(versionJson))
+                {
+                    throw new REWApiException("Version response was empty");
+                }
+
+                var versionData = JsonSerializer.Deserialize<JsonElement>(versionJson);
+                if (!versionData.TryGetProperty("message", out var messageElement))
+                {
+                    throw new REWApiException("Version response missing 'message' field");
+                }
+
+                var version = messageElement.GetString() ?? string.Empty;
+
+                // Get blocking mode with error handling
+                bool blockingMode;
+                try
+                {
+                    var blockingResponse = await _httpClient.GetAsync($"{_baseUrl}/application/blocking", cancellationToken);
+                    if (!blockingResponse.IsSuccessStatusCode)
+                    {
+                        _logger?.LogWarning("Failed to get blocking mode status: {StatusCode}", blockingResponse.StatusCode);
+                        blockingMode = false; // Default value
+                    }
+                    else
+                    {
+                        var blockingJson = await blockingResponse.Content.ReadAsStringAsync(cancellationToken);
+                        blockingMode = !string.IsNullOrWhiteSpace(blockingJson) && JsonSerializer.Deserialize<bool>(blockingJson);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger?.LogWarning(ex, "Failed to retrieve blocking mode, using default");
+                    blockingMode = false;
+                }
+
+                // Get logging status with error handling
+                bool loggingEnabled;
+                try
+                {
+                    var loggingResponse = await _httpClient.GetAsync($"{_baseUrl}/application/logging", cancellationToken);
+                    if (!loggingResponse.IsSuccessStatusCode)
+                    {
+                        _logger?.LogWarning("Failed to get logging status: {StatusCode}", loggingResponse.StatusCode);
+                        loggingEnabled = false; // Default value
+                    }
+                    else
+                    {
+                        var loggingJson = await loggingResponse.Content.ReadAsStringAsync(cancellationToken);
+                        loggingEnabled = !string.IsNullOrWhiteSpace(loggingJson) && JsonSerializer.Deserialize<bool>(loggingJson);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger?.LogWarning(ex, "Failed to retrieve logging status, using default");
+                    loggingEnabled = false;
+                }
+
+                var status = new ApplicationStatus
+                {
+                    Version = version,
+                    BlockingMode = blockingMode,
+                    CommandInProgress = false, // TODO: Need to find correct endpoint for this
+                    CurrentCommand = null,     // TODO: Need to find correct endpoint for this
+                    LoggingEnabled = loggingEnabled,
+                    LogFilePath = null         // TODO: Need to find correct endpoint for this
+                };
+
+                _logger?.LogDebug("Retrieved application status: Version={Version}, Blocking={Blocking}, Logging={Logging}", 
+                    status.Version, status.BlockingMode, status.LoggingEnabled);
+
+                return status;
+            }
+            catch (OperationCanceledException)
+            {
+                _logger?.LogDebug("Get status operation was cancelled");
+                throw;
+            }
+            catch (REWApiException)
+            {
+                throw; // Re-throw our specific exceptions
+            }
+            catch (Exception ex)
+            {
+                _logger?.LogError(ex, "Unexpected error getting application status");
+                throw new REWApiException("Failed to get application status", ex);
+            }
         }
 
         /// <summary>
@@ -240,45 +314,94 @@ namespace REWApi.Domain.Services
         /// Get REW version and API capabilities
         /// Maps to GET /version
         /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>REW version information</returns>
+        /// <exception cref="REWApiException">Thrown if API call fails or response is invalid</exception>
         public async Task<REWVersion> GetVersion(CancellationToken cancellationToken = default)
         {
-            var response = await _httpClient.GetAsync($"{_baseUrl}/version", cancellationToken);
-            response.EnsureSuccessStatusCode();
-
-            var json = await response.Content.ReadAsStringAsync(cancellationToken);
-            var data = JsonSerializer.Deserialize<JsonElement>(json);
-
-            // Parse the message field: "5.40 Beta 102 API 0.9.0"
-            var message = data.GetProperty("message").GetString() ?? string.Empty;
-            var parts = message.Split(' ');
-            
-            string version = "";
-            string apiVersion = "";
-            
-            if (parts.Length >= 1)
+            try
             {
-                version = parts[0]; // "5.40"
-            }
-            
-            // Look for "API" keyword followed by version
-            for (int i = 0; i < parts.Length - 1; i++)
-            {
-                if (parts[i].Equals("API", StringComparison.OrdinalIgnoreCase) && i + 1 < parts.Length)
+                _logger?.LogDebug("Getting REW version information");
+
+                var response = await _httpClient.GetAsync($"{_baseUrl}/version", cancellationToken);
+                if (!response.IsSuccessStatusCode)
                 {
-                    apiVersion = parts[i + 1]; // "0.9.0"
-                    break;
+                    throw new REWApiException($"Version endpoint returned {response.StatusCode}: {response.ReasonPhrase}");
                 }
-            }
 
-            return new REWVersion
+                var json = await response.Content.ReadAsStringAsync(cancellationToken);
+                if (string.IsNullOrWhiteSpace(json))
+                {
+                    throw new REWApiException("Version response was empty");
+                }
+
+                var data = JsonSerializer.Deserialize<JsonElement>(json);
+                if (!data.TryGetProperty("message", out var messageElement))
+                {
+                    throw new REWApiException("Version response missing 'message' field");
+                }
+
+                // Parse the message field: "5.40 Beta 102 API 0.9.0"
+                var message = messageElement.GetString();
+                if (string.IsNullOrWhiteSpace(message))
+                {
+                    throw new REWApiException("Version message was null or empty");
+                }
+
+                var parts = message.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                
+                string version = "";
+                string apiVersion = "";
+                
+                if (parts.Length >= 1)
+                {
+                    version = parts[0]; // "5.40"
+                }
+                
+                // Look for "API" keyword followed by version
+                for (int i = 0; i < parts.Length - 1; i++)
+                {
+                    if (parts[i].Equals("API", StringComparison.OrdinalIgnoreCase) && i + 1 < parts.Length)
+                    {
+                        apiVersion = parts[i + 1]; // "0.9.0"
+                        break;
+                    }
+                }
+
+                var result = new REWVersion
+                {
+                    Version = version,
+                    BuildDate = null, // Not available in this endpoint
+                    APIVersion = apiVersion,
+                    OpenAPIHash = null, // Not available in this endpoint
+                    IsProVersion = message.Contains("Pro", StringComparison.OrdinalIgnoreCase),
+                    SupportedFeatures = Array.Empty<string>() // Not available in this endpoint
+                };
+
+                _logger?.LogDebug("Retrieved REW version: {Version}, API: {ApiVersion}, Pro: {IsPro}", 
+                    result.Version, result.APIVersion, result.IsProVersion);
+
+                return result;
+            }
+            catch (OperationCanceledException)
             {
-                Version = version,
-                BuildDate = null, // Not available in this endpoint
-                APIVersion = apiVersion,
-                OpenAPIHash = null, // Not available in this endpoint
-                IsProVersion = message.Contains("Pro", StringComparison.OrdinalIgnoreCase),
-                SupportedFeatures = Array.Empty<string>() // Not available in this endpoint
-            };
+                _logger?.LogDebug("Get version operation was cancelled");
+                throw;
+            }
+            catch (REWApiException)
+            {
+                throw; // Re-throw our specific exceptions
+            }
+            catch (JsonException ex)
+            {
+                _logger?.LogError(ex, "Failed to parse version response JSON");
+                throw new REWApiException("Invalid JSON response from version endpoint", ex);
+            }
+            catch (Exception ex)
+            {
+                _logger?.LogError(ex, "Unexpected error getting REW version");
+                throw new REWApiException("Failed to get REW version", ex);
+            }
         }
 
         /// <summary>
@@ -298,18 +421,5 @@ namespace REWApi.Domain.Services
                 return false;
             }
         }
-    }
-
-    /// <summary>
-    /// REW version and capability information
-    /// </summary>
-    public class REWVersion
-    {
-        public string Version { get; set; } = string.Empty;
-        public string? BuildDate { get; set; }
-        public string? APIVersion { get; set; }
-        public string? OpenAPIHash { get; set; }
-        public bool IsProVersion { get; set; }
-        public string[] SupportedFeatures { get; set; } = Array.Empty<string>();
     }
 }

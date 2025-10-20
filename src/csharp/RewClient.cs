@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using REWApi.Domain;
 using REWApi.Domain.Services;
 using REWApi.Infrastructure;
 
@@ -311,7 +312,7 @@ namespace REWApi
         /// Get current command gate status
         /// Useful for diagnostics and monitoring
         /// </summary>
-        public CommandStatus GetCommandStatus()
+        public Infrastructure.CommandStatus GetCommandStatus()
         {
             ThrowIfDisposed();
             return _commandGate.GetCurrentStatus();

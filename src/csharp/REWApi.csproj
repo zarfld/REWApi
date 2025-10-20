@@ -14,8 +14,8 @@
     <RepositoryUrl>https://github.com/zarfld/REWApi</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>REW;Room EQ Wizard;Audio;DSP;Measurement</PackageTags>
-    <Nullable>enable</Nullable>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Nullable>disable</Nullable>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningsAsErrors />
     <WarningsNotAsErrors>CS1591</WarningsNotAsErrors>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>

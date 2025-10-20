@@ -32,6 +32,36 @@ namespace REWApi.Infrastructure
     }
 
     /// <summary>
+    /// Exception thrown when REW API call fails or returns invalid data
+    /// </summary>
+    public class REWApiException : REWException
+    {
+        public string? Endpoint { get; }
+        public int? StatusCode { get; }
+
+        public REWApiException(string message) : base(message)
+        {
+        }
+
+        public REWApiException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
+
+        public REWApiException(string message, string endpoint, int? statusCode = null) : base(message)
+        {
+            Endpoint = endpoint;
+            StatusCode = statusCode;
+        }
+
+        public REWApiException(string message, string endpoint, Exception innerException, int? statusCode = null) 
+            : base(message, innerException)
+        {
+            Endpoint = endpoint;
+            StatusCode = statusCode;
+        }
+    }
+
+    /// <summary>
     /// Exception thrown when REW audio configuration fails
     /// </summary>
     public class REWAudioException : REWException

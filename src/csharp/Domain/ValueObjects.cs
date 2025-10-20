@@ -389,4 +389,111 @@ namespace REWApi.Domain
         public bool FrequencyWarping { get; set; }
         public bool ReplicateData { get; set; }
     }
+
+    /// <summary>
+    /// REW version and capability information
+    /// </summary>
+    public class REWVersion
+    {
+        public string Version { get; set; } = string.Empty;
+        public string? BuildDate { get; set; }
+        public string? APIVersion { get; set; }
+        public string? OpenAPIHash { get; set; }
+        public bool IsProVersion { get; set; }
+        public string[] SupportedFeatures { get; set; } = Array.Empty<string>();
+    }
+
+    /// <summary>
+    /// Command execution status for diagnostics
+    /// </summary>
+    public class CommandStatus
+    {
+        public bool IsExecuting { get; set; }
+        public string? CurrentCommand { get; set; }
+        public DateTime? StartTime { get; set; }
+        public TimeSpan? ElapsedTime { get; set; }
+        public int QueuedCommands { get; set; }
+    }
+
+    /// <summary>
+    /// REW Application Settings Configuration
+    /// </summary>
+    public class ApplicationSettings
+    {
+        public string? Theme { get; set; }
+        public bool AutoUpdate { get; set; }
+        public string? DefaultMeasurementFolder { get; set; }
+        public double DefaultSampleRate { get; set; } = 48000;
+        public int BufferSize { get; set; } = 1024;
+        public bool EnableLogging { get; set; } = true;
+        public string? LogLevel { get; set; } = "INFO";
+    }
+
+    /// <summary>
+    /// REW Audio Device and Settings Configuration
+    /// </summary>
+    public class AudioSettings
+    {
+        public string? InputDevice { get; set; }
+        public string? OutputDevice { get; set; }
+        public double SampleRate { get; set; } = 48000;
+        public int BufferSize { get; set; } = 1024;
+        public double InputGain { get; set; } = 0.0;
+        public double OutputLevel { get; set; } = -12.0;
+        public bool EnableCalibration { get; set; } = false;
+        public string? CalibrationFile { get; set; }
+    }
+
+    /// <summary>
+    /// REW Measurement Data Container
+    /// </summary>
+    public class MeasurementData
+    {
+        public string? Title { get; set; }
+        public DateTime Timestamp { get; set; }
+        public double[] Frequency { get; set; } = Array.Empty<double>();
+        public double[] Magnitude { get; set; } = Array.Empty<double>();
+        public double[] Phase { get; set; } = Array.Empty<double>();
+        public double[] Coherence { get; set; } = Array.Empty<double>();
+        public string? Notes { get; set; }
+        public AudioSettings? AudioSettings { get; set; }
+    }
+
+    /// <summary>
+    /// REW EQ Settings and Configuration
+    /// </summary>
+    public class EQSettings
+    {
+        public bool Enabled { get; set; }
+        public string? EQType { get; set; } = "Parametric";
+        public int MaxFilters { get; set; } = 20;
+        public double TargetCurve { get; set; } = 0.0;
+        public string? FilterFile { get; set; }
+        public bool AutoEQ { get; set; } = false;
+    }
+
+    /// <summary>
+    /// SPL Meter Command Parameters
+    /// </summary>
+    public class SPLMeterCommandParameters
+    {
+        public double Duration { get; set; } = 30.0; // seconds
+        public string? WeightingFilter { get; set; } = "A"; // A, C, Z
+        public string? TimeWeighting { get; set; } = "Fast"; // Fast, Slow
+        public bool LogData { get; set; } = true;
+        public string? OutputFile { get; set; }
+    }
+
+    /// <summary>
+    /// Real-Time Analyzer Command Parameters
+    /// </summary>
+    public class RTACommandParameters
+    {
+        public double Duration { get; set; } = 60.0; // seconds
+        public int FFTSize { get; set; } = 8192;
+        public string? WindowType { get; set; } = "Hanning";
+        public double UpdateRate { get; set; } = 10.0; // Hz
+        public bool ShowPeakHold { get; set; } = true;
+        public string? OutputFile { get; set; }
+    }
 }
