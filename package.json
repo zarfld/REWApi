@@ -1,0 +1,58 @@
+{
+  "name": "rew-api",
+  "version": "1.0.0",
+  "description": "REW API Client Library - Multi-language support for Room EQ Wizard HTTP API",
+  "type": "module",
+  "main": "src/js/rewApi.js",
+  "scripts": {
+    "test": "cd tests && npm test",
+    "test:watch": "cd tests && npm run test:watch",
+    "test:coverage": "cd tests && npm run test:coverage",
+    "test:ci": "cd tests && npm run test:ci",
+    "test:unit": "cd tests && npm run test:unit",
+    "test:integration": "cd tests && npm run test:integration",
+    "lint": "echo 'No linting configured for multi-language project'",
+    "format": "echo 'No formatting configured for multi-language project'",
+    "format:check": "echo 'No format check configured for multi-language project'",
+    "build": "echo 'Build handled by language-specific tools'",
+    "start": "echo 'No start command for library project'"
+  },
+  "devDependencies": {
+    "@jest/globals": "^29.7.0",
+    "jest": "^29.7.0",
+    "eslint": "^8.55.0"
+  },
+  "dependencies": {},
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "keywords": [
+    "rew",
+    "room-eq-wizard",
+    "api",
+    "client",
+    "http",
+    "audio",
+    "measurement",
+    "acoustics",
+    "multi-language",
+    "c++",
+    "csharp",
+    "javascript",
+    "typescript"
+  ],
+  "author": "REW API Development Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zarfld/REWApi.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zarfld/REWApi/issues"
+  },
+  "homepage": "https://github.com/zarfld/REWApi#readme",
+  "workspaces": [
+    "tests"
+  ]
+}
