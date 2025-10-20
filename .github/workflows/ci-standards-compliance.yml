@@ -92,6 +92,11 @@ jobs:
           echo "✅ All required artifacts present"
           echo "Contents of build/:"
           ls -la build/
+      - name: Ensure test directory exists
+        run: |
+          mkdir -p 05-implementation/tests/generated
+          echo "Created test directory"
+          ls -la 05-implementation/tests/generated/ || echo "Directory empty"
       - name: Upload generated artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -100,6 +105,7 @@ jobs:
             build/spec-index.json
             build/traceability.json
             05-implementation/tests/generated/
+          if-no-files-found: warn
   # Phase 05: Implementation Quality Checks
   code-quality:
     needs: [spec-generation]
@@ -120,7 +126,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          npm ci
+          echo "📦 Installing Node.js dependencies..."
+          npm install
           npm install -g eslint prettier markdownlint-cli
 
       - name: Run linting (Coding Standards)
@@ -167,7 +174,7 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Run unit tests
         run: |
@@ -293,7 +300,7 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Run database migrations
         run: |
@@ -378,7 +385,7 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Install Playwright
         run: npx playwright install --with-deps
@@ -649,7 +656,7 @@ jobs:
       - name: Build application
         run: |
           echo "🏗️ Building application..."
-          npm ci
+          npm install
           npm run build
 
       - name: Deploy to staging
