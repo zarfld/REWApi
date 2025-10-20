@@ -1,32 +1,29 @@
-const fetch = require('node-fetch');
+// Support both CommonJS and ES modules
+let fetch;
+try {
+    // Try to use global fetch first (for tests with mocked fetch)
+    fetch = globalThis.fetch || global.fetch;
+} catch (e) {
+    // Fall back to node-fetch for Node.js environments
+    fetch = require('node-fetch');
+}
 
 class REWApi {
     constructor() {
         this.graphUpdateInhibited = false;
         this.blockingModeEnabled = false;
+        this.baseUrl = 'http://localhost:4735';
     }
 
     setGraphUpdateInhibition(inhibit) {
         this.graphUpdateInhibited = inhibit;
     }
 
-    async get(endpoint) {
-        if (this.graphUpdateInhibited) return null;
-        const response = await fetch(endpoint);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return await response.json();
-    }
-
-    async put(endpoint, data) {
-        if (this.graphUpdateInhibited) return null;
-        const response = await fetch(endpoint, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
+    async get(endpoint, options = {}) {
+        const url = endpoint.startsWith('http') ? endpoint : `${this.baseUrl}${endpoint}`;
+        const response = await fetch(url, {
+            method: 'GET',
+            ...options
         });
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -34,14 +31,33 @@ class REWApi {
         return await response.json();
     }
 
-    async post(endpoint, data) {
-        if (this.graphUpdateInhibited) return null;
-        const response = await fetch(endpoint, {
+    async put(endpoint, data, options = {}) {
+        const url = endpoint.startsWith('http') ? endpoint : `${this.baseUrl}${endpoint}`;
+        const response = await fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            },
+            body: JSON.stringify(data),
+            ...options
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return await response.json();
+    }
+
+    async post(endpoint, data, options = {}) {
+        const url = endpoint.startsWith('http') ? endpoint : `${this.baseUrl}${endpoint}`;
+        const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                ...options.headers
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(data),
+            ...options
         });
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
