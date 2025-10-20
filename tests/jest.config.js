@@ -32,9 +32,9 @@ export default {
   // Coverage configuration
   collectCoverage: true,
   collectCoverageFrom: [
-    'src/**/*.js',
-    '!src/**/*.test.js',
-    '!src/**/fixtures/**',
+    '../src/**/*.js',
+    '!../src/**/*.test.js',
+    '!../src/**/fixtures/**',
     '!node_modules/**'
   ],
   
@@ -47,7 +47,7 @@ export default {
       statements: 40
     },
     // Specific thresholds for core modules
-    'src/js/rewApi.js': {
+    '../src/js/rewApi.js': {
       branches: 50,
       functions: 50,
       lines: 50,
