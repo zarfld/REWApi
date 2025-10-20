@@ -8,8 +8,23 @@ date: "2025-10-03"
 status: approved
 traceability:
   requirements:
-    - REQ-F-001
-    - REQ-NF-001
+    - REQ-F-001  # HTTP Communication Core
+    - REQ-F-002  # Base64 Array Encoding/Decoding  
+    - REQ-F-004  # Measurement Operations
+    - REQ-F-005  # Frequency Response Analysis
+    - REQ-F-006  # Impulse Response Analysis
+    - REQ-NF-001 # HTTP Response Time
+    - REQ-NF-002 # Data Transfer Efficiency
+    - REQ-NF-003 # Error Handling
+    - REQ-NF-004 # System Reliability and Availability
+    - REQ-NF-005 # Local Network Communication
+    - REQ-NF-USE-001 # API Consistency
+    - REQ-NF-USE-002 # Developer Experience
+    - REQ-NF-COMP-001 # REW Version Compatibility
+    - REQ-NF-COMP-002 # Platform Requirements
+    - REQ-NF-MAIN-001 # Code Organization
+    - REQ-NF-MAIN-002 # Documentation Requirements
+    - REQ-NF-SCAL-001 # Concurrent Operations
 ---
 
 # Architecture Quality Attribute Scenarios
@@ -38,20 +53,23 @@ status: draft | verified | at-risk
 
 ## Example Scenarios
 
-### QA-SC-001 Performance - API Latency
+### QA-SC-001 Performance - HTTP Response Time
 ```yaml
 id: QA-SC-001
 qualityAttribute: Performance
-source: User via Web UI
-stimulus: Submits a standard data retrieval request
-stimulusEnvironment: Peak Load (1000 concurrent users)
-artifact: API Gateway + Application Service
-response: Returns requested data
-responseMeasure: p95 < 200ms, p99 < 500ms
+source: REW API Client Application
+stimulus: Makes concurrent HTTP requests to REW API
+stimulusEnvironment: Normal Load (REW running standard measurements)
+artifact: REW API HTTP Server + Client Library
+response: Returns measurement data within acceptable time limits
+responseMeasure: p95 < 5s, p99 < 10s (per REQ-NF-001)
 relatedRequirements:
-  - REQ-NF-P-001
+  - REQ-NF-001
+  - REQ-F-001
+  - REQ-F-002
 relatedADRs:
-  - ADR-002
+  - ADR-001
+  - ADR-003
 relatedViews:
   - logical
   - process
@@ -59,44 +77,139 @@ validationMethod: benchmark
 status: draft
 ```
 
-### QA-SC-002 Availability - Primary Database Failure
+### QA-SC-002 Reliability - Network Connection Failure
 ```yaml
 id: QA-SC-002
-qualityAttribute: Availability
-source: Hardware failure in primary DB node
-stimulus: Primary database becomes unreachable
+qualityAttribute: Reliability
+source: Network infrastructure failure
+stimulus: Network connection to REW API server is lost
 stimulusEnvironment: Normal Operation
-artifact: Data Persistence Layer
-response: Automatic failover to standby
-responseMeasure: RTO < 60s, RPO = 0
+artifact: HTTP Client Communication Layer
+response: Graceful error handling with clear error messages
+responseMeasure: No application crash, error recovery within 30s
 relatedRequirements:
-  - REQ-NF-R-002
+  - REQ-NF-003
+  - REQ-NF-004
+  - REQ-F-001
 relatedADRs:
-  - ADR-003
+  - ADR-001
+  - ADR-002
 relatedViews:
   - deployment
-  - data
+  - logical
 validationMethod: chaos test
 status: draft
 ```
 
-### QA-SC-003 Security - Credential Stuffing Attack
+### QA-SC-003 Data Integrity - Base64 Encoding Consistency
 ```yaml
 id: QA-SC-003
-qualityAttribute: Security
-source: Malicious actor
-stimulus: Automated login attempts (500 req/s distributed across IPs)
-stimulusEnvironment: Normal Operation
-artifact: Authentication subsystem
-response: Rate limiting, anomaly detection triggers, suspicious IPs blocked
-responseMeasure: > 95% attacks blocked, < 1% false positives, no user data compromised
+qualityAttribute: Data Integrity
+source: Multi-language client applications
+stimulus: Encode identical float arrays across different language implementations
+stimulusEnvironment: Cross-platform deployment
+artifact: Base64 encoding/decoding subsystem
+response: Identical Base64 output and perfect round-trip accuracy
+responseMeasure: 100% byte-identical output, zero precision loss
 relatedRequirements:
-  - REQ-NF-S-001
+  - REQ-NF-002
+  - REQ-F-002
+  - REQ-NF-USE-001
 relatedADRs:
-  - ADR-004
+  - ADR-003
 relatedViews:
-  - security
-validationMethod: security test
+  - implementation
+validationMethod: cross-platform test
+status: draft
+```
+
+### QA-SC-004 Usability - Parameter Validation Feedback
+```yaml
+id: QA-SC-004
+qualityAttribute: Usability
+source: Developer using REW API client library
+stimulus: Provides invalid parameters to measurement command
+stimulusEnvironment: Development Environment
+artifact: Parameter Validation Subsystem
+response: Clear, actionable error message before API call
+responseMeasure: Error detected client-side within 100ms, message clearly identifies issue
+relatedRequirements:
+  - REQ-NF-USE-002
+  - REQ-F-004
+  - REQ-F-005
+  - REQ-F-006
+relatedADRs:
+  - ADR-002
+relatedViews:
+  - logical
+validationMethod: usability test
+status: draft
+```
+
+### QA-SC-005 Compatibility - REW Version Support
+```yaml
+id: QA-SC-005
+qualityAttribute: Compatibility
+source: REW software version update
+stimulus: REW updates from supported version to newer version
+stimulusEnvironment: Production deployment
+artifact: REW API client library compatibility layer
+response: Continued operation with existing functionality
+responseMeasure: No breaking changes, backward compatibility maintained
+relatedRequirements:
+  - REQ-NF-COMP-001
+  - REQ-NF-COMP-002
+  - REQ-NF-005
+relatedADRs:
+  - ADR-001
+relatedViews:
+  - deployment
+validationMethod: regression test
+status: draft
+```
+
+### QA-SC-006 Maintainability - Code Organization
+```yaml
+id: QA-SC-006
+qualityAttribute: Maintainability
+source: Development team member
+stimulus: Needs to add new REW API endpoint support
+stimulusEnvironment: Development Environment
+artifact: Client library codebase structure
+response: Clear extension points and consistent patterns
+responseMeasure: New endpoint added within 4 hours, follows existing patterns
+relatedRequirements:
+  - REQ-NF-MAIN-001
+  - REQ-NF-MAIN-002
+relatedADRs:
+  - ADR-001
+  - ADR-002
+  - ADR-003
+relatedViews:
+  - implementation
+validationMethod: developer survey
+status: draft
+```
+
+### QA-SC-007 Scalability - Concurrent Operations
+```yaml
+id: QA-SC-007
+qualityAttribute: Scalability
+source: Multiple client applications
+stimulus: 10 concurrent applications using REW API simultaneously
+stimulusEnvironment: Peak Usage
+artifact: REW API server + client connection management
+response: All clients receive responses without degradation
+responseMeasure: No request failures, response time increase < 50%
+relatedRequirements:
+  - REQ-NF-SCAL-001
+  - REQ-F-001
+relatedADRs:
+  - ADR-001
+relatedViews:
+  - deployment
+  - process
+validationMethod: load test
 status: draft
 ```
 

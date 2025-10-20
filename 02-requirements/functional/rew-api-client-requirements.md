@@ -116,6 +116,12 @@ Scenario: HTTP error response
   And the error message should include HTTP status information
 ```
 
+**Architecture Traceability**:
+- **Architecture Components**: ARC-C-001 - REW Client Service Component
+- **Architecture Decisions**: ADR-001 - HTTP Client Architecture for REW API Communication
+- **Design Elements**: HTTP client abstraction layer, connection management
+- **Implementation**: Cross-platform HTTP communication service
+
 ### REQ-F-002: Base64 Array Encoding/Decoding
 
 **ID**: REQ-F-002  
@@ -196,6 +202,7 @@ Scenario: Decode invalid Base64
 
 **Architecture Traceability**:
 - **Architecture Components**: ARC-C-001 - REW Client Service Component
+- **Architecture Decisions**: ADR-003 - Data Serialization Approach  
 - **Design Elements**: Base64 encoding/decoding utility classes
 - **Implementation**: Cross-platform data serialization layer
 
@@ -365,6 +372,12 @@ Scenario: Get non-normalized impulse response
   When impulse response is requested with normalised=false
   Then raw impulse response data should be returned without normalization
 ```
+
+**Architecture Traceability**:
+- **Architecture Components**: ARC-C-001 - REW Client Service Component
+- **Architecture Decisions**: ADR-002 - Parameter Validation Strategy
+- **Design Elements**: Measurement command processing, parameter validation
+- **Implementation**: Measurement service layer with comprehensive parameter validation
 
 ### REQ-F-005: Filter and EQ Management
 
