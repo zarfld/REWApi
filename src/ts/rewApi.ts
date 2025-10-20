@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+import fetch from 'cross-fetch';
 
 class REWApi {
     private graphUpdateInhibited: boolean = false;
@@ -10,6 +10,12 @@ class REWApi {
 
     async get(endpoint: string): Promise<any> {
         if (this.graphUpdateInhibited) return null;
+        
+        // Add full URL if endpoint is relative
+        if (endpoint.startsWith('/')) {
+            endpoint = `http://localhost:4735${endpoint}`;
+        }
+        
         const response = await fetch(endpoint);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -19,6 +25,12 @@ class REWApi {
 
     async put(endpoint: string, data: any): Promise<any> {
         if (this.graphUpdateInhibited) return null;
+        
+        // Add full URL if endpoint is relative
+        if (endpoint.startsWith('/')) {
+            endpoint = `http://localhost:4735${endpoint}`;
+        }
+        
         const response = await fetch(endpoint, {
             method: 'PUT',
             headers: {
@@ -34,6 +46,12 @@ class REWApi {
 
     async post(endpoint: string, data: any): Promise<any> {
         if (this.graphUpdateInhibited) return null;
+        
+        // Add full URL if endpoint is relative
+        if (endpoint.startsWith('/')) {
+            endpoint = `http://localhost:4735${endpoint}`;
+        }
+        
         const response = await fetch(endpoint, {
             method: 'POST',
             headers: {
@@ -481,17 +499,43 @@ class REWApi {
         const buffer = new ArrayBuffer(array.length * 4);
         const view = new DataView(buffer);
         for (let i = 0; i < array.length; i++) {
-            view.setFloat32(i * 4, array[i], false); // Use big-endian for REW compatibility
+            view.setFloat32(i * 4, array[i], true); // Use little-endian for consistency
         }
-        return Buffer.from(buffer).toString('base64');
+        
+        // Convert ArrayBuffer to base64 string
+        const uint8Array = new Uint8Array(buffer);
+        let binaryString = '';
+        for (let i = 0; i < uint8Array.length; i++) {
+            binaryString += String.fromCharCode(uint8Array[i]);
+        }
+        return btoa ? btoa(binaryString) : Buffer.from(buffer).toString('base64');
     }
 
     decodeArray(base64Encoded: string): Float32Array {
-        const buffer = Buffer.from(base64Encoded, 'base64');
-        const view = new DataView(buffer.buffer);
-        const array = new Float32Array(buffer.length / 4);
+        // Convert base64 string to ArrayBuffer
+        let buffer: ArrayBuffer;
+        
+        if (typeof atob !== 'undefined') {
+            // Browser environment
+            const binaryString = atob(base64Encoded);
+            const uint8Array = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) {
+                uint8Array[i] = binaryString.charCodeAt(i);
+            }
+            buffer = uint8Array.buffer;
+        } else {
+            // Node.js environment
+            const bufferFromBase64 = Buffer.from(base64Encoded, 'base64');
+            buffer = bufferFromBase64.buffer.slice(
+                bufferFromBase64.byteOffset,
+                bufferFromBase64.byteOffset + bufferFromBase64.byteLength
+            );
+        }
+        
+        const view = new DataView(buffer);
+        const array = new Float32Array(buffer.byteLength / 4);
         for (let i = 0; i < array.length; i++) {
-            array[i] = view.getFloat32(i * 4, false); // Use big-endian for REW compatibility
+            array[i] = view.getFloat32(i * 4, true); // Use little-endian for consistency
         }
         return array;
     }

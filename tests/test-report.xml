@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testExecutions version="1">
   <file path="D:\Repos\REWApi\tests\unit\measurement-operations.test.js">
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Retrieval - REQ-F-004.1 should get all measurements successfully" duration="45">
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Retrieval - REQ-F-004.1 should get all measurements successfully" duration="41">
       <failure message="Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)"><![CDATA[Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)
 
 Expected: "http://localhost:4735/measurements", ObjectContaining {"method": "GET"}
@@ -10,19 +10,19 @@ Number of calls: 0
     at Object.toHaveBeenCalledWith (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:56:25)
     at processTicksAndRejections (node:internal/process/task_queues:105:5)]]></failure>
     </testCase>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Retrieval - REQ-F-004.1 should handle empty measurement list gracefully" duration="12">
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Retrieval - REQ-F-004.1 should handle empty measurement list gracefully" duration="11">
       <failure message="Error: expect(received).toEqual(expected) // deep equality"><![CDATA[Error: expect(received).toEqual(expected) // deep equality
 
 Expected: []
-Received: {}
+Received: {"1": {"alignSPLOffsetdB": 0, "clockAdjustmentPPM": 0, "cumulativeIRShiftSeconds": 0.0000498046875, "date": "2023-Mär-26 16:02:46", "endFreq": 19999.879, "inverted": false, "notes": "", "rewVersion": "V5.20.13", "splOffsetdB": 120, "startFreq": 0.36621094, "timeOfIRPeakSeconds": 0, "timeOfIRStartSeconds": -0.0003333333333333333, "timingReference": "No timing reference", "title": "M4/1_sec", "uuid": "8f6895cf-9ecf-4de6-8cdc-7a677417cb73"}, "2": {"alignSPLOffsetdB": 0, "clockAdjustmentPPM": 0, "cumulativeIRShiftSeconds": 0.00005322265625, "date": "2023-Mär-26 16:03:15", "endFreq": 19999.879, "inverted": false, "notes": "", "rewVersion": "V5.20.13", "splOffsetdB": 120, "startFreq": 0.36621094, "timeOfIRPeakSeconds": 0, "timeOfIRStartSeconds": -0.0003333333333333333, "timingReference": "No timing reference", "title": "M4/1_sec", "uuid": "3557eeee-82ee-4842-8675-b78bdd13e012"}, "3": {"alignSPLOffsetdB": 0, "clockAdjustmentPPM": 0, "cumulativeIRShiftSeconds": 0.000010416666666666668, "date": "2023-Mär-26 16:05:04", "endFreq": 19999.879, "inverted": false, "notes": "", "rewVersion": "V5.20.13", "splOffsetdB": 120, "startFreq": 0.36621094, "timeOfIRPeakSeconds": 0, "timeOfIRStartSeconds": -0.00035416666666666664, "timingReference": "No timing reference", "title": "Monitor2 Mär 26", "uuid": "f707754d-919d-479e-a070-5f8fdb72a193"}, "4": {"alignSPLOffsetdB": 0, "date": "2023-Mär-26 16:11:52", "endFreq": 48011.58, "inverted": false, "notes": "", "rewVersion": "V5.20.13", "splOffsetdB": 89.81006354086054, "startFreq": 2.5, "title": "Target Monitor2 Mär 26", "uuid": "26614004-c4f6-4952-a44c-0b503a9c48e8"}, "5": {"alignSPLOffsetdB": 0, "clockAdjustmentPPM": 0, "cumulativeIRShiftSeconds": 0.000008463541666666666, "date": "2023-Mär-26 16:20:11", "endFreq": 19999.879, "inverted": false, "notes": "", "rewVersion": "V5.20.13", "splOffsetdB": 120, "startFreq": 0.36621094, "timeOfIRPeakSeconds": 0, "timeOfIRStartSeconds": -0.00020833333333333332, "timingReference": "No timing reference", "title": "Monitor1 Mär 26", "uuid": "9998820f-e958-4402-836e-6d87fda0e486"}, "6": {"alignSPLOffsetdB": 0, "clockAdjustmentPPM": 0, "cumulativeIRShiftSeconds": 0.000009440104166666667, "date": "2023-Mär-26 16:20:54", "endFreq": 19999.879, "inverted": false, "notes": "", "rewVersion": "V5.20.13", "splOffsetdB": 120, "startFreq": 0.36621094, "timeOfIRPeakSeconds": 0, "timeOfIRStartSeconds": -0.0002708333333333333, "timingReference": "No timing reference", "title": "Monitor1 Mär 26", "uuid": "e5165beb-837b-43bb-963b-118e6f59d53f"}, "7": {"alignSPLOffsetdB": 0, "clockAdjustmentPPM": 0, "cumulativeIRShiftSeconds": 0.00004150390624999999, "date": "2023-Mär-26 16:45:09", "endFreq": 19999.879, "inverted": false, "notes": "", "rewVersion": "V5.20.13", "splOffsetdB": 120, "startFreq": 0.36621094, "timeOfIRPeakSeconds": 0, "timeOfIRStartSeconds": -0.00020833333333333332, "timingReference": "No timing reference", "title": "Monitor3 Mär 26", "uuid": "e7b7c999-83df-42a5-a3cd-6dea35ff9db1"}}
     at Object.toEqual (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:77:22)
     at processTicksAndRejections (node:internal/process/task_queues:105:5)]]></failure>
     </testCase>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Retrieval - REQ-F-004.1 should handle server errors appropriately" duration="6">
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Retrieval - REQ-F-004.1 should handle server errors appropriately" duration="14">
       <failure message="Error: expect(received).rejects.toThrow()"><![CDATA[Error: expect(received).rejects.toThrow()
 
 Received promise resolved instead of rejected
-Resolved to value: {}
+Resolved to value: {"1": {"alignSPLOffsetdB": 0, "clockAdjustmentPPM": 0, "cumulativeIRShiftSeconds": 0.0000498046875, "date": "2023-Mär-26 16:02:46", "endFreq": 19999.879, "inverted": false, "notes": "", "rewVersion": "V5.20.13", "splOffsetdB": 120, "startFreq": 0.36621094, "timeOfIRPeakSeconds": 0, "timeOfIRStartSeconds": -0.0003333333333333333, "timingReference": "No timing reference", "title": "M4/1_sec", "uuid": "8f6895cf-9ecf-4de6-8cdc-7a677417cb73"}, "2": {"alignSPLOffsetdB": 0, "clockAdjustmentPPM": 0, "cumulativeIRShiftSeconds": 0.00005322265625, "date": "2023-Mär-26 16:03:15", "endFreq": 19999.879, "inverted": false, "notes": "", "rewVersion": "V5.20.13", "splOffsetdB": 120, "startFreq": 0.36621094, "timeOfIRPeakSeconds": 0, "timeOfIRStartSeconds": -0.0003333333333333333, "timingReference": "No timing reference", "title": "M4/1_sec", "uuid": "3557eeee-82ee-4842-8675-b78bdd13e012"}, "3": {"alignSPLOffsetdB": 0, "clockAdjustmentPPM": 0, "cumulativeIRShiftSeconds": 0.000010416666666666668, "date": "2023-Mär-26 16:05:04", "endFreq": 19999.879, "inverted": false, "notes": "", "rewVersion": "V5.20.13", "splOffsetdB": 120, "startFreq": 0.36621094, "timeOfIRPeakSeconds": 0, "timeOfIRStartSeconds": -0.00035416666666666664, "timingReference": "No timing reference", "title": "Monitor2 Mär 26", "uuid": "f707754d-919d-479e-a070-5f8fdb72a193"}, "4": {"alignSPLOffsetdB": 0, "date": "2023-Mär-26 16:11:52", "endFreq": 48011.58, "inverted": false, "notes": "", "rewVersion": "V5.20.13", "splOffsetdB": 89.81006354086054, "startFreq": 2.5, "title": "Target Monitor2 Mär 26", "uuid": "26614004-c4f6-4952-a44c-0b503a9c48e8"}, "5": {"alignSPLOffsetdB": 0, "clockAdjustmentPPM": 0, "cumulativeIRShiftSeconds": 0.000008463541666666666, "date": "2023-Mär-26 16:20:11", "endFreq": 19999.879, "inverted": false, "notes": "", "rewVersion": "V5.20.13", "splOffsetdB": 120, "startFreq": 0.36621094, "timeOfIRPeakSeconds": 0, "timeOfIRStartSeconds": -0.00020833333333333332, "timingReference": "No timing reference", "title": "Monitor1 Mär 26", "uuid": "9998820f-e958-4402-836e-6d87fda0e486"}, "6": {"alignSPLOffsetdB": 0, "clockAdjustmentPPM": 0, "cumulativeIRShiftSeconds": 0.000009440104166666667, "date": "2023-Mär-26 16:20:54", "endFreq": 19999.879, "inverted": false, "notes": "", "rewVersion": "V5.20.13", "splOffsetdB": 120, "startFreq": 0.36621094, "timeOfIRPeakSeconds": 0, "timeOfIRStartSeconds": -0.0002708333333333333, "timingReference": "No timing reference", "title": "Monitor1 Mär 26", "uuid": "e5165beb-837b-43bb-963b-118e6f59d53f"}, "7": {"alignSPLOffsetdB": 0, "clockAdjustmentPPM": 0, "cumulativeIRShiftSeconds": 0.00004150390624999999, "date": "2023-Mär-26 16:45:09", "endFreq": 19999.879, "inverted": false, "notes": "", "rewVersion": "V5.20.13", "splOffsetdB": 120, "startFreq": 0.36621094, "timeOfIRPeakSeconds": 0, "timeOfIRStartSeconds": -0.00020833333333333332, "timingReference": "No timing reference", "title": "Monitor3 Mär 26", "uuid": "e7b7c999-83df-42a5-a3cd-6dea35ff9db1"}}
     at expect (D:\Repos\REWApi\node_modules\expect\build\index.js:113:15)
     at Object.expect (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:91:13)
     at Promise.then.completed (D:\Repos\REWApi\node_modules\jest-circus\build\utils.js:298:28)
@@ -44,7 +44,7 @@ Resolved to value: {}
       <failure message="Error: expect(received).rejects.toThrow()"><![CDATA[Error: expect(received).rejects.toThrow()
 
 Received promise resolved instead of rejected
-Resolved to value: {}
+Resolved to value: {"1": {"alignSPLOffsetdB": 0, "clockAdjustmentPPM": 0, "cumulativeIRShiftSeconds": 0.0000498046875, "date": "2023-Mär-26 16:02:46", "endFreq": 19999.879, "inverted": false, "notes": "", "rewVersion": "V5.20.13", "splOffsetdB": 120, "startFreq": 0.36621094, "timeOfIRPeakSeconds": 0, "timeOfIRStartSeconds": -0.0003333333333333333, "timingReference": "No timing reference", "title": "M4/1_sec", "uuid": "8f6895cf-9ecf-4de6-8cdc-7a677417cb73"}, "2": {"alignSPLOffsetdB": 0, "clockAdjustmentPPM": 0, "cumulativeIRShiftSeconds": 0.00005322265625, "date": "2023-Mär-26 16:03:15", "endFreq": 19999.879, "inverted": false, "notes": "", "rewVersion": "V5.20.13", "splOffsetdB": 120, "startFreq": 0.36621094, "timeOfIRPeakSeconds": 0, "timeOfIRStartSeconds": -0.0003333333333333333, "timingReference": "No timing reference", "title": "M4/1_sec", "uuid": "3557eeee-82ee-4842-8675-b78bdd13e012"}, "3": {"alignSPLOffsetdB": 0, "clockAdjustmentPPM": 0, "cumulativeIRShiftSeconds": 0.000010416666666666668, "date": "2023-Mär-26 16:05:04", "endFreq": 19999.879, "inverted": false, "notes": "", "rewVersion": "V5.20.13", "splOffsetdB": 120, "startFreq": 0.36621094, "timeOfIRPeakSeconds": 0, "timeOfIRStartSeconds": -0.00035416666666666664, "timingReference": "No timing reference", "title": "Monitor2 Mär 26", "uuid": "f707754d-919d-479e-a070-5f8fdb72a193"}, "4": {"alignSPLOffsetdB": 0, "date": "2023-Mär-26 16:11:52", "endFreq": 48011.58, "inverted": false, "notes": "", "rewVersion": "V5.20.13", "splOffsetdB": 89.81006354086054, "startFreq": 2.5, "title": "Target Monitor2 Mär 26", "uuid": "26614004-c4f6-4952-a44c-0b503a9c48e8"}, "5": {"alignSPLOffsetdB": 0, "clockAdjustmentPPM": 0, "cumulativeIRShiftSeconds": 0.000008463541666666666, "date": "2023-Mär-26 16:20:11", "endFreq": 19999.879, "inverted": false, "notes": "", "rewVersion": "V5.20.13", "splOffsetdB": 120, "startFreq": 0.36621094, "timeOfIRPeakSeconds": 0, "timeOfIRStartSeconds": -0.00020833333333333332, "timingReference": "No timing reference", "title": "Monitor1 Mär 26", "uuid": "9998820f-e958-4402-836e-6d87fda0e486"}, "6": {"alignSPLOffsetdB": 0, "clockAdjustmentPPM": 0, "cumulativeIRShiftSeconds": 0.000009440104166666667, "date": "2023-Mär-26 16:20:54", "endFreq": 19999.879, "inverted": false, "notes": "", "rewVersion": "V5.20.13", "splOffsetdB": 120, "startFreq": 0.36621094, "timeOfIRPeakSeconds": 0, "timeOfIRStartSeconds": -0.0002708333333333333, "timingReference": "No timing reference", "title": "Monitor1 Mär 26", "uuid": "e5165beb-837b-43bb-963b-118e6f59d53f"}, "7": {"alignSPLOffsetdB": 0, "clockAdjustmentPPM": 0, "cumulativeIRShiftSeconds": 0.00004150390624999999, "date": "2023-Mär-26 16:45:09", "endFreq": 19999.879, "inverted": false, "notes": "", "rewVersion": "V5.20.13", "splOffsetdB": 120, "startFreq": 0.36621094, "timeOfIRPeakSeconds": 0, "timeOfIRStartSeconds": -0.00020833333333333332, "timingReference": "No timing reference", "title": "Monitor3 Mär 26", "uuid": "e7b7c999-83df-42a5-a3cd-6dea35ff9db1"}}
     at expect (D:\Repos\REWApi\node_modules\expect\build\index.js:113:15)
     at Object.expect (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:100:13)
     at Promise.then.completed (D:\Repos\REWApi\node_modules\jest-circus\build\utils.js:298:28)
@@ -62,11 +62,11 @@ Resolved to value: {}
     at runTestInternal (D:\Repos\REWApi\node_modules\jest-runner\build\runTest.js:367:16)
     at runTest (D:\Repos\REWApi\node_modules\jest-runner\build\runTest.js:444:34)]]></failure>
     </testCase>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Retrieval - REQ-F-004.1 should handle invalid JSON responses" duration="5">
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Retrieval - REQ-F-004.1 should handle invalid JSON responses" duration="7">
       <failure message="Error: expect(received).rejects.toThrow()"><![CDATA[Error: expect(received).rejects.toThrow()
 
 Received promise resolved instead of rejected
-Resolved to value: {}
+Resolved to value: {"1": {"alignSPLOffsetdB": 0, "clockAdjustmentPPM": 0, "cumulativeIRShiftSeconds": 0.0000498046875, "date": "2023-Mär-26 16:02:46", "endFreq": 19999.879, "inverted": false, "notes": "", "rewVersion": "V5.20.13", "splOffsetdB": 120, "startFreq": 0.36621094, "timeOfIRPeakSeconds": 0, "timeOfIRStartSeconds": -0.0003333333333333333, "timingReference": "No timing reference", "title": "M4/1_sec", "uuid": "8f6895cf-9ecf-4de6-8cdc-7a677417cb73"}, "2": {"alignSPLOffsetdB": 0, "clockAdjustmentPPM": 0, "cumulativeIRShiftSeconds": 0.00005322265625, "date": "2023-Mär-26 16:03:15", "endFreq": 19999.879, "inverted": false, "notes": "", "rewVersion": "V5.20.13", "splOffsetdB": 120, "startFreq": 0.36621094, "timeOfIRPeakSeconds": 0, "timeOfIRStartSeconds": -0.0003333333333333333, "timingReference": "No timing reference", "title": "M4/1_sec", "uuid": "3557eeee-82ee-4842-8675-b78bdd13e012"}, "3": {"alignSPLOffsetdB": 0, "clockAdjustmentPPM": 0, "cumulativeIRShiftSeconds": 0.000010416666666666668, "date": "2023-Mär-26 16:05:04", "endFreq": 19999.879, "inverted": false, "notes": "", "rewVersion": "V5.20.13", "splOffsetdB": 120, "startFreq": 0.36621094, "timeOfIRPeakSeconds": 0, "timeOfIRStartSeconds": -0.00035416666666666664, "timingReference": "No timing reference", "title": "Monitor2 Mär 26", "uuid": "f707754d-919d-479e-a070-5f8fdb72a193"}, "4": {"alignSPLOffsetdB": 0, "date": "2023-Mär-26 16:11:52", "endFreq": 48011.58, "inverted": false, "notes": "", "rewVersion": "V5.20.13", "splOffsetdB": 89.81006354086054, "startFreq": 2.5, "title": "Target Monitor2 Mär 26", "uuid": "26614004-c4f6-4952-a44c-0b503a9c48e8"}, "5": {"alignSPLOffsetdB": 0, "clockAdjustmentPPM": 0, "cumulativeIRShiftSeconds": 0.000008463541666666666, "date": "2023-Mär-26 16:20:11", "endFreq": 19999.879, "inverted": false, "notes": "", "rewVersion": "V5.20.13", "splOffsetdB": 120, "startFreq": 0.36621094, "timeOfIRPeakSeconds": 0, "timeOfIRStartSeconds": -0.00020833333333333332, "timingReference": "No timing reference", "title": "Monitor1 Mär 26", "uuid": "9998820f-e958-4402-836e-6d87fda0e486"}, "6": {"alignSPLOffsetdB": 0, "clockAdjustmentPPM": 0, "cumulativeIRShiftSeconds": 0.000009440104166666667, "date": "2023-Mär-26 16:20:54", "endFreq": 19999.879, "inverted": false, "notes": "", "rewVersion": "V5.20.13", "splOffsetdB": 120, "startFreq": 0.36621094, "timeOfIRPeakSeconds": 0, "timeOfIRStartSeconds": -0.0002708333333333333, "timingReference": "No timing reference", "title": "Monitor1 Mär 26", "uuid": "e5165beb-837b-43bb-963b-118e6f59d53f"}, "7": {"alignSPLOffsetdB": 0, "clockAdjustmentPPM": 0, "cumulativeIRShiftSeconds": 0.00004150390624999999, "date": "2023-Mär-26 16:45:09", "endFreq": 19999.879, "inverted": false, "notes": "", "rewVersion": "V5.20.13", "splOffsetdB": 120, "startFreq": 0.36621094, "timeOfIRPeakSeconds": 0, "timeOfIRStartSeconds": -0.00020833333333333332, "timingReference": "No timing reference", "title": "Monitor3 Mär 26", "uuid": "e7b7c999-83df-42a5-a3cd-6dea35ff9db1"}}
     at expect (D:\Repos\REWApi\node_modules\expect\build\index.js:113:15)
     at Object.expect (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:112:13)
     at Promise.then.completed (D:\Repos\REWApi\node_modules\jest-circus\build\utils.js:298:28)
@@ -85,15 +85,15 @@ Resolved to value: {}
     at runTest (D:\Repos\REWApi\node_modules\jest-runner\build\runTest.js:444:34)]]></failure>
     </testCase>
     <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Retrieval - REQ-F-004.1 should validate measurement data structure" duration="7"/>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Creation - REQ-F-004.2 should add new measurement with valid data" duration="6">
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Creation - REQ-F-004.2 should add new measurement with valid data" duration="5">
       <failure message="Error: HTTP error! status: 404"><![CDATA[Error: HTTP error! status: 404
     at REWApi.post (D:\Repos\REWApi\src\js\rewApi.js:63:19)
     at processTicksAndRejections (node:internal/process/task_queues:105:5)
     at REWApi.addMeasurement (D:\Repos\REWApi\src\js\rewApi.js:306:16)
     at Object.<anonymous> (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:154:22)]]></failure>
     </testCase>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Creation - REQ-F-004.2 should reject invalid measurement data" duration="6"/>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Creation - REQ-F-004.2 should handle duplicate measurement names" duration="7"/>
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Creation - REQ-F-004.2 should reject invalid measurement data" duration="5"/>
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Creation - REQ-F-004.2 should handle duplicate measurement names" duration="4"/>
     <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Creation - REQ-F-004.2 should validate required fields" duration="5"/>
     <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Deletion - REQ-F-004.3 should delete measurement by ID" duration="4">
       <failure message="Error: HTTP error! status: 400"><![CDATA[Error: HTTP error! status: 400
@@ -102,8 +102,8 @@ Resolved to value: {}
     at Object.<anonymous> (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:224:22)]]></failure>
     </testCase>
     <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Deletion - REQ-F-004.3 should handle deletion of non-existent measurement" duration="3"/>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Deletion - REQ-F-004.3 should validate measurement ID format" duration="127"/>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Deletion - REQ-F-004.3 should delete all measurements" duration="82">
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Deletion - REQ-F-004.3 should validate measurement ID format" duration="625"/>
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Deletion - REQ-F-004.3 should delete all measurements" duration="240">
       <failure message="Error: HTTP error! status: 404"><![CDATA[Error: HTTP error! status: 404
     at REWApi.get (D:\Repos\REWApi\src\js\rewApi.js:29:19)
     at processTicksAndRejections (node:internal/process/task_queues:105:5)
@@ -111,7 +111,7 @@ Resolved to value: {}
     at REWApi._notifySubscribers (D:\Repos\REWApi\src\js\rewApi.js:1177:29)
     at Object.<anonymous> (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:265:22)]]></failure>
     </testCase>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Commands - REQ-F-004.4 should issue measurement start command" duration="1">
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Commands - REQ-F-004.4 should issue measurement start command" duration="4">
       <failure message="Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)"><![CDATA[Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)
 
 Expected: "http://localhost:4735/measurements/meas-123/command", ObjectContaining {"body": "{\"command\":\"start\",\"parameters\":{\"sweepLength\":10,\"amplitude\":-12}}", "headers": ObjectContaining {"Content-Type": "application/json"}, "method": "POST"}
@@ -120,7 +120,7 @@ Number of calls: 0
     at Object.toHaveBeenCalledWith (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:295:25)
     at processTicksAndRejections (node:internal/process/task_queues:105:5)]]></failure>
     </testCase>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Commands - REQ-F-004.4 should issue measurement stop command" duration="1">
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Commands - REQ-F-004.4 should issue measurement stop command" duration="2">
       <failure message="Error: expect(received).toBe(expected) // Object.is equality"><![CDATA[Error: expect(received).toBe(expected) // Object.is equality
 
 Expected: true
@@ -150,7 +150,7 @@ Resolved to value: "Error: Unknown command."
     at runTestInternal (D:\Repos\REWApi\node_modules\jest-runner\build\runTest.js:367:16)
     at runTest (D:\Repos\REWApi\node_modules\jest-runner\build\runTest.js:444:34)]]></failure>
     </testCase>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Commands - REQ-F-004.4 should validate command parameters" duration="1">
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Commands - REQ-F-004.4 should validate command parameters" duration="0">
       <failure message="Error: expect(received).rejects.toThrow()"><![CDATA[Error: expect(received).rejects.toThrow()
 
 Received promise resolved instead of rejected
@@ -172,7 +172,7 @@ Resolved to value: "Error: Unknown command."
     at runTestInternal (D:\Repos\REWApi\node_modules\jest-runner\build\runTest.js:367:16)
     at runTest (D:\Repos\REWApi\node_modules\jest-runner\build\runTest.js:444:34)]]></failure>
     </testCase>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Commands - REQ-F-004.4 should handle commands on non-existent measurements" duration="0">
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Measurement Commands - REQ-F-004.4 should handle commands on non-existent measurements" duration="1">
       <failure message="Error: expect(received).rejects.toThrow()"><![CDATA[Error: expect(received).rejects.toThrow()
 
 Received promise resolved instead of rejected
@@ -210,15 +210,15 @@ Received: false
     at async Promise.all (index 0)
     at Object.<anonymous> (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:421:23)]]></failure>
     </testCase>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Edge Cases and Boundary Conditions should handle boundary conditions for measurement names" duration="6"/>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Edge Cases and Boundary Conditions should handle special characters in measurement names" duration="4">
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Edge Cases and Boundary Conditions should handle boundary conditions for measurement names" duration="4"/>
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Edge Cases and Boundary Conditions should handle special characters in measurement names" duration="3">
       <failure message="Error: HTTP error! status: 404"><![CDATA[Error: HTTP error! status: 404
     at REWApi.post (D:\Repos\REWApi\src\js\rewApi.js:63:19)
     at processTicksAndRejections (node:internal/process/task_queues:105:5)
     at REWApi.addMeasurement (D:\Repos\REWApi\src\js\rewApi.js:306:16)
     at Object.<anonymous> (D:\Repos\REWApi\tests\unit\measurement-operations.test.js:470:24)]]></failure>
     </testCase>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Performance and Timeout Handling should handle request timeouts" duration="7">
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Performance and Timeout Handling should handle request timeouts" duration="4">
       <failure message="Error: expect(received).rejects.toThrow()"><![CDATA[Error: expect(received).rejects.toThrow()
 
 Received promise resolved instead of rejected
@@ -240,6 +240,6 @@ Resolved to value: {}
     at runTestInternal (D:\Repos\REWApi\node_modules\jest-runner\build\runTest.js:367:16)
     at runTest (D:\Repos\REWApi\node_modules\jest-runner\build\runTest.js:444:34)]]></failure>
     </testCase>
-    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Performance and Timeout Handling should complete operations within reasonable time limits" duration="6"/>
+    <testCase name="Core Measurement Operations - REQ-F-004 (Phase 1) Performance and Timeout Handling should complete operations within reasonable time limits" duration="5"/>
   </file>
 </testExecutions>
