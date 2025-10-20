@@ -27,7 +27,7 @@ export default {
   },
   
   // Setup files
-  setupFilesAfterEnv: ['<rootDir>/tests/setup.js'],
+  setupFilesAfterEnv: ['<rootDir>/setup.js'],
   
   // Coverage configuration
   collectCoverage: true,
