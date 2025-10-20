@@ -10,6 +10,7 @@ traceability:
   requirements:
     - REQ-F-001  # HTTP Communication Core
     - REQ-F-002  # Base64 Array Encoding/Decoding  
+    - REQ-F-003  # Audio System Control
     - REQ-F-004  # Measurement Operations
     - REQ-F-005  # Frequency Response Analysis
     - REQ-F-006  # Impulse Response Analysis
@@ -214,11 +215,16 @@ status: draft
 ```
 
 ## Coverage Matrix
+
 | Scenario ID | Quality Attribute | Requirements | ADRs | Views | Validation Method | Status |
 |-------------|-------------------|--------------|------|-------|-------------------|--------|
-| QA-SC-001 | Performance | REQ-NF-P-001 | ADR-002 | logical, process | benchmark | draft |
-| QA-SC-002 | Availability | REQ-NF-R-002 | ADR-003 | deployment, data | chaos test | draft |
-| QA-SC-003 | Security | REQ-NF-S-001 | ADR-004 | security | security test | draft |
+| QA-SC-001 | Performance | REQ-NF-001, REQ-F-001, REQ-F-002 | ADR-001, ADR-003 | logical, process | benchmark | draft |
+| QA-SC-002 | Reliability | REQ-NF-003, REQ-NF-004, REQ-F-001 | ADR-001, ADR-002 | deployment, logical | chaos test | draft |
+| QA-SC-003 | Data Integrity | REQ-NF-002, REQ-F-002, REQ-NF-USE-001 | ADR-003 | implementation | cross-platform test | draft |
+| QA-SC-004 | Usability | REQ-NF-USE-002, REQ-F-004, REQ-F-005, REQ-F-006 | ADR-002 | logical | usability test | draft |
+| QA-SC-005 | Compatibility | REQ-NF-COMP-001, REQ-NF-COMP-002, REQ-NF-005 | ADR-001 | deployment | regression test | draft |
+| QA-SC-006 | Maintainability | REQ-NF-MAIN-001, REQ-NF-MAIN-002 | ADR-001, ADR-002, ADR-003 | implementation | developer survey | draft |
+| QA-SC-007 | Scalability | REQ-NF-SCAL-001, REQ-F-001 | ADR-001 | deployment, process | load test | draft |
 
 ## Definition of Done
 - At least one scenario per prioritized quality attribute
