@@ -1493,5 +1493,184 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     }
 
     #endregion
-}
 
+    #region Phase 3f: EQ Response Data Tests
+
+    /// <summary>
+    /// Test: GetTargetResponse returns valid frequency response data
+    /// @test TEST-MEASUREMENTS-EQ-042 - Get target response curve
+    /// @status ACTIVE - Phase 3f implementation
+    /// </summary>
+    [Fact]
+    public async Task GetTargetResponse_ReturnsCurveData()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        var measurementId = measurements[0].UUID;
+
+        // Act
+        var targetResponse = await measurementsService.GetTargetResponse(measurementId);
+
+        // Assert
+        targetResponse.Should().NotBeNull();
+        targetResponse.Frequencies.Should().NotBeNullOrEmpty("target response should have frequency data");
+        targetResponse.Magnitudes.Should().NotBeNullOrEmpty("target response should have magnitude data");
+        targetResponse.Frequencies.Length.Should().Be(targetResponse.Magnitudes.Length, "frequencies and magnitudes should match");
+        
+        // Target response should cover reasonable frequency range (can start below 10 Hz)
+        targetResponse.Frequencies[0].Should().BeGreaterThan(0, "first frequency should be positive");
+        targetResponse.Frequencies[^1].Should().BeLessThan(30000, "last frequency should be below 30 kHz");
+    }
+
+    /// <summary>
+    /// Test: GetEQFrequencyResponse returns EQ'd frequency response
+    /// @test TEST-MEASUREMENTS-EQ-043 - Get EQ predicted frequency response
+    /// @status ACTIVE - Phase 3f implementation
+    /// </summary>
+    [Fact]
+    public async Task GetEQFrequencyResponse_ReturnsEQdResponse()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        var measurementId = measurements[0].UUID;
+
+        // Act
+        var eqResponse = await measurementsService.GetEQFrequencyResponse(measurementId);
+
+        // Assert
+        eqResponse.Should().NotBeNull();
+        eqResponse.Frequencies.Should().NotBeNullOrEmpty("EQ response should have frequency data");
+        eqResponse.Magnitudes.Should().NotBeNullOrEmpty("EQ response should have magnitude data");
+        eqResponse.Frequencies.Length.Should().Be(eqResponse.Magnitudes.Length);
+        
+        // Should have phase data
+        eqResponse.Phases.Should().NotBeNullOrEmpty("EQ response should have phase data");
+        eqResponse.Phases.Length.Should().Be(eqResponse.Frequencies.Length);
+    }
+
+    /// <summary>
+    /// Test: GetEQFrequencyResponse with unit parameter
+    /// @test TEST-MEASUREMENTS-EQ-044 - Get EQ response with custom unit
+    /// @status ACTIVE - Phase 3f implementation
+    /// </summary>
+    [Fact]
+    public async Task GetEQFrequencyResponse_WithCustomUnit_ReturnsData()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        var measurementId = measurements[0].UUID;
+
+        // Act
+        var eqResponse = await measurementsService.GetEQFrequencyResponse(
+            measurementId, 
+            unit: "dBFS", 
+            smoothing: "1/3");
+
+        // Assert
+        eqResponse.Should().NotBeNull();
+        eqResponse.Frequencies.Should().NotBeNullOrEmpty();
+        eqResponse.Magnitudes.Should().NotBeNullOrEmpty();
+        
+        // Magnitudes should be in dBFS range (negative values, typically -60 to 0 dB)
+        foreach (var magnitude in eqResponse.Magnitudes.Take(100))  // Check first 100 points
+        {
+            magnitude.Should().BeLessThanOrEqualTo(10, "dBFS values should typically be <= 0");
+        }
+    }
+
+    /// <summary>
+    /// Test: GetEQGroupDelay returns group delay data
+    /// @test TEST-MEASUREMENTS-EQ-045 - Get EQ predicted group delay
+    /// @status ACTIVE - Phase 3f implementation
+    /// </summary>
+    [Fact]
+    public async Task GetEQGroupDelay_ReturnsGroupDelayData()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        var measurementId = measurements[0].UUID;
+
+        // Act
+        var groupDelay = await measurementsService.GetEQGroupDelay(measurementId);
+
+        // Assert
+        groupDelay.Should().NotBeNull();
+        groupDelay.Frequencies.Should().NotBeNullOrEmpty("group delay should have frequency data");
+        groupDelay.Magnitudes.Should().NotBeNullOrEmpty("group delay should have delay values in magnitudes field");
+        groupDelay.Frequencies.Length.Should().Be(groupDelay.Magnitudes.Length);
+        
+        // Group delay values should be in reasonable range (typically 0 to few milliseconds = 0 to 0.005 seconds)
+        foreach (var delay in groupDelay.Magnitudes.Where(d => !float.IsNaN(d) && !float.IsInfinity(d)))
+        {
+            Math.Abs(delay).Should().BeLessThan(1.0f, "group delay should typically be less than 1 second");
+        }
+    }
+
+    /// <summary>
+    /// Test: GetEQImpulseResponse returns impulse response data
+    /// @test TEST-MEASUREMENTS-EQ-046 - Get EQ predicted impulse response
+    /// @status ACTIVE - Phase 3f implementation
+    /// </summary>
+    [Fact]
+    public async Task GetEQImpulseResponse_ReturnsImpulseData()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        var measurementId = measurements[0].UUID;
+
+        // Act
+        var impulseResponse = await measurementsService.GetEQImpulseResponse(measurementId);
+
+        // Assert
+        impulseResponse.Should().NotBeNull();
+        impulseResponse.Data.Should().NotBeNullOrEmpty("impulse response should have response data");
+        impulseResponse.SampleRate.Should().BeGreaterThan(0, "sample rate should be positive");
+        impulseResponse.SampleInterval.Should().BeGreaterThan(0, "sample interval should be positive");
+        
+        // Sample rate and interval should be reciprocal
+        var expectedInterval = 1.0 / impulseResponse.SampleRate;
+        impulseResponse.SampleInterval.Should().BeApproximately(expectedInterval, 0.0001, "sample interval should be 1/sample rate");
+    }
+
+    /// <summary>
+    /// Test: GetEQImpulseResponse with windowed parameter
+    /// @test TEST-MEASUREMENTS-EQ-047 - Get EQ impulse response windowed
+    /// @status ACTIVE - Phase 3f implementation
+    /// </summary>
+    [Fact]
+    public async Task GetEQImpulseResponse_Windowed_ReturnsWindowedData()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        var measurementId = measurements[0].UUID;
+
+        // Act - Get both windowed and full
+        var fullResponse = await measurementsService.GetEQImpulseResponse(measurementId, windowed: false);
+        var windowedResponse = await measurementsService.GetEQImpulseResponse(measurementId, windowed: true);
+
+        // Assert
+        fullResponse.Should().NotBeNull();
+        windowedResponse.Should().NotBeNull();
+        
+        // Windowed response should typically be shorter or same length as full
+        windowedResponse.Data.Length.Should().BeLessOrEqualTo(fullResponse.Data.Length, 
+            "windowed response should be shorter or equal to full response");
+        
+        // Both should have same sample rate
+        windowedResponse.SampleRate.Should().Be(fullResponse.SampleRate);
+    }
+
+    #endregion
+}

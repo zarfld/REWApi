@@ -1472,6 +1472,145 @@ namespace REWApi.Domain.Services
 
         #endregion
 
+        #region Phase 3f: EQ Response Data (GZIP-compressed endpoints)
+
+        /// <summary>
+        /// Gets the target response curve for a measurement
+        /// Maps to GET /measurements/{id}/target-response
+        /// Returns GZIP-compressed frequency response data representing the target curve
+        /// </summary>
+        /// <param name="measurementId">UUID of the measurement</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Target response curve data</returns>
+        /// <exception cref="ArgumentException">If measurementId is null or empty</exception>
+        /// <exception cref="InvalidOperationException">If deserialization or decompression fails</exception>
+        public async Task<FrequencyResponseData> GetTargetResponse(
+            string measurementId,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            var url = $"{_baseUrl}/measurements/{measurementId}/target-response";
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            var data = JsonSerializer.Deserialize<JsonElement>(json);
+
+            return ParseFrequencyResponse(data);
+        }
+
+        /// <summary>
+        /// Gets the predicted frequency response with EQ filters applied
+        /// Maps to GET /measurements/{id}/eq/frequency-response
+        /// Returns GZIP-compressed frequency response data showing the measurement with EQ applied
+        /// </summary>
+        /// <param name="measurementId">UUID of the measurement</param>
+        /// <param name="unit">Unit for magnitude data (default: SPL)</param>
+        /// <param name="smoothing">Smoothing to apply (default: None)</param>
+        /// <param name="ppo">Points per octave for log spacing (optional)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>EQ'd frequency response data</returns>
+        /// <exception cref="ArgumentException">If measurementId is null or empty</exception>
+        /// <exception cref="InvalidOperationException">If deserialization or decompression fails</exception>
+        public async Task<FrequencyResponseData> GetEQFrequencyResponse(
+            string measurementId,
+            string unit = "SPL",
+            string smoothing = "None",
+            int? ppo = null,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            var urlBuilder = new StringBuilder($"{_baseUrl}/measurements/{measurementId}/eq/frequency-response?unit={Uri.EscapeDataString(unit)}&smoothing={Uri.EscapeDataString(smoothing)}");
+            if (ppo.HasValue)
+                urlBuilder.Append($"&ppo={ppo.Value}");
+
+            var response = await _httpClient.GetAsync(urlBuilder.ToString(), cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            var data = JsonSerializer.Deserialize<JsonElement>(json);
+
+            return ParseFrequencyResponse(data);
+        }
+
+        /// <summary>
+        /// Gets the predicted group delay with EQ filters applied
+        /// Maps to GET /measurements/{id}/eq/group-delay
+        /// Returns GZIP-compressed group delay data showing the measurement with EQ applied
+        /// </summary>
+        /// <param name="measurementId">UUID of the measurement</param>
+        /// <param name="smoothing">Smoothing to apply (default: None)</param>
+        /// <param name="ppo">Points per octave for log spacing (optional)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>EQ'd group delay data</returns>
+        /// <exception cref="ArgumentException">If measurementId is null or empty</exception>
+        /// <exception cref="InvalidOperationException">If deserialization or decompression fails</exception>
+        public async Task<FrequencyResponseData> GetEQGroupDelay(
+            string measurementId,
+            string smoothing = "None",
+            int? ppo = null,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            var urlBuilder = new StringBuilder($"{_baseUrl}/measurements/{measurementId}/eq/group-delay?smoothing={Uri.EscapeDataString(smoothing)}");
+            if (ppo.HasValue)
+                urlBuilder.Append($"&ppo={ppo.Value}");
+
+            var response = await _httpClient.GetAsync(urlBuilder.ToString(), cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            var data = JsonSerializer.Deserialize<JsonElement>(json);
+
+            return ParseFrequencyResponse(data);
+        }
+
+        /// <summary>
+        /// Gets the predicted impulse response with EQ filters applied
+        /// Maps to GET /measurements/{id}/eq/impulse-response
+        /// Returns GZIP-compressed impulse response data showing the measurement with EQ applied
+        /// </summary>
+        /// <param name="measurementId">UUID of the measurement</param>
+        /// <param name="unit">Unit for data (default: Percent)</param>
+        /// <param name="windowed">Whether to return only windowed portion (default: false)</param>
+        /// <param name="normalised">Whether to normalize data (default: true)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>EQ'd impulse response data</returns>
+        /// <exception cref="ArgumentException">If measurementId is null or empty</exception>
+        /// <exception cref="InvalidOperationException">If deserialization or decompression fails</exception>
+        public async Task<ImpulseResponseData> GetEQImpulseResponse(
+            string measurementId,
+            string unit = "Percent",
+            bool windowed = false,
+            bool normalised = true,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            var urlBuilder = new StringBuilder($"{_baseUrl}/measurements/{measurementId}/eq/impulse-response?unit={Uri.EscapeDataString(unit)}");
+            if (windowed)
+                urlBuilder.Append("&windowed=true");
+            if (!normalised)
+                urlBuilder.Append("&normalised=false");
+
+            var response = await _httpClient.GetAsync(urlBuilder.ToString(), cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            var data = JsonSerializer.Deserialize<JsonElement>(json);
+
+            return ParseImpulseResponse(data);
+        }
+
+        #endregion
+
         // Internal helper methods
 
         private async Task<string> PollJobCompletion(string jobId, CancellationToken cancellationToken)
