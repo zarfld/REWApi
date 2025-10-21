@@ -659,4 +659,67 @@ namespace REWApi.Domain
         public bool ShowPeakHold { get; set; } = true;
         public string? OutputFile { get; set; }
     }
+
+    /// <summary>
+    /// Impulse Response Window settings for a measurement
+    /// Used to configure IR windowing parameters in REW
+    /// </summary>
+    public class IRWindows
+    {
+        /// <summary>
+        /// Type of the left window (e.g., "Tukey 0.25", "Hann", "Rectangular")
+        /// </summary>
+        public string LeftWindowType { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Type of the right window (e.g., "Tukey 0.25", "Hann", "Rectangular")
+        /// </summary>
+        public string RightWindowType { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Width of the left window in milliseconds
+        /// </summary>
+        public double LeftWindowWidthms { get; set; }
+
+        /// <summary>
+        /// Width of the right window in milliseconds
+        /// </summary>
+        public double RightWindowWidthms { get; set; }
+
+        /// <summary>
+        /// Reference time in milliseconds (timing reference point)
+        /// </summary>
+        public double RefTimems { get; set; }
+
+        /// <summary>
+        /// Whether to add Frequency Dependent Windowing (FDW)
+        /// </summary>
+        public bool AddFDW { get; set; }
+
+        /// <summary>
+        /// Width of the FDW in cycles or octaves
+        /// Note: Can be in cycles or octaves depending on REW View preferences
+        /// </summary>
+        public double FdwWidthCycles { get; set; }
+
+        /// <summary>
+        /// Domain behavior: Set symmetric windowing (same settings for left and right)
+        /// </summary>
+        public void SetSymmetricWindowing(string windowType, double widthMs)
+        {
+            LeftWindowType = RightWindowType = windowType;
+            LeftWindowWidthms = RightWindowWidthms = widthMs;
+        }
+
+        /// <summary>
+        /// Domain behavior: Validate window settings
+        /// </summary>
+        public bool IsValid()
+        {
+            return !string.IsNullOrEmpty(LeftWindowType) 
+                && !string.IsNullOrEmpty(RightWindowType)
+                && LeftWindowWidthms >= 0 
+                && RightWindowWidthms >= 0;
+        }
+    }
 }

@@ -1900,6 +1900,91 @@ namespace REWApi.Domain.Services
             response.EnsureSuccessStatusCode();
         }
 
+        /// <summary>
+        /// Gets the impulse response window settings for a measurement
+        /// Maps to GET /measurements/{id}/ir-windows
+        /// Returns the current IR window configuration including window types, widths, and FDW settings
+        /// </summary>
+        /// <param name="measurementId">UUID of the measurement</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>IRWindows object with current settings</returns>
+        /// <exception cref="ArgumentException">Thrown when measurementId is null or empty</exception>
+        public async Task<IRWindows> GetIRWindows(string measurementId, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            var url = $"{_baseUrl}/measurements/{measurementId}/ir-windows";
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            var windows = JsonSerializer.Deserialize<IRWindows>(json, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+            return windows ?? new IRWindows();
+        }
+
+        /// <summary>
+        /// Sets the impulse response window settings for a measurement (replaces all settings)
+        /// Maps to POST /measurements/{id}/ir-windows
+        /// Completely replaces the current IR window configuration
+        /// </summary>
+        /// <param name="measurementId">UUID of the measurement</param>
+        /// <param name="windows">IRWindows object with new settings</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <exception cref="ArgumentException">Thrown when measurementId is null/empty or windows is null</exception>
+        public async Task SetIRWindows(string measurementId, IRWindows windows, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+            if (windows == null)
+                throw new ArgumentNullException(nameof(windows));
+            if (!windows.IsValid())
+                throw new ArgumentException("Invalid IR window settings", nameof(windows));
+
+            var json = JsonSerializer.Serialize(windows, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+            var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+            var url = $"{_baseUrl}/measurements/{measurementId}/ir-windows";
+            var response = await _httpClient.PostAsync(url, content, cancellationToken);
+            response.EnsureSuccessStatusCode();
+        }
+
+        /// <summary>
+        /// Updates the impulse response window settings for a measurement (partial update)
+        /// Maps to PUT /measurements/{id}/ir-windows
+        /// Updates only the provided settings, leaving others unchanged
+        /// </summary>
+        /// <param name="measurementId">UUID of the measurement</param>
+        /// <param name="windows">IRWindows object with settings to update</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <exception cref="ArgumentException">Thrown when measurementId is null/empty or windows is null</exception>
+        public async Task UpdateIRWindows(string measurementId, IRWindows windows, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+            if (windows == null)
+                throw new ArgumentNullException(nameof(windows));
+            if (!windows.IsValid())
+                throw new ArgumentException("Invalid IR window settings", nameof(windows));
+
+            var json = JsonSerializer.Serialize(windows, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+            var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+            var url = $"{_baseUrl}/measurements/{measurementId}/ir-windows";
+            var response = await _httpClient.PutAsync(url, content, cancellationToken);
+            response.EnsureSuccessStatusCode();
+        }
+
         #endregion
 
         // Internal helper methods
