@@ -520,6 +520,62 @@ namespace REWApi.Domain
     }
 
     /// <summary>
+    /// Equaliser information (manufacturer and model)
+    /// Maps to REW API equaliser objects
+    /// </summary>
+    public class EqualiserInfo
+    {
+        public string Manufacturer { get; set; } = string.Empty;
+        public string Model { get; set; } = string.Empty;
+    }
+
+    /// <summary>
+    /// Individual filter setting
+    /// Maps to REW API filter objects
+    /// </summary>
+    public class FilterSetting
+    {
+        public int Index { get; set; }
+        public string Type { get; set; } = "None";
+        public bool Enabled { get; set; }
+        public bool IsAuto { get; set; }
+        public double? Fc { get; set; }  // Center frequency (Hz)
+        public double? Gain { get; set; }  // Gain (dB)
+        public double? Q { get; set; }  // Quality factor
+    }
+
+    /// <summary>
+    /// Target settings for EQ matching
+    /// Maps to REW API target-settings objects
+    /// </summary>
+    public class TargetSettings
+    {
+        public string Shape { get; set; } = "Full range";  // "Full range", "Subwoofer", "LF", "LF + sub", "Other"
+        public int BassManagementSlopedBPerOctave { get; set; } = 12;
+        public int BassManagementCutoffHz { get; set; } = 80;
+        public int LowFreqSlopedBPerOctave { get; set; } = 24;
+        public int LowFreqCutoffHz { get; set; } = 10;
+        public string LowPassCrossoverType { get; set; } = "L-R2";  // "Butterworth", "L-R2", "L-R4"
+        public string HighPassCrossoverType { get; set; } = "L-R2";
+        public int LowPassCutoffHz { get; set; } = 1000;
+        public int HighPassCutoffHz { get; set; } = 100;
+    }
+
+    /// <summary>
+    /// Room curve settings for target curve adjustment
+    /// Maps to REW API room-curve-settings objects
+    /// </summary>
+    public class RoomCurveSettings
+    {
+        public bool AddRoomCurve { get; set; }
+        public int LowFreqRiseStartHz { get; set; } = 200;
+        public int LowFreqRiseEndHz { get; set; } = 20;
+        public double LowFreqRiseSlopedBPerOctave { get; set; } = 1.0;
+        public int HighFreqFallStartHz { get; set; } = 1000;
+        public double HighFreqFallSlopedBPerOctave { get; set; } = 0.5;
+    }
+
+    /// <summary>
     /// SPL Meter Command Parameters
     /// </summary>
     public class SPLMeterCommandParameters

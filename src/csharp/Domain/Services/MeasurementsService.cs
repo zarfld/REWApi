@@ -687,6 +687,279 @@ namespace REWApi.Domain.Services
             return ParseRT60(data, octaveFrac);
         }
 
+        #region Phase 3a: Core EQ Settings Methods
+
+        /// <summary>
+        /// Get the equaliser assigned to a measurement
+        /// Maps to GET /measurements/{id}/equaliser
+        /// </summary>
+        /// <param name="measurementId">Measurement UUID</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>EqualiserInfo with manufacturer and model</returns>
+        public async Task<EqualiserInfo> GetMeasurementEqualiser(
+            string measurementId,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            var url = $"{_baseUrl}/measurements/{measurementId}/equaliser";
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            return JsonSerializer.Deserialize<EqualiserInfo>(json, new JsonSerializerOptions 
+            { 
+                PropertyNameCaseInsensitive = true 
+            })!;
+        }
+
+        /// <summary>
+        /// Set the equaliser for a measurement
+        /// Maps to POST /measurements/{id}/equaliser
+        /// </summary>
+        /// <param name="measurementId">Measurement UUID</param>
+        /// <param name="equaliserInfo">Equaliser manufacturer and model</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task UpdateMeasurementEqualiser(
+            string measurementId,
+            EqualiserInfo equaliserInfo,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+            if (equaliserInfo == null)
+                throw new ArgumentNullException(nameof(equaliserInfo));
+
+            var url = $"{_baseUrl}/measurements/{measurementId}/equaliser";
+            var content = new StringContent(
+                JsonSerializer.Serialize(equaliserInfo, new JsonSerializerOptions 
+                { 
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase 
+                }),
+                Encoding.UTF8,
+                "application/json");
+
+            var response = await _httpClient.PostAsync(url, content, cancellationToken);
+            response.EnsureSuccessStatusCode();
+        }
+
+        /// <summary>
+        /// Get all filter settings for a measurement
+        /// Maps to GET /measurements/{id}/filters
+        /// </summary>
+        /// <param name="measurementId">Measurement UUID</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Array of FilterSetting objects</returns>
+        public async Task<FilterSetting[]> GetMeasurementFilters(
+            string measurementId,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            var url = $"{_baseUrl}/measurements/{measurementId}/filters";
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            var data = JsonSerializer.Deserialize<JsonElement>(json);
+
+            // Handle both response formats: {"value": [...], "Count": n} or just [...]
+            if (data.ValueKind == JsonValueKind.Object && data.TryGetProperty("value", out var valueArray))
+            {
+                return JsonSerializer.Deserialize<FilterSetting[]>(valueArray.GetRawText(), new JsonSerializerOptions 
+                { 
+                    PropertyNameCaseInsensitive = true 
+                })!;
+            }
+            else if (data.ValueKind == JsonValueKind.Array)
+            {
+                return JsonSerializer.Deserialize<FilterSetting[]>(json, new JsonSerializerOptions 
+                { 
+                    PropertyNameCaseInsensitive = true 
+                })!;
+            }
+            else
+            {
+                throw new InvalidOperationException($"Unexpected response format for filters endpoint: {data.ValueKind}");
+            }
+        }
+
+        /// <summary>
+        /// Update a single filter setting
+        /// Maps to PUT /measurements/{id}/filters
+        /// </summary>
+        /// <param name="measurementId">Measurement UUID</param>
+        /// <param name="filter">Complete filter setting to update</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task UpdateMeasurementFilter(
+            string measurementId,
+            FilterSetting filter,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+            if (filter == null)
+                throw new ArgumentNullException(nameof(filter));
+
+            var url = $"{_baseUrl}/measurements/{measurementId}/filters";
+            var content = new StringContent(
+                JsonSerializer.Serialize(filter, new JsonSerializerOptions 
+                { 
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase 
+                }),
+                Encoding.UTF8,
+                "application/json");
+
+            var request = new HttpRequestMessage(HttpMethod.Put, url)
+            {
+                Content = content
+            };
+
+            var response = await _httpClient.SendAsync(request, cancellationToken);
+            response.EnsureSuccessStatusCode();
+        }
+
+        /// <summary>
+        /// Update multiple filter settings in a single call
+        /// Maps to POST /measurements/{id}/filters
+        /// </summary>
+        /// <param name="measurementId">Measurement UUID</param>
+        /// <param name="filters">Array of filter settings to update</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task UpdateMeasurementFilters(
+            string measurementId,
+            FilterSetting[] filters,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+            if (filters == null || filters.Length == 0)
+                throw new ArgumentException("Filters array cannot be null or empty", nameof(filters));
+
+            var url = $"{_baseUrl}/measurements/{measurementId}/filters";
+            var content = new StringContent(
+                JsonSerializer.Serialize(filters, new JsonSerializerOptions 
+                { 
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase 
+                }),
+                Encoding.UTF8,
+                "application/json");
+
+            var response = await _httpClient.PostAsync(url, content, cancellationToken);
+            response.EnsureSuccessStatusCode();
+        }
+
+        /// <summary>
+        /// Get target settings for a measurement
+        /// Maps to GET /measurements/{id}/target-settings
+        /// </summary>
+        /// <param name="measurementId">Measurement UUID</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>TargetSettings object</returns>
+        public async Task<TargetSettings> GetMeasurementTargetSettings(
+            string measurementId,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            var url = $"{_baseUrl}/measurements/{measurementId}/target-settings";
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            return JsonSerializer.Deserialize<TargetSettings>(json, new JsonSerializerOptions 
+            { 
+                PropertyNameCaseInsensitive = true 
+            })!;
+        }
+
+        /// <summary>
+        /// Update target settings for a measurement (partial update)
+        /// Maps to PUT /measurements/{id}/target-settings
+        /// </summary>
+        /// <param name="measurementId">Measurement UUID</param>
+        /// <param name="targetSettings">Target settings to update (partial fields allowed)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task UpdateMeasurementTargetSettings(
+            string measurementId,
+            TargetSettings targetSettings,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+            if (targetSettings == null)
+                throw new ArgumentNullException(nameof(targetSettings));
+
+            var url = $"{_baseUrl}/measurements/{measurementId}/target-settings";
+            var content = new StringContent(
+                JsonSerializer.Serialize(targetSettings, new JsonSerializerOptions 
+                { 
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase 
+                }),
+                Encoding.UTF8,
+                "application/json");
+
+            var request = new HttpRequestMessage(HttpMethod.Put, url)
+            {
+                Content = content
+            };
+
+            var response = await _httpClient.SendAsync(request, cancellationToken);
+            response.EnsureSuccessStatusCode();
+        }
+
+        /// <summary>
+        /// Get target level (SPL) for a measurement
+        /// Maps to GET /measurements/{id}/target-level
+        /// </summary>
+        /// <param name="measurementId">Measurement UUID</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Target level in dB SPL</returns>
+        public async Task<double> GetMeasurementTargetLevel(
+            string measurementId,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            var url = $"{_baseUrl}/measurements/{measurementId}/target-level";
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            return JsonSerializer.Deserialize<double>(json);
+        }
+
+        /// <summary>
+        /// Set target level (SPL) for a measurement
+        /// Maps to POST /measurements/{id}/target-level
+        /// </summary>
+        /// <param name="measurementId">Measurement UUID</param>
+        /// <param name="targetLevel">Target level in dB SPL</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task UpdateMeasurementTargetLevel(
+            string measurementId,
+            double targetLevel,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            var url = $"{_baseUrl}/measurements/{measurementId}/target-level";
+            var content = new StringContent(
+                JsonSerializer.Serialize(targetLevel),
+                Encoding.UTF8,
+                "application/json");
+
+            var response = await _httpClient.PostAsync(url, content, cancellationToken);
+            response.EnsureSuccessStatusCode();
+        }
+
+        #endregion
+
         // Internal helper methods
 
         private async Task<string> PollJobCompletion(string jobId, CancellationToken cancellationToken)
