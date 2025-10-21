@@ -1421,6 +1421,57 @@ namespace REWApi.Domain.Services
 
         #endregion
 
+        #region Phase 3e - Match Target Settings (2 methods)
+
+        /// <summary>
+        /// Gets the match target settings that control the filter matching algorithm.
+        /// These settings determine how REW's "Match target response" EQ command behaves.
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Current match target algorithm settings</returns>
+        public async Task<MatchTargetSettings> GetMatchTargetSettings(
+            CancellationToken cancellationToken = default)
+        {
+            var url = $"{_baseUrl}/eq/match-target-settings";
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            return JsonSerializer.Deserialize<MatchTargetSettings>(json, options)
+                ?? throw new InvalidOperationException("Failed to deserialize match target settings");
+        }
+
+        /// <summary>
+        /// Updates the match target settings that control the filter matching algorithm.
+        /// </summary>
+        /// <param name="matchTargetSettings">Match target settings to apply</param>
+        /// <param name="partialUpdate">If true, uses PUT for partial update; if false, uses POST for full replacement</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task UpdateMatchTargetSettings(
+            MatchTargetSettings matchTargetSettings,
+            bool partialUpdate = false,
+            CancellationToken cancellationToken = default)
+        {
+            if (matchTargetSettings == null)
+                throw new ArgumentNullException(nameof(matchTargetSettings));
+
+            var url = $"{_baseUrl}/eq/match-target-settings";
+            var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+            var content = new StringContent(
+                JsonSerializer.Serialize(matchTargetSettings, options),
+                Encoding.UTF8,
+                "application/json");
+
+            var response = partialUpdate
+                ? await _httpClient.PutAsync(url, content, cancellationToken)
+                : await _httpClient.PostAsync(url, content, cancellationToken);
+
+            response.EnsureSuccessStatusCode();
+        }
+
+        #endregion
+
         // Internal helper methods
 
         private async Task<string> PollJobCompletion(string jobId, CancellationToken cancellationToken)

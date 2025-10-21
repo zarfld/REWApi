@@ -589,6 +589,53 @@ namespace REWApi.Domain
     }
 
     /// <summary>
+    /// Match Target Settings
+    /// Controls parameters for the filter matching algorithm when matching to target curves
+    /// Maps to REW API /eq/match-target-settings
+    /// </summary>
+    public class MatchTargetSettings
+    {
+        /// <summary>Start frequency for matching in Hz (typically 20)</summary>
+        public int StartFrequency { get; set; } = 20;
+        
+        /// <summary>End frequency for matching in Hz (typically 100-20000)</summary>
+        public int EndFrequency { get; set; } = 100;
+        
+        /// <summary>Maximum boost per individual filter in dB (typically 0-12)</summary>
+        public int IndividualMaxBoostdB { get; set; } = 9;
+        
+        /// <summary>Overall maximum boost across all filters in dB (typically 0-6)</summary>
+        public int OverallMaxBoostdB { get; set; } = 0;
+        
+        /// <summary>Flatness target in dB - how close to match the target (typically 1-5)</summary>
+        public int FlatnessTargetdB { get; set; } = 3;
+        
+        /// <summary>Allow narrow Q filters below 200Hz</summary>
+        public bool AllowNarrowFiltersBelow200Hz { get; set; } = true;
+        
+        /// <summary>Vary Q values above 200Hz for better matching</summary>
+        public bool VaryQAbove200Hz { get; set; } = false;
+        
+        /// <summary>Allow use of low shelf filters</summary>
+        public bool AllowLowShelf { get; set; } = false;
+        
+        /// <summary>Minimum gain for low shelf in dB</summary>
+        public int LowShelfMin { get; set; } = -6;
+        
+        /// <summary>Maximum gain for low shelf in dB</summary>
+        public int LowShelfMax { get; set; } = 6;
+        
+        /// <summary>Allow use of high shelf filters</summary>
+        public bool AllowHighShelf { get; set; } = false;
+        
+        /// <summary>Minimum gain for high shelf in dB</summary>
+        public int HighShelfMin { get; set; } = -6;
+        
+        /// <summary>Maximum gain for high shelf in dB</summary>
+        public int HighShelfMax { get; set; } = 6;
+    }
+
+    /// <summary>
     /// SPL Meter Command Parameters
     /// </summary>
     public class SPLMeterCommandParameters

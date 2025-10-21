@@ -1004,5 +1004,494 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     }
 
     #endregion
+
+    #region Phase 3d - Room Curves (11 tests)
+
+    /// <summary>
+    /// Test: Get default room curve settings
+    /// @test TEST-MEASUREMENTS-EQ-026 - Get default room curve configuration
+    /// @status ACTIVE - Phase 3d implementation
+    /// </summary>
+    [Fact]
+    public async Task GetDefaultRoomCurveSettings_ReturnsSettings()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+
+        // Act
+        var settings = await measurementsService.GetDefaultRoomCurveSettings();
+
+        // Assert
+        settings.Should().NotBeNull();
+        settings.LowFreqRiseStartHz.Should().BeGreaterThan(0);
+        settings.HighFreqFallStartHz.Should().BeGreaterThan(0);
+    }
+
+    /// <summary>
+    /// Test: Update default room curve settings with full replacement
+    /// @test TEST-MEASUREMENTS-EQ-027 - POST updates default room curve settings
+    /// @status ACTIVE - Phase 3d implementation
+    /// </summary>
+    [Fact]
+    public async Task UpdateDefaultRoomCurveSettings_FullReplacement_Succeeds()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        var originalSettings = await measurementsService.GetDefaultRoomCurveSettings();
+
+        var newSettings = new RoomCurveSettings
+        {
+            AddRoomCurve = true,
+            LowFreqRiseStartHz = 250,
+            LowFreqRiseEndHz = 25,
+            LowFreqRiseSlopedBPerOctave = 2.0,
+            HighFreqFallStartHz = 2000,
+            HighFreqFallSlopedBPerOctave = 1.0
+        };
+
+        try
+        {
+            // Act
+            await measurementsService.UpdateDefaultRoomCurveSettings(newSettings, partialUpdate: false);
+
+            // Assert
+            var updatedSettings = await measurementsService.GetDefaultRoomCurveSettings();
+            updatedSettings.LowFreqRiseStartHz.Should().Be(250);
+            updatedSettings.LowFreqRiseSlopedBPerOctave.Should().Be(2.0);
+            updatedSettings.HighFreqFallStartHz.Should().Be(2000);
+        }
+        finally
+        {
+            // Cleanup: Restore original settings
+            await measurementsService.UpdateDefaultRoomCurveSettings(originalSettings, partialUpdate: false);
+        }
+    }
+
+    /// <summary>
+    /// Test: Get measurement room curve settings
+    /// @test TEST-MEASUREMENTS-EQ-028 - Get room curve settings for specific measurement
+    /// @status ACTIVE - Phase 3d implementation
+    /// </summary>
+    [Fact]
+    public async Task GetMeasurementRoomCurveSettings_ValidId_ReturnsSettings()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeEmpty("at least one measurement must exist in REW");
+        var measurementId = measurements[0].UUID;
+
+        // Act
+        var settings = await measurementsService.GetMeasurementRoomCurveSettings(measurementId);
+
+        // Assert
+        settings.Should().NotBeNull();
+        settings.LowFreqRiseStartHz.Should().BeGreaterThan(0);
+        settings.HighFreqFallStartHz.Should().BeGreaterThan(0);
+    }
+
+    /// <summary>
+    /// Test: Update measurement room curve settings
+    /// @test TEST-MEASUREMENTS-EQ-029 - POST updates measurement-specific room curve settings
+    /// @status ACTIVE - Phase 3d implementation
+    /// </summary>
+    [Fact]
+    public async Task UpdateMeasurementRoomCurveSettings_ValidId_Succeeds()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeEmpty("at least one measurement must exist in REW");
+        var measurementId = measurements[0].UUID;
+
+        var originalSettings = await measurementsService.GetMeasurementRoomCurveSettings(measurementId);
+
+        var newSettings = new RoomCurveSettings
+        {
+            AddRoomCurve = true,
+            LowFreqRiseStartHz = 300,
+            LowFreqRiseEndHz = 30,
+            LowFreqRiseSlopedBPerOctave = 1.5,
+            HighFreqFallStartHz = 1500,
+            HighFreqFallSlopedBPerOctave = 0.75
+        };
+
+        try
+        {
+            // Act
+            await measurementsService.UpdateMeasurementRoomCurveSettings(measurementId, newSettings, partialUpdate: false);
+
+            // Assert
+            var updatedSettings = await measurementsService.GetMeasurementRoomCurveSettings(measurementId);
+            updatedSettings.LowFreqRiseStartHz.Should().Be(300);
+            updatedSettings.LowFreqRiseSlopedBPerOctave.Should().Be(1.5);
+        }
+        finally
+        {
+            // Cleanup: Restore original settings
+            await measurementsService.UpdateMeasurementRoomCurveSettings(measurementId, originalSettings, partialUpdate: false);
+        }
+    }
+
+    /// <summary>
+    /// Test: Get house curve path
+    /// @test TEST-MEASUREMENTS-EQ-030 - Get current house curve file path
+    /// @status ACTIVE - Phase 3d implementation
+    /// </summary>
+    [Fact]
+    public async Task GetHouseCurve_ReturnsPathOrEmpty()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+
+        // Act
+        var houseCurve = await measurementsService.GetHouseCurve();
+
+        // Assert
+        houseCurve.Should().NotBeNull("house curve should return empty string if not set");
+    }
+
+    /// <summary>
+    /// Test: Set and clear house curve
+    /// @test TEST-MEASUREMENTS-EQ-031 - Set house curve path and clear it
+    /// @status ACTIVE - Phase 3d implementation
+    /// </summary>
+    [Fact]
+    public async Task SetAndClearHouseCurve_RoundTrip_Succeeds()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        var originalHouseCurve = await measurementsService.GetHouseCurve();
+
+        // Note: REW API may require an existing file path for SetHouseCurve
+        // This test verifies the clear operation works correctly
+        
+        try
+        {
+            // Act - Clear house curve first
+            await measurementsService.ClearHouseCurve();
+
+            // Assert - Verify it was cleared
+            var clearedHouseCurve = await measurementsService.GetHouseCurve();
+            clearedHouseCurve.Should().BeEmpty("house curve should be empty after clearing");
+
+            // If there was an original house curve, try to restore it
+            if (!string.IsNullOrEmpty(originalHouseCurve))
+            {
+                // Attempt to restore - may succeed if file still exists
+                try
+                {
+                    await measurementsService.SetHouseCurve(originalHouseCurve);
+                    var restoredHouseCurve = await measurementsService.GetHouseCurve();
+                    restoredHouseCurve.Should().Be(originalHouseCurve, "should restore original house curve");
+                }
+                catch (HttpRequestException)
+                {
+                    // File may no longer exist - this is acceptable
+                }
+            }
+        }
+        finally
+        {
+            // Cleanup: Ensure we try to restore original state
+            if (!string.IsNullOrEmpty(originalHouseCurve))
+            {
+                try
+                {
+                    await measurementsService.SetHouseCurve(originalHouseCurve);
+                }
+                catch
+                {
+                    // Best effort cleanup - ignore failures
+                }
+            }
+            else
+            {
+                await measurementsService.ClearHouseCurve();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Test: Update default room curve with partial update
+    /// @test TEST-MEASUREMENTS-EQ-032 - PUT updates only specified fields
+    /// @status ACTIVE - Phase 3d implementation
+    /// </summary>
+    [Fact]
+    public async Task UpdateDefaultRoomCurveSettings_PartialUpdate_Succeeds()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        var originalSettings = await measurementsService.GetDefaultRoomCurveSettings();
+
+        var partialSettings = new RoomCurveSettings
+        {
+            AddRoomCurve = originalSettings.AddRoomCurve,
+            LowFreqRiseStartHz = 180, // Change only this field
+            LowFreqRiseEndHz = originalSettings.LowFreqRiseEndHz,
+            LowFreqRiseSlopedBPerOctave = originalSettings.LowFreqRiseSlopedBPerOctave,
+            HighFreqFallStartHz = originalSettings.HighFreqFallStartHz,
+            HighFreqFallSlopedBPerOctave = originalSettings.HighFreqFallSlopedBPerOctave
+        };
+
+        try
+        {
+            // Act
+            await measurementsService.UpdateDefaultRoomCurveSettings(partialSettings, partialUpdate: true);
+
+            // Assert
+            var updatedSettings = await measurementsService.GetDefaultRoomCurveSettings();
+            updatedSettings.LowFreqRiseStartHz.Should().Be(180);
+        }
+        finally
+        {
+            // Cleanup
+            await measurementsService.UpdateDefaultRoomCurveSettings(originalSettings, partialUpdate: false);
+        }
+    }
+
+    /// <summary>
+    /// Test: GetMeasurementRoomCurveSettings with null ID throws
+    /// @test TEST-MEASUREMENTS-EQ-033 - Null measurement ID validation
+    /// @status ACTIVE - Phase 3d implementation
+    /// </summary>
+    [Fact]
+    public async Task GetMeasurementRoomCurveSettings_NullId_ThrowsArgumentException()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+
+        // Act & Assert
+        var act = async () => await measurementsService.GetMeasurementRoomCurveSettings(null!);
+
+        await act.Should().ThrowAsync<ArgumentException>();
+    }
+
+    /// <summary>
+    /// Test: UpdateMeasurementRoomCurveSettings with null ID throws
+    /// @test TEST-MEASUREMENTS-EQ-034 - Null measurement ID validation
+    /// @status ACTIVE - Phase 3d implementation
+    /// </summary>
+    [Fact]
+    public async Task UpdateMeasurementRoomCurveSettings_NullId_ThrowsArgumentException()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        var settings = new RoomCurveSettings();
+
+        // Act & Assert
+        var act = async () => await measurementsService.UpdateMeasurementRoomCurveSettings(null!, settings);
+
+        await act.Should().ThrowAsync<ArgumentException>();
+    }
+
+    /// <summary>
+    /// Test: UpdateDefaultRoomCurveSettings with null settings throws
+    /// @test TEST-MEASUREMENTS-EQ-035 - Null settings validation
+    /// @status ACTIVE - Phase 3d implementation
+    /// </summary>
+    [Fact]
+    public async Task UpdateDefaultRoomCurveSettings_NullSettings_ThrowsArgumentNullException()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+
+        // Act & Assert
+        var act = async () => await measurementsService.UpdateDefaultRoomCurveSettings(null!);
+
+        await act.Should().ThrowAsync<ArgumentNullException>();
+    }
+
+    /// <summary>
+    /// Test: SetHouseCurve with null path throws
+    /// @test TEST-MEASUREMENTS-EQ-036 - Null path validation
+    /// @status ACTIVE - Phase 3d implementation
+    /// </summary>
+    [Fact]
+    public async Task SetHouseCurve_NullPath_ThrowsArgumentNullException()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+
+        // Act & Assert
+        var act = async () => await measurementsService.SetHouseCurve(null!);
+
+        await act.Should().ThrowAsync<ArgumentNullException>();
+    }
+
+    #endregion
+
+    #region Phase 3e - Match Target Settings (5 tests)
+
+    /// <summary>
+    /// Test: Get match target settings
+    /// @test TEST-MEASUREMENTS-EQ-037 - Get filter matching algorithm parameters
+    /// @status ACTIVE - Phase 3e implementation
+    /// </summary>
+    [Fact]
+    public async Task GetMatchTargetSettings_ReturnsSettings()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+
+        // Act
+        var settings = await measurementsService.GetMatchTargetSettings();
+
+        // Assert
+        settings.Should().NotBeNull();
+        settings.StartFrequency.Should().BeGreaterThan(0, "start frequency should be positive");
+        settings.EndFrequency.Should().BeGreaterThan(settings.StartFrequency, "end frequency should be greater than start");
+        settings.IndividualMaxBoostdB.Should().BeGreaterThanOrEqualTo(0);
+        settings.FlatnessTargetdB.Should().BeGreaterThan(0);
+    }
+
+    /// <summary>
+    /// Test: Update match target settings with full replacement
+    /// @test TEST-MEASUREMENTS-EQ-038 - POST updates all match target settings
+    /// @status ACTIVE - Phase 3e implementation
+    /// </summary>
+    [Fact]
+    public async Task UpdateMatchTargetSettings_FullReplacement_Succeeds()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        var originalSettings = await measurementsService.GetMatchTargetSettings();
+
+        var newSettings = new MatchTargetSettings
+        {
+            StartFrequency = 30,
+            EndFrequency = 200,
+            IndividualMaxBoostdB = 6,
+            OverallMaxBoostdB = 3,
+            FlatnessTargetdB = 2,
+            AllowNarrowFiltersBelow200Hz = false,
+            VaryQAbove200Hz = true,
+            AllowLowShelf = true,
+            LowShelfMin = -3,
+            LowShelfMax = 3,
+            AllowHighShelf = true,
+            HighShelfMin = -4,
+            HighShelfMax = 4
+        };
+
+        try
+        {
+            // Act
+            await measurementsService.UpdateMatchTargetSettings(newSettings, partialUpdate: false);
+
+            // Assert
+            var updatedSettings = await measurementsService.GetMatchTargetSettings();
+            updatedSettings.StartFrequency.Should().Be(30);
+            updatedSettings.IndividualMaxBoostdB.Should().Be(6);
+            updatedSettings.FlatnessTargetdB.Should().Be(2);
+            updatedSettings.AllowLowShelf.Should().BeTrue();
+            updatedSettings.VaryQAbove200Hz.Should().BeTrue();
+        }
+        finally
+        {
+            // Cleanup: Restore original settings
+            await measurementsService.UpdateMatchTargetSettings(originalSettings, partialUpdate: false);
+        }
+    }
+
+    /// <summary>
+    /// Test: Update match target settings with partial update
+    /// @test TEST-MEASUREMENTS-EQ-039 - PUT updates only specified fields
+    /// @status ACTIVE - Phase 3e implementation
+    /// </summary>
+    [Fact]
+    public async Task UpdateMatchTargetSettings_PartialUpdate_Succeeds()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        var originalSettings = await measurementsService.GetMatchTargetSettings();
+
+        var partialSettings = new MatchTargetSettings
+        {
+            StartFrequency = 25, // Change only this
+            EndFrequency = originalSettings.EndFrequency,
+            IndividualMaxBoostdB = originalSettings.IndividualMaxBoostdB,
+            OverallMaxBoostdB = originalSettings.OverallMaxBoostdB,
+            FlatnessTargetdB = originalSettings.FlatnessTargetdB,
+            AllowNarrowFiltersBelow200Hz = originalSettings.AllowNarrowFiltersBelow200Hz,
+            VaryQAbove200Hz = originalSettings.VaryQAbove200Hz,
+            AllowLowShelf = originalSettings.AllowLowShelf,
+            LowShelfMin = originalSettings.LowShelfMin,
+            LowShelfMax = originalSettings.LowShelfMax,
+            AllowHighShelf = originalSettings.AllowHighShelf,
+            HighShelfMin = originalSettings.HighShelfMin,
+            HighShelfMax = originalSettings.HighShelfMax
+        };
+
+        try
+        {
+            // Act
+            await measurementsService.UpdateMatchTargetSettings(partialSettings, partialUpdate: true);
+
+            // Assert
+            var updatedSettings = await measurementsService.GetMatchTargetSettings();
+            updatedSettings.StartFrequency.Should().Be(25);
+            updatedSettings.EndFrequency.Should().Be(originalSettings.EndFrequency, "other fields should remain unchanged");
+        }
+        finally
+        {
+            // Cleanup
+            await measurementsService.UpdateMatchTargetSettings(originalSettings, partialUpdate: false);
+        }
+    }
+
+    /// <summary>
+    /// Test: Verify match target settings structure
+    /// @test TEST-MEASUREMENTS-EQ-040 - Validate all match target properties
+    /// @status ACTIVE - Phase 3e implementation
+    /// </summary>
+    [Fact]
+    public async Task GetMatchTargetSettings_ValidatesAllProperties()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+
+        // Act
+        var settings = await measurementsService.GetMatchTargetSettings();
+
+        // Assert - Verify all properties are accessible and have valid values
+        settings.StartFrequency.Should().BeInRange(10, 200, "typical start frequency range");
+        settings.EndFrequency.Should().BeInRange(100, 20000, "typical end frequency range");
+        settings.IndividualMaxBoostdB.Should().BeInRange(0, 20, "typical individual boost range");
+        settings.OverallMaxBoostdB.Should().BeInRange(0, 12, "typical overall boost range");
+        settings.FlatnessTargetdB.Should().BeInRange(0, 10, "typical flatness target range");
+        
+        // Boolean flags - verify they are defined (booleans are value types, always have valid values)
+        // Just check they can be read without error
+        _ = settings.AllowNarrowFiltersBelow200Hz;
+        _ = settings.VaryQAbove200Hz;
+        _ = settings.AllowLowShelf;
+        _ = settings.AllowHighShelf;
+        
+        // Shelf limits should be in typical range
+        settings.LowShelfMin.Should().BeInRange(-20, 0, "low shelf minimum");
+        settings.LowShelfMax.Should().BeInRange(0, 20, "low shelf maximum");
+        settings.HighShelfMin.Should().BeInRange(-20, 0, "high shelf minimum");
+        settings.HighShelfMax.Should().BeInRange(0, 20, "high shelf maximum");
+    }
+
+    /// <summary>
+    /// Test: UpdateMatchTargetSettings with null settings throws
+    /// @test TEST-MEASUREMENTS-EQ-041 - Null settings validation
+    /// @status ACTIVE - Phase 3e implementation
+    /// </summary>
+    [Fact]
+    public async Task UpdateMatchTargetSettings_NullSettings_ThrowsArgumentNullException()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+
+        // Act & Assert
+        var act = async () => await measurementsService.UpdateMatchTargetSettings(null!);
+
+        await act.Should().ThrowAsync<ArgumentNullException>();
+    }
+
+    #endregion
 }
 
