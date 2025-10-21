@@ -358,6 +358,34 @@ namespace REWApi.Domain
         public int OctaveFraction { get; set; }
     }
 
+
+
+    /// <summary>
+    /// Spectrogram result
+    /// </summary>
+    public class SpectrogramResult
+    {
+        public double[] Frequencies { get; set; } = Array.Empty<double>();
+        public double[] Times { get; set; } = Array.Empty<double>();
+        public float[,] SPLData { get; set; } = new float[0, 0];
+        public int FFTSize { get; set; }
+        public string WindowType { get; set; } = string.Empty;
+    }
+
+    /// <summary>
+    /// Distortion analysis data
+    /// </summary>
+    public class DistortionData
+    {
+        public double[] Frequencies { get; set; } = Array.Empty<double>();
+        public double[] THD { get; set; } = Array.Empty<double>();
+        public double[] THDPlusN { get; set; } = Array.Empty<double>();
+        public double[] SecondHarmonic { get; set; } = Array.Empty<double>();
+        public double[] ThirdHarmonic { get; set; } = Array.Empty<double>();
+        public string Unit { get; set; } = "%";
+        public int PPO { get; set; } = 12;
+    }
+
     /// <summary>
     /// Processing operation result
     /// </summary>

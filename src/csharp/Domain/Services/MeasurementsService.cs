@@ -291,20 +291,58 @@ namespace REWApi.Domain.Services
 
         /// <summary>
         /// Delete measurement
-        /// Maps to DELETE /measurements/:id
+        /// Maps to DELETE /measurements/{id}
         /// </summary>
-        public async Task DeleteMeasurement(string measurementId, CancellationToken cancellationToken = default)
+        /// <param name="measurementId">UUID of measurement to delete</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>True if deleted successfully, false if measurement not found</returns>
+        public async Task<bool> DeleteMeasurement(string measurementId, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(measurementId))
                 throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
 
-            await _commandGate.ExecuteCommand(async () =>
+            try
             {
                 var response = await _httpClient.DeleteAsync($"{_baseUrl}/measurements/{measurementId}", cancellationToken);
+                
+                if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    _logger?.LogWarning("Measurement {MeasurementId} not found for deletion", measurementId);
+                    return false;
+                }
+                
                 response.EnsureSuccessStatusCode();
-
                 _logger?.LogInformation("Deleted measurement {MeasurementId}", measurementId);
-            }, "Delete Measurement", cancellationToken);
+                return true;
+            }
+            catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                _logger?.LogWarning(ex, "Measurement {MeasurementId} not found for deletion", measurementId);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Delete all measurements from REW
+        /// Maps to DELETE /measurements
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>True if deleted successfully</returns>
+        public async Task<bool> DeleteAllMeasurements(CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var response = await _httpClient.DeleteAsync($"{_baseUrl}/measurements", cancellationToken);
+                response.EnsureSuccessStatusCode();
+                
+                _logger?.LogInformation("Deleted all measurements");
+                return true;
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger?.LogError(ex, "Failed to delete all measurements");
+                return false;
+            }
         }
 
         /// <summary>
@@ -570,6 +608,56 @@ namespace REWApi.Domain.Services
             }, "Export Measurement", cancellationToken);
         }
 
+        /// <summary>
+        /// Get group delay data for a measurement
+        /// Maps to GET /measurements/{id}/group-delay
+        /// Returns FrequencyResponse object with group delay values in Magnitudes field (unit: seconds)
+        /// </summary>
+        public async Task<FrequencyResponseData> GetGroupDelay(
+            string measurementId,
+            string smoothing = "None",
+            int? ppo = null,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            var urlBuilder = new StringBuilder($"{_baseUrl}/measurements/{measurementId}/group-delay?smoothing={Uri.EscapeDataString(smoothing)}");
+            if (ppo.HasValue)
+                urlBuilder.Append($"&ppo={ppo.Value}");
+
+            var response = await _httpClient.GetAsync(urlBuilder.ToString(), cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            var data = JsonSerializer.Deserialize<JsonElement>(json);
+
+            return ParseFrequencyResponse(data);
+        }
+
+        /// <summary>
+        /// Get distortion analysis data for a measurement
+        /// Maps to GET /measurements/{id}/distortion
+        /// </summary>
+        public async Task<DistortionData> GetDistortion(
+            string measurementId,
+            string unit = "%",
+            int ppo = 12,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            var url = $"{_baseUrl}/measurements/{measurementId}/distortion?unit={Uri.EscapeDataString(unit)}&ppo={ppo}";
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            var data = JsonSerializer.Deserialize<JsonElement>(json);
+
+            return ParseDistortion(data, unit, ppo);
+        }
+
         // Internal helper methods
 
         private async Task<string> PollJobCompletion(string jobId, CancellationToken cancellationToken)
@@ -820,12 +908,22 @@ namespace REWApi.Domain.Services
         {
             var responseData = data.TryGetProperty("data", out var irData) ? irData.GetString() : null;
 
+            // Parse sample rate - REW returns it as double, but we store as int
+            int sampleRate = 0;
+            if (data.TryGetProperty("sampleRate", out var rate))
+            {
+                if (rate.ValueKind == JsonValueKind.Number)
+                {
+                    sampleRate = rate.TryGetInt32(out var intVal) ? intVal : (int)rate.GetDouble();
+                }
+            }
+
             return new ImpulseResponseData
             {
                 StartTime = data.TryGetProperty("startTime", out var startT) ? startT.GetDouble() : 0,
                 TimingReference = data.TryGetProperty("timingReference", out var timing) ? timing.GetString() ?? string.Empty : string.Empty,
                 SampleInterval = data.TryGetProperty("sampleInterval", out var interval) ? interval.GetDouble() : 0,
-                SampleRate = data.TryGetProperty("sampleRate", out var rate) ? rate.GetInt32() : 0,
+                SampleRate = sampleRate,
                 Data = !string.IsNullOrEmpty(responseData) ? _arrayCodec.DecodeFloatArray(responseData) : Array.Empty<float>()
             };
         }
@@ -862,6 +960,26 @@ namespace REWApi.Domain.Services
                 Mode = options.Mode,
                 Slices = options.Slices,
                 PPO = options.PPO
+            };
+        }
+
+        private DistortionData ParseDistortion(JsonElement data, string unit, int ppo)
+        {
+            var frequenciesData = data.TryGetProperty("frequencies", out var freqs) ? freqs.GetString() : null;
+            var thdData = data.TryGetProperty("thd", out var thd) ? thd.GetString() : null;
+            var thdPlusNData = data.TryGetProperty("thdPlusN", out var thdPlusN) ? thdPlusN.GetString() : null;
+            var h2Data = data.TryGetProperty("secondHarmonic", out var h2) ? h2.GetString() : null;
+            var h3Data = data.TryGetProperty("thirdHarmonic", out var h3) ? h3.GetString() : null;
+
+            return new DistortionData
+            {
+                Frequencies = !string.IsNullOrEmpty(frequenciesData) ? _arrayCodec.DecodeDoubleArray(frequenciesData) : Array.Empty<double>(),
+                THD = !string.IsNullOrEmpty(thdData) ? _arrayCodec.DecodeDoubleArray(thdData) : Array.Empty<double>(),
+                THDPlusN = !string.IsNullOrEmpty(thdPlusNData) ? _arrayCodec.DecodeDoubleArray(thdPlusNData) : Array.Empty<double>(),
+                SecondHarmonic = !string.IsNullOrEmpty(h2Data) ? _arrayCodec.DecodeDoubleArray(h2Data) : Array.Empty<double>(),
+                ThirdHarmonic = !string.IsNullOrEmpty(h3Data) ? _arrayCodec.DecodeDoubleArray(h3Data) : Array.Empty<double>(),
+                Unit = unit,
+                PPO = ppo
             };
         }
 
