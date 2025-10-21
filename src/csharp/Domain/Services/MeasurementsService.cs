@@ -1611,6 +1611,160 @@ namespace REWApi.Domain.Services
 
         #endregion
 
+        #region Phase 4: Additional Measurement Data Endpoints
+
+        /// <summary>
+        /// Gets the EQ'd (processed) frequency response for a measurement
+        /// Maps to GET /measurements/{id}/eq/frequency-response
+        /// Returns frequency response data after all EQ filters have been applied
+        /// </summary>
+        /// <param name="measurementId">UUID of the measurement</param>
+        /// <param name="unit">Unit for magnitude data (default: SPL)</param>
+        /// <param name="smoothing">Smoothing to apply (default: None)</param>
+        /// <param name="ppo">Points per octave for log spacing (optional)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>EQ'd frequency response data</returns>
+        /// <exception cref="ArgumentException">If measurementId is null or empty</exception>
+        /// <exception cref="InvalidOperationException">If deserialization fails</exception>
+        public async Task<FrequencyResponseData> GetProcessedFrequencyResponse(
+            string measurementId,
+            string unit = "SPL",
+            string smoothing = "None",
+            int? ppo = null,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            var urlBuilder = new StringBuilder($"{_baseUrl}/measurements/{measurementId}/eq/frequency-response?unit={Uri.EscapeDataString(unit)}&smoothing={Uri.EscapeDataString(smoothing)}");
+            if (ppo.HasValue)
+                urlBuilder.Append($"&ppo={ppo.Value}");
+
+            var response = await _httpClient.GetAsync(urlBuilder.ToString(), cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            var data = JsonSerializer.Deserialize<JsonElement>(json);
+
+            return ParseFrequencyResponse(data);
+        }
+
+        /// <summary>
+        /// Gets the impulse response of the measurement's filter set
+        /// Maps to GET /measurements/{id}/filters-impulse-response
+        /// Returns the impulse response that would result from applying the measurement's filters
+        /// </summary>
+        /// <param name="measurementId">UUID of the measurement</param>
+        /// <param name="sampleRate">Sample rate for the impulse response (Hz)</param>
+        /// <param name="length">Length of the impulse response in samples (max: 4194304)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Filter impulse response data</returns>
+        /// <exception cref="ArgumentException">If measurementId is null/empty or parameters invalid</exception>
+        /// <exception cref="InvalidOperationException">If deserialization fails</exception>
+        public async Task<ImpulseResponseData> GetFiltersImpulseResponse(
+            string measurementId,
+            int sampleRate = 48000,
+            int length = 131072,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+            if (sampleRate <= 0)
+                throw new ArgumentException("Sample rate must be greater than 0", nameof(sampleRate));
+            if (length <= 0 || length > 4194304)
+                throw new ArgumentException("Length must be between 1 and 4194304 samples", nameof(length));
+
+            var url = $"{_baseUrl}/measurements/{measurementId}/filters-impulse-response?samplerate={sampleRate}&length={length}";
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            var data = JsonSerializer.Deserialize<JsonElement>(json);
+
+            return ParseImpulseResponse(data);
+        }
+
+        /// <summary>
+        /// Gets waterfall plot data for a measurement
+        /// Maps to GET /measurements/{id}/waterfall
+        /// Returns GZIP-compressed waterfall data if available (requires prior generation)
+        /// </summary>
+        /// <param name="measurementId">UUID of the measurement</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Waterfall plot data</returns>
+        /// <exception cref="ArgumentException">If measurementId is null or empty</exception>
+        /// <exception cref="InvalidOperationException">If waterfall not generated or deserialization fails</exception>
+        public async Task<WaterfallResult> GetWaterfall(
+            string measurementId,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            var url = $"{_baseUrl}/measurements/{measurementId}/waterfall";
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            var data = JsonSerializer.Deserialize<JsonElement>(json);
+
+            // Waterfall data structure: frequencies, times, and 2D SPL data array
+            var frequencies = _arrayCodec.DecodeDoubleArray(data.GetProperty("frequencies").GetString()!);
+            var times = _arrayCodec.DecodeDoubleArray(data.GetProperty("times").GetString()!);
+            var splData = Decode2DFloatArray(data.GetProperty("data"), frequencies.Length, times.Length);
+
+            return new WaterfallResult
+            {
+                Frequencies = frequencies,
+                Times = times,
+                DecodedSPLData = splData,
+                Mode = WaterfallMode.Fourier, // Default, actual mode not always returned
+                Slices = times.Length,
+                PPO = 48 // Default
+            };
+        }
+
+        /// <summary>
+        /// Gets spectrogram data for a measurement
+        /// Maps to GET /measurements/{id}/spectrogram
+        /// Returns GZIP-compressed spectrogram data if available (requires prior generation)
+        /// </summary>
+        /// <param name="measurementId">UUID of the measurement</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Spectrogram data</returns>
+        /// <exception cref="ArgumentException">If measurementId is null or empty</exception>
+        /// <exception cref="InvalidOperationException">If spectrogram not generated or deserialization fails</exception>
+        public async Task<SpectrogramResult> GetSpectrogram(
+            string measurementId,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            var url = $"{_baseUrl}/measurements/{measurementId}/spectrogram";
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            var data = JsonSerializer.Deserialize<JsonElement>(json);
+
+            // Spectrogram data structure: frequencies, times, and 2D amplitude data array
+            var frequencies = _arrayCodec.DecodeDoubleArray(data.GetProperty("frequencies").GetString()!);
+            var times = _arrayCodec.DecodeDoubleArray(data.GetProperty("times").GetString()!);
+            var splData = Decode2DFloatArray(data.GetProperty("data"), frequencies.Length, times.Length);
+
+            return new SpectrogramResult
+            {
+                Frequencies = frequencies,
+                Times = times,
+                SPLData = splData,
+                FFTSize = 8192, // Default
+                WindowType = data.TryGetProperty("windowType", out var wt) ? wt.GetString() ?? "Unknown" : "Unknown"
+            };
+        }
+
+        #endregion
+
         // Internal helper methods
 
         private async Task<string> PollJobCompletion(string jobId, CancellationToken cancellationToken)
@@ -1862,8 +2016,9 @@ namespace REWApi.Domain.Services
             var responseData = data.TryGetProperty("data", out var irData) ? irData.GetString() : null;
 
             // Parse sample rate - REW returns it as double, but we store as int
+            // Try both "sampleRate" (camelCase) and "samplerate" (lowercase) for compatibility
             int sampleRate = 0;
-            if (data.TryGetProperty("sampleRate", out var rate))
+            if (data.TryGetProperty("sampleRate", out var rate) || data.TryGetProperty("samplerate", out rate))
             {
                 if (rate.ValueKind == JsonValueKind.Number)
                 {
@@ -2059,6 +2214,39 @@ namespace REWApi.Domain.Services
             }
             
             return frequencies;
+        }
+
+        private float[,] Decode2DFloatArray(JsonElement dataElement, int rows, int cols)
+        {
+            // Waterfall/Spectrogram data is an array of Base64-encoded float arrays
+            // Each array represents one time slice (row)
+            // Convert jagged array to 2D array
+            if (dataElement.ValueKind != JsonValueKind.Array)
+                throw new InvalidOperationException("2D data element must be an array");
+
+            var result = new float[rows, cols];
+            int rowIndex = 0;
+
+            foreach (var slice in dataElement.EnumerateArray())
+            {
+                if (rowIndex >= rows) break;
+
+                if (slice.ValueKind == JsonValueKind.String)
+                {
+                    var encodedData = slice.GetString();
+                    if (!string.IsNullOrEmpty(encodedData))
+                    {
+                        var rowData = _arrayCodec.DecodeFloatArray(encodedData);
+                        for (int colIndex = 0; colIndex < Math.Min(rowData.Length, cols); colIndex++)
+                        {
+                            result[rowIndex, colIndex] = rowData[colIndex];
+                        }
+                    }
+                }
+                rowIndex++;
+            }
+
+            return result;
         }
     }
 

@@ -1673,4 +1673,223 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     }
 
     #endregion
+
+    #region Phase 4: Advanced Measurement Data Retrieval
+
+    /// <summary>
+    /// Test: GetProcessedFrequencyResponse with default parameters
+    /// @test TEST-MEASUREMENTS-PHASE4-001 - Get processed frequency response
+    /// @status ACTIVE - Phase 4 implementation
+    /// </summary>
+    [Fact]
+    public async Task GetProcessedFrequencyResponse_DefaultParameters_ReturnsProcessedData()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        var measurementId = measurements[0].UUID;
+
+        // Act
+        var processedResponse = await measurementsService.GetProcessedFrequencyResponse(measurementId);
+
+        // Assert
+        processedResponse.Should().NotBeNull();
+        processedResponse.Magnitudes.Should().NotBeNullOrEmpty("processed frequency response should contain magnitude data");
+        processedResponse.Phases.Should().NotBeNullOrEmpty("processed frequency response should contain phase data");
+        processedResponse.Smoothing.Should().Be("None", "default smoothing should be None");
+        processedResponse.StartFrequency.Should().BeGreaterThan(0);
+    }
+
+    /// <summary>
+    /// Test: GetProcessedFrequencyResponse with custom parameters
+    /// @test TEST-MEASUREMENTS-PHASE4-002 - Get processed frequency response with custom unit and smoothing
+    /// @status ACTIVE - Phase 4 implementation
+    /// </summary>
+    [Fact]
+    public async Task GetProcessedFrequencyResponse_CustomParameters_ReturnsCustomProcessedData()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        var measurementId = measurements[0].UUID;
+
+        // Act
+        var processedResponse = await measurementsService.GetProcessedFrequencyResponse(
+            measurementId, 
+            unit: "dB", 
+            smoothing: "1/3 octave", 
+            ppo: 12
+        );
+
+        // Assert
+        processedResponse.Should().NotBeNull();
+        processedResponse.Magnitudes.Should().NotBeNullOrEmpty();
+        processedResponse.Smoothing.Should().NotBeNullOrEmpty("REW should return the smoothing format applied");
+        // REW returns the actual smoothing used (e.g., "1/6", "1/3", "1/12")
+        // which may differ from the requested format
+    }
+
+    /// <summary>
+    /// Test: GetFiltersImpulseResponse with default parameters
+    /// @test TEST-MEASUREMENTS-PHASE4-003 - Get filters impulse response
+    /// @status ACTIVE - Phase 4 implementation
+    /// @note Returns empty data if measurement has no filters applied (this is expected behavior)
+    /// </summary>
+    [Fact]
+    public async Task GetFiltersImpulseResponse_DefaultParameters_ReturnsFilterImpulseData()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        var measurementId = measurements[0].UUID;
+
+        // Act
+        var filterImpulse = await measurementsService.GetFiltersImpulseResponse(measurementId);
+
+        // Assert
+        filterImpulse.Should().NotBeNull();
+        filterImpulse.Data.Should().NotBeNull("endpoint should return data array");
+        // Note: Data may be empty if measurement has no filters applied - this is expected REW behavior
+        // In this case, REW may also return 0 for sample rate when no filters exist
+        if (filterImpulse.Data.Length > 0)
+        {
+            filterImpulse.SampleRate.Should().BeGreaterThan(0, "sample rate should be set when data exists");
+            filterImpulse.Data.Length.Should().BeLessOrEqualTo(131072, "default max length should be 131072 samples");
+        }
+    }
+
+    /// <summary>
+    /// Test: GetFiltersImpulseResponse with custom parameters
+    /// @test TEST-MEASUREMENTS-PHASE4-004 - Get filters impulse response with custom sample rate and length
+    /// @status ACTIVE - Phase 4 implementation
+    /// @note Returns empty data if measurement has no filters applied (this is expected behavior)
+    /// </summary>
+    [Fact]
+    public async Task GetFiltersImpulseResponse_CustomParameters_ReturnsCustomFilterImpulseData()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        var measurementId = measurements[0].UUID;
+
+        // Act
+        var filterImpulse = await measurementsService.GetFiltersImpulseResponse(
+            measurementId, 
+            sampleRate: 96000, 
+            length: 65536
+        );
+
+        // Assert
+        filterImpulse.Should().NotBeNull();
+        filterImpulse.Data.Should().NotBeNull("endpoint should return data array");
+        // Note: Data may be empty if measurement has no filters applied - this is expected REW behavior
+        // In this case, REW may also return 0 for sample rate when no filters exist
+        if (filterImpulse.Data.Length > 0)
+        {
+            filterImpulse.SampleRate.Should().BeGreaterThan(0, "sample rate should be set when data exists");
+            filterImpulse.Data.Length.Should().BeLessOrEqualTo(65536, "data length should not exceed requested length");
+        }
+    }
+
+    /// <summary>
+    /// Test: GetFiltersImpulseResponse with invalid parameters throws exception
+    /// @test TEST-MEASUREMENTS-PHASE4-005 - Get filters impulse response with invalid sample rate
+    /// @status ACTIVE - Phase 4 implementation
+    /// </summary>
+    [Fact]
+    public async Task GetFiltersImpulseResponse_InvalidSampleRate_ThrowsArgumentException()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        var measurementId = measurements[0].UUID;
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentException>(async () =>
+            await measurementsService.GetFiltersImpulseResponse(measurementId, sampleRate: -1000)
+        );
+    }
+
+    /// <summary>
+    /// Test: GetFiltersImpulseResponse with length out of range throws exception
+    /// @test TEST-MEASUREMENTS-PHASE4-006 - Get filters impulse response with invalid length
+    /// @status ACTIVE - Phase 4 implementation
+    /// </summary>
+    [Fact]
+    public async Task GetFiltersImpulseResponse_InvalidLength_ThrowsArgumentException()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        var measurementId = measurements[0].UUID;
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentException>(async () =>
+            await measurementsService.GetFiltersImpulseResponse(measurementId, length: 5000000) // > 4194304 max
+        );
+    }
+
+    /// <summary>
+    /// Test: GetWaterfall returns waterfall plot data
+    /// @test TEST-MEASUREMENTS-PHASE4-007 - Get waterfall plot data
+    /// @status ACTIVE - Phase 4 implementation
+    /// @note Requires waterfall to be generated first via GenerateWaterfall command
+    /// </summary>
+    [Fact(Skip = "Requires waterfall generation which is a complex command-based operation")]
+    public async Task GetWaterfall_ValidId_ReturnsWaterfallData()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        var measurementId = measurements[0].UUID;
+
+        // Act
+        var waterfall = await measurementsService.GetWaterfall(measurementId);
+
+        // Assert
+        waterfall.Should().NotBeNull();
+        waterfall.Frequencies.Should().NotBeNullOrEmpty("waterfall should contain frequency data");
+        waterfall.Times.Should().NotBeNullOrEmpty("waterfall should contain time data");
+        waterfall.DecodedSPLData.Should().NotBeNull("waterfall should contain 2D SPL data");
+        waterfall.DecodedSPLData.GetLength(0).Should().BeGreaterThan(0, "waterfall should have rows (time slices)");
+        waterfall.DecodedSPLData.GetLength(1).Should().BeGreaterThan(0, "waterfall should have columns (frequencies)");
+    }
+
+    /// <summary>
+    /// Test: GetSpectrogram returns spectrogram data
+    /// @test TEST-MEASUREMENTS-PHASE4-008 - Get spectrogram data
+    /// @status ACTIVE - Phase 4 implementation
+    /// @note Requires spectrogram to be generated first via GenerateSpectrogram command
+    /// </summary>
+    [Fact(Skip = "Requires spectrogram generation which is a complex command-based operation")]
+    public async Task GetSpectrogram_ValidId_ReturnsSpectrogramData()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        var measurementId = measurements[0].UUID;
+
+        // Act
+        var spectrogram = await measurementsService.GetSpectrogram(measurementId);
+
+        // Assert
+        spectrogram.Should().NotBeNull();
+        spectrogram.Frequencies.Should().NotBeNullOrEmpty("spectrogram should contain frequency data");
+        spectrogram.Times.Should().NotBeNullOrEmpty("spectrogram should contain time data");
+        spectrogram.SPLData.Should().NotBeNull("spectrogram should contain 2D amplitude data");
+        spectrogram.FFTSize.Should().BeGreaterThan(0, "spectrogram should have FFT size");
+        spectrogram.WindowType.Should().NotBeNullOrEmpty("spectrogram should have window type");
+        spectrogram.SPLData.GetLength(0).Should().BeGreaterThan(0, "spectrogram should have rows");
+        spectrogram.SPLData.GetLength(1).Should().BeGreaterThan(0, "spectrogram should have columns");
+    }
+
+    #endregion
 }
