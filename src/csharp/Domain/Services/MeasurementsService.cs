@@ -960,6 +960,467 @@ namespace REWApi.Domain.Services
 
         #endregion
 
+        #region Phase 3b: EQ Commands
+
+        /// <summary>
+        /// Gets the list of available EQ commands that can be executed.
+        /// Returns 8 commands: Calculate target level, Match target, Optimise gains,
+        /// Optimise gains and Qs, Optimise gains, Qs and Fcs, Generate predicted measurement,
+        /// Generate filters measurement, Generate target measurement.
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Array of available EQ command strings</returns>
+        public async Task<string[]> GetEQCommands(CancellationToken cancellationToken = default)
+        {
+            var url = $"{_baseUrl}/measurements/eq/commands";
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            using var doc = JsonDocument.Parse(json);
+            var root = doc.RootElement;
+
+            // Handle response format: {"value": [...], "Count": 8} or just [...]
+            if (root.ValueKind == JsonValueKind.Object && root.TryGetProperty("value", out var valueArray))
+            {
+                return JsonSerializer.Deserialize<string[]>(valueArray.GetRawText()) 
+                    ?? Array.Empty<string>();
+            }
+            else if (root.ValueKind == JsonValueKind.Array)
+            {
+                return JsonSerializer.Deserialize<string[]>(json) 
+                    ?? Array.Empty<string>();
+            }
+            else
+            {
+                throw new InvalidOperationException($"Unexpected response format: {root.ValueKind}");
+            }
+        }
+
+        /// <summary>
+        /// Executes an EQ command on a measurement (e.g., "Match target", "Optimise gains").
+        /// Long-running operations return a progress ID that can be tracked via WebSocket subscription.
+        /// </summary>
+        /// <param name="measurementId">Measurement UUID</param>
+        /// <param name="command">Command name (from GetEQCommands)</param>
+        /// <param name="parameters">Optional command parameters (omit or pass null if no parameters needed)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Command result with status message and optional operation ID</returns>
+        public async Task<EQCommandResult> ExecuteEQCommand(
+            string measurementId,
+            string command,
+            Dictionary<string, object>? parameters = null,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+            
+            if (string.IsNullOrEmpty(command))
+                throw new ArgumentException("Command cannot be null or empty", nameof(command));
+
+            var url = $"{_baseUrl}/measurements/{measurementId}/eq/command";
+            
+            // Build request body - only include parameters if provided
+            object requestBody;
+            if (parameters != null && parameters.Count > 0)
+            {
+                requestBody = new
+                {
+                    command,
+                    parameters
+                };
+            }
+            else
+            {
+                requestBody = new { command };
+            }
+
+            var content = new StringContent(
+                JsonSerializer.Serialize(requestBody, new JsonSerializerOptions 
+                { 
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase 
+                }),
+                Encoding.UTF8,
+                "application/json");
+
+            var response = await _httpClient.PostAsync(url, content, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            return JsonSerializer.Deserialize<EQCommandResult>(json, new JsonSerializerOptions 
+            { 
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase 
+            }) ?? new EQCommandResult();
+        }
+
+        #endregion
+
+        #region Phase 3c: Global EQ Defaults
+
+        /// <summary>
+        /// Gets the list of available equaliser profiles.
+        /// Returns 50 built-in equaliser profiles from 33 manufacturers.
+        /// </summary>
+        /// <param name="manufacturer">Optional manufacturer name to filter results</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Array of available equalisers</returns>
+        public async Task<EqualiserInfo[]> GetAvailableEqualisers(
+            string? manufacturer = null,
+            CancellationToken cancellationToken = default)
+        {
+            var url = $"{_baseUrl}/eq/equalisers";
+            if (!string.IsNullOrEmpty(manufacturer))
+            {
+                url += $"?manufacturer={Uri.EscapeDataString(manufacturer)}";
+            }
+
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            using var doc = JsonDocument.Parse(json);
+            var root = doc.RootElement;
+
+            // Handle response format: {"value": [...], "Count": n} or just [...]
+            if (root.ValueKind == JsonValueKind.Object && root.TryGetProperty("value", out var valueArray))
+            {
+                return JsonSerializer.Deserialize<EqualiserInfo[]>(valueArray.GetRawText(), new JsonSerializerOptions 
+                { 
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase 
+                }) ?? Array.Empty<EqualiserInfo>();
+            }
+            else if (root.ValueKind == JsonValueKind.Array)
+            {
+                return JsonSerializer.Deserialize<EqualiserInfo[]>(json, new JsonSerializerOptions 
+                { 
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase 
+                }) ?? Array.Empty<EqualiserInfo>();
+            }
+            else
+            {
+                throw new InvalidOperationException($"Unexpected response format: {root.ValueKind}");
+            }
+        }
+
+        /// <summary>
+        /// Gets the list of available equaliser manufacturers.
+        /// Returns 33 manufacturer names.
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Array of manufacturer names</returns>
+        public async Task<string[]> GetManufacturers(CancellationToken cancellationToken = default)
+        {
+            var url = $"{_baseUrl}/eq/manufacturers";
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            using var doc = JsonDocument.Parse(json);
+            var root = doc.RootElement;
+
+            // Handle response format: {"value": [...], "Count": n} or just [...]
+            if (root.ValueKind == JsonValueKind.Object && root.TryGetProperty("value", out var valueArray))
+            {
+                return JsonSerializer.Deserialize<string[]>(valueArray.GetRawText()) 
+                    ?? Array.Empty<string>();
+            }
+            else if (root.ValueKind == JsonValueKind.Array)
+            {
+                return JsonSerializer.Deserialize<string[]>(json) 
+                    ?? Array.Empty<string>();
+            }
+            else
+            {
+                throw new InvalidOperationException($"Unexpected response format: {root.ValueKind}");
+            }
+        }
+
+        /// <summary>
+        /// Gets the default equaliser profile used for new measurements.
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Default equaliser information</returns>
+        public async Task<EqualiserInfo> GetDefaultEqualiser(CancellationToken cancellationToken = default)
+        {
+            var url = $"{_baseUrl}/eq/default-equaliser";
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            return JsonSerializer.Deserialize<EqualiserInfo>(json, new JsonSerializerOptions 
+            { 
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase 
+            }) ?? new EqualiserInfo();
+        }
+
+        /// <summary>
+        /// Sets the default equaliser profile for new measurements.
+        /// </summary>
+        /// <param name="equaliser">Equaliser information to set as default</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task SetDefaultEqualiser(
+            EqualiserInfo equaliser,
+            CancellationToken cancellationToken = default)
+        {
+            if (equaliser == null)
+                throw new ArgumentNullException(nameof(equaliser));
+
+            var url = $"{_baseUrl}/eq/default-equaliser";
+            var content = new StringContent(
+                JsonSerializer.Serialize(equaliser, new JsonSerializerOptions 
+                { 
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase 
+                }),
+                Encoding.UTF8,
+                "application/json");
+
+            var response = await _httpClient.PostAsync(url, content, cancellationToken);
+            response.EnsureSuccessStatusCode();
+        }
+
+        /// <summary>
+        /// Gets the default target curve settings for new measurements.
+        /// Controls target shape (Full range, Subwoofer, LF, etc.), crossover settings, and slopes.
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Default target settings</returns>
+        public async Task<TargetSettings> GetDefaultTargetSettings(CancellationToken cancellationToken = default)
+        {
+            var url = $"{_baseUrl}/eq/default-target-settings";
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            return JsonSerializer.Deserialize<TargetSettings>(json, new JsonSerializerOptions 
+            { 
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase 
+            }) ?? new TargetSettings();
+        }
+
+        /// <summary>
+        /// Updates the default target curve settings for new measurements.
+        /// Can perform full replacement (POST) or partial update (PUT).
+        /// </summary>
+        /// <param name="targetSettings">Target settings to apply</param>
+        /// <param name="partialUpdate">If true, performs PUT (partial update); if false, performs POST (full replacement)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task UpdateDefaultTargetSettings(
+            TargetSettings targetSettings,
+            bool partialUpdate = false,
+            CancellationToken cancellationToken = default)
+        {
+            if (targetSettings == null)
+                throw new ArgumentNullException(nameof(targetSettings));
+
+            var url = $"{_baseUrl}/eq/default-target-settings";
+            var content = new StringContent(
+                JsonSerializer.Serialize(targetSettings, new JsonSerializerOptions 
+                { 
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase 
+                }),
+                Encoding.UTF8,
+                "application/json");
+
+            var response = partialUpdate 
+                ? await _httpClient.PutAsync(url, content, cancellationToken)
+                : await _httpClient.PostAsync(url, content, cancellationToken);
+            
+            response.EnsureSuccessStatusCode();
+        }
+
+        /// <summary>
+        /// Gets the default target level in dB SPL for new measurements.
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Default target level in dB SPL</returns>
+        public async Task<double> GetDefaultTargetLevel(CancellationToken cancellationToken = default)
+        {
+            var url = $"{_baseUrl}/eq/default-target-level";
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            return JsonSerializer.Deserialize<double>(json);
+        }
+
+        /// <summary>
+        /// Sets the default target level in dB SPL for new measurements.
+        /// </summary>
+        /// <param name="targetLevel">Target level in dB SPL (typical values: 75-85 dB)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task SetDefaultTargetLevel(
+            double targetLevel,
+            CancellationToken cancellationToken = default)
+        {
+            var url = $"{_baseUrl}/eq/default-target-level";
+            var content = new StringContent(
+                JsonSerializer.Serialize(targetLevel),
+                Encoding.UTF8,
+                "application/json");
+
+            var response = await _httpClient.PostAsync(url, content, cancellationToken);
+            response.EnsureSuccessStatusCode();
+        }
+
+        #endregion
+
+        #region Phase 3d - Room Curves (7 methods)
+
+        /// <summary>
+        /// Gets the default room curve settings for new measurements.
+        /// Room curves add low frequency rise and high frequency fall to target curves.
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Default room curve settings</returns>
+        public async Task<RoomCurveSettings> GetDefaultRoomCurveSettings(
+            CancellationToken cancellationToken = default)
+        {
+            var url = $"{_baseUrl}/eq/default-room-curve-settings";
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            return JsonSerializer.Deserialize<RoomCurveSettings>(json, options)
+                ?? throw new InvalidOperationException("Failed to deserialize room curve settings");
+        }
+
+        /// <summary>
+        /// Updates the default room curve settings for new measurements.
+        /// </summary>
+        /// <param name="roomCurveSettings">Room curve settings to apply</param>
+        /// <param name="partialUpdate">If true, uses PUT for partial update; if false, uses POST for full replacement</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task UpdateDefaultRoomCurveSettings(
+            RoomCurveSettings roomCurveSettings,
+            bool partialUpdate = false,
+            CancellationToken cancellationToken = default)
+        {
+            if (roomCurveSettings == null)
+                throw new ArgumentNullException(nameof(roomCurveSettings));
+
+            var url = $"{_baseUrl}/eq/default-room-curve-settings";
+            var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+            var content = new StringContent(
+                JsonSerializer.Serialize(roomCurveSettings, options),
+                Encoding.UTF8,
+                "application/json");
+
+            var response = partialUpdate
+                ? await _httpClient.PutAsync(url, content, cancellationToken)
+                : await _httpClient.PostAsync(url, content, cancellationToken);
+
+            response.EnsureSuccessStatusCode();
+        }
+
+        /// <summary>
+        /// Gets the room curve settings for a specific measurement.
+        /// </summary>
+        /// <param name="measurementId">Measurement UUID</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Measurement's room curve settings</returns>
+        public async Task<RoomCurveSettings> GetMeasurementRoomCurveSettings(
+            string measurementId,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            var url = $"{_baseUrl}/measurements/{measurementId}/room-curve-settings";
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            return JsonSerializer.Deserialize<RoomCurveSettings>(json, options)
+                ?? throw new InvalidOperationException("Failed to deserialize room curve settings");
+        }
+
+        /// <summary>
+        /// Updates the room curve settings for a specific measurement.
+        /// </summary>
+        /// <param name="measurementId">Measurement UUID</param>
+        /// <param name="roomCurveSettings">Room curve settings to apply</param>
+        /// <param name="partialUpdate">If true, uses PUT for partial update; if false, uses POST for full replacement</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task UpdateMeasurementRoomCurveSettings(
+            string measurementId,
+            RoomCurveSettings roomCurveSettings,
+            bool partialUpdate = false,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+            if (roomCurveSettings == null)
+                throw new ArgumentNullException(nameof(roomCurveSettings));
+
+            var url = $"{_baseUrl}/measurements/{measurementId}/room-curve-settings";
+            var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+            var content = new StringContent(
+                JsonSerializer.Serialize(roomCurveSettings, options),
+                Encoding.UTF8,
+                "application/json");
+
+            var response = partialUpdate
+                ? await _httpClient.PutAsync(url, content, cancellationToken)
+                : await _httpClient.PostAsync(url, content, cancellationToken);
+
+            response.EnsureSuccessStatusCode();
+        }
+
+        /// <summary>
+        /// Gets the current house curve file path.
+        /// House curves are user-defined target curves loaded from text files.
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Full path to house curve file, or empty string if no house curve is set</returns>
+        public async Task<string> GetHouseCurve(
+            CancellationToken cancellationToken = default)
+        {
+            var url = $"{_baseUrl}/eq/house-curve";
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            return JsonSerializer.Deserialize<string>(json) ?? string.Empty;
+        }
+
+        /// <summary>
+        /// Sets the house curve file path for target curve generation.
+        /// </summary>
+        /// <param name="filePath">Full path to house curve text file (e.g., "C:\\curves\\my-curve.txt")</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task SetHouseCurve(
+            string filePath,
+            CancellationToken cancellationToken = default)
+        {
+            if (filePath == null)
+                throw new ArgumentNullException(nameof(filePath));
+
+            var url = $"{_baseUrl}/eq/house-curve";
+            var content = new StringContent(
+                JsonSerializer.Serialize(filePath),
+                Encoding.UTF8,
+                "application/json");
+
+            var response = await _httpClient.PostAsync(url, content, cancellationToken);
+            response.EnsureSuccessStatusCode();
+        }
+
+        /// <summary>
+        /// Clears the current house curve setting (resets to no house curve).
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task ClearHouseCurve(
+            CancellationToken cancellationToken = default)
+        {
+            var url = $"{_baseUrl}/eq/house-curve";
+            var response = await _httpClient.DeleteAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+        }
+
+        #endregion
+
         // Internal helper methods
 
         private async Task<string> PollJobCompletion(string jobId, CancellationToken cancellationToken)

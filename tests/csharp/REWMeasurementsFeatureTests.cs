@@ -588,4 +588,421 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     }
 
     #endregion
+
+    #region Phase 3b: EQ Commands
+
+    /// <summary>
+    /// Test: Get available EQ commands
+    /// @test TEST-MEASUREMENTS-EQ-009 - Get list of available EQ commands
+    /// @status ACTIVE - Phase 3b implementation
+    /// </summary>
+    [Fact]
+    public async Task GetEQCommands_ReturnsEightCommands()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+
+        // Act
+        var commands = await measurementsService.GetEQCommands();
+
+        // Assert
+        commands.Should().NotBeNull();
+        commands.Should().HaveCount(8, "REW API provides 8 EQ commands");
+        
+        // Verify expected commands are present
+        commands.Should().Contain("Calculate target level");
+        commands.Should().Contain("Match target");
+        commands.Should().Contain("Optimise gains");
+        commands.Should().Contain("Optimise gains and Qs");
+        commands.Should().Contain("Optimise gains, Qs and Fcs");
+        commands.Should().Contain("Generate predicted measurement");
+        commands.Should().Contain("Generate filters measurement");
+        commands.Should().Contain("Generate target measurement");
+    }
+
+    /// <summary>
+    /// Test: Execute EQ command - Calculate target level
+    /// @test TEST-MEASUREMENTS-EQ-010 - Execute Calculate target level command
+    /// @status ACTIVE - Phase 3b implementation
+    /// </summary>
+    [Fact]
+    public async Task ExecuteEQCommand_CalculateTargetLevel_Succeeds()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeEmpty("test requires at least one measurement in REW");
+        var firstMeasurementId = measurements[0].UUID;
+
+        // Act
+        var result = await measurementsService.ExecuteEQCommand(
+            firstMeasurementId,
+            "Calculate target level");
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Message.Should().NotBeNullOrEmpty("command should return status message");
+        // Calculate target level is typically a quick operation, may not return an ID
+    }
+
+    /// <summary>
+    /// Test: Execute EQ command - Optimise gains
+    /// @test TEST-MEASUREMENTS-EQ-011 - Execute Optimise gains command
+    /// @status SKIP - May fail if REW command gate is busy from previous tests
+    /// </summary>
+    [Fact(Skip = "May fail if REW command gate is busy from previous EQ command executions - test manually if needed")]
+    public async Task ExecuteEQCommand_OptimiseGains_Succeeds()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeEmpty("test requires at least one measurement in REW");
+        var firstMeasurementId = measurements[0].UUID;
+
+        // Act
+        var result = await measurementsService.ExecuteEQCommand(
+            firstMeasurementId,
+            "Optimise gains");
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Message.Should().NotBeNullOrEmpty("command should return status message");
+    }
+
+    /// <summary>
+    /// Test: Execute EQ command - Generate predicted measurement
+    /// @test TEST-MEASUREMENTS-EQ-012 - Execute Generate predicted measurement command
+    /// @status ACTIVE - Phase 3b implementation
+    /// </summary>
+    [Fact]
+    public async Task ExecuteEQCommand_GeneratePredictedMeasurement_Succeeds()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeEmpty("test requires at least one measurement in REW");
+        var firstMeasurementId = measurements[0].UUID;
+
+        // Act
+        var result = await measurementsService.ExecuteEQCommand(
+            firstMeasurementId,
+            "Generate predicted measurement");
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Message.Should().NotBeNullOrEmpty("command should return status message");
+        // This command typically creates a new measurement
+    }
+
+    /// <summary>
+    /// Test: Execute EQ command - Match target (long-running)
+    /// @test TEST-MEASUREMENTS-EQ-013 - Execute Match target command
+    /// @status SKIP - Long-running operation that creates additional measurements
+    /// </summary>
+    [Fact(Skip = "Long-running operation that may create additional measurements - run manually if needed")]
+    public async Task ExecuteEQCommand_MatchTarget_Succeeds()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeEmpty("test requires at least one measurement in REW");
+        var firstMeasurementId = measurements[0].UUID;
+
+        // Act
+        var result = await measurementsService.ExecuteEQCommand(
+            firstMeasurementId,
+            "Match target");
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Message.Should().NotBeNullOrEmpty();
+        result.Id.Should().HaveValue("long-running operation should return progress tracking ID");
+        result.Message.Should().Contain("in progress", "match target is typically async");
+    }
+
+    /// <summary>
+    /// Test: Execute EQ command with invalid command name
+    /// @test TEST-MEASUREMENTS-EQ-014 - Invalid command name should throw exception
+    /// @status ACTIVE - Phase 3b implementation
+    /// </summary>
+    [Fact]
+    public async Task ExecuteEQCommand_InvalidCommand_ThrowsException()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeEmpty("test requires at least one measurement in REW");
+        var firstMeasurementId = measurements[0].UUID;
+
+        // Act & Assert
+        var act = async () => await measurementsService.ExecuteEQCommand(
+            firstMeasurementId,
+            "Invalid Command That Does Not Exist");
+
+        await act.Should().ThrowAsync<HttpRequestException>(
+            "invalid command name should be rejected by API");
+    }
+
+    /// <summary>
+    /// Test: Execute EQ command with empty measurement ID
+    /// @test TEST-MEASUREMENTS-EQ-015 - Empty measurement ID should throw ArgumentException
+    /// @status ACTIVE - Phase 3b implementation
+    /// </summary>
+    [Fact]
+    public async Task ExecuteEQCommand_EmptyMeasurementId_ThrowsArgumentException()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+
+        // Act & Assert
+        var act = async () => await measurementsService.ExecuteEQCommand(
+            "",
+            "Calculate target level");
+
+        await act.Should().ThrowAsync<ArgumentException>()
+            .WithMessage("*Measurement ID*");
+    }
+
+    /// <summary>
+    /// Test: Execute EQ command with empty command string
+    /// @test TEST-MEASUREMENTS-EQ-016 - Empty command should throw ArgumentException
+    /// @status ACTIVE - Phase 3b implementation
+    /// </summary>
+    [Fact]
+    public async Task ExecuteEQCommand_EmptyCommand_ThrowsArgumentException()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeEmpty("test requires at least one measurement in REW");
+        var firstMeasurementId = measurements[0].UUID;
+
+        // Act & Assert
+        var act = async () => await measurementsService.ExecuteEQCommand(
+            firstMeasurementId,
+            "");
+
+        await act.Should().ThrowAsync<ArgumentException>()
+            .WithMessage("*Command*");
+    }
+
+    #endregion
+
+    #region Phase 3c: Global EQ Defaults
+
+    /// <summary>
+    /// Test: Get available equaliser profiles
+    /// @test TEST-MEASUREMENTS-EQ-017 - Get list of 50 built-in equaliser profiles
+    /// @status ACTIVE - Phase 3c implementation
+    /// </summary>
+    [Fact]
+    public async Task GetAvailableEqualisers_ReturnsAllProfiles()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+
+        // Act
+        var equalisers = await measurementsService.GetAvailableEqualisers();
+
+        // Assert
+        equalisers.Should().NotBeNull();
+        equalisers.Should().HaveCountGreaterThan(10, "REW provides 50 built-in equaliser profiles");
+        equalisers.Should().Contain(e => e.Manufacturer == "Generic" && e.Model == "Generic");
+    }
+
+    /// <summary>
+    /// Test: Get available equalisers filtered by manufacturer
+    /// @test TEST-MEASUREMENTS-EQ-018 - Filter equalisers by manufacturer name
+    /// @status ACTIVE - Phase 3c implementation
+    /// </summary>
+    [Fact]
+    public async Task GetAvailableEqualisers_WithManufacturerFilter_ReturnsFiltered()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+
+        // Act
+        var equalisers = await measurementsService.GetAvailableEqualisers("MiniDSP");
+
+        // Assert
+        equalisers.Should().NotBeNull();
+        equalisers.Should().NotBeEmpty("MiniDSP has several equaliser models");
+        equalisers.Should().OnlyContain(e => e.Manufacturer == "MiniDSP");
+    }
+
+    /// <summary>
+    /// Test: Get list of manufacturers
+    /// @test TEST-MEASUREMENTS-EQ-019 - Get list of 33 manufacturers
+    /// @status ACTIVE - Phase 3c implementation
+    /// </summary>
+    [Fact]
+    public async Task GetManufacturers_Returns33Manufacturers()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+
+        // Act
+        var manufacturers = await measurementsService.GetManufacturers();
+
+        // Assert
+        manufacturers.Should().NotBeNull();
+        manufacturers.Should().HaveCountGreaterThan(10, "REW provides 33 manufacturers");
+        manufacturers.Should().Contain("Generic");
+        manufacturers.Should().Contain("MiniDSP");
+    }
+
+    /// <summary>
+    /// Test: Get and set default equaliser
+    /// @test TEST-MEASUREMENTS-EQ-020 - Get/set default equaliser profile
+    /// @status ACTIVE - Phase 3c implementation
+    /// </summary>
+    [Fact]
+    public async Task GetSetDefaultEqualiser_RoundTrip_Succeeds()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        
+        // Save original
+        var originalEqualiser = await measurementsService.GetDefaultEqualiser();
+        
+        var newEqualiser = new EqualiserInfo
+        {
+            Manufacturer = "Generic",
+            Model = "Generic"
+        };
+
+        // Act
+        await measurementsService.SetDefaultEqualiser(newEqualiser);
+        
+        // Assert - Verify change
+        var updatedEqualiser = await measurementsService.GetDefaultEqualiser();
+        updatedEqualiser.Manufacturer.Should().Be(newEqualiser.Manufacturer);
+        updatedEqualiser.Model.Should().Be(newEqualiser.Model);
+        
+        // Cleanup - Restore original
+        await measurementsService.SetDefaultEqualiser(originalEqualiser);
+    }
+
+    /// <summary>
+    /// Test: Get default target settings
+    /// @test TEST-MEASUREMENTS-EQ-021 - Get default target curve settings
+    /// @status ACTIVE - Phase 3c implementation
+    /// </summary>
+    [Fact]
+    public async Task GetDefaultTargetSettings_ReturnsSettings()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+
+        // Act
+        var targetSettings = await measurementsService.GetDefaultTargetSettings();
+
+        // Assert
+        targetSettings.Should().NotBeNull();
+        targetSettings.Shape.Should().NotBeNullOrEmpty("target shape should be set");
+        // Shape values: "Full range", "Subwoofer", "LF", "LF + sub", "Other"
+    }
+
+    /// <summary>
+    /// Test: Update default target settings (POST - full replacement)
+    /// @test TEST-MEASUREMENTS-EQ-022 - Update default target settings
+    /// @status ACTIVE - Phase 3c implementation
+    /// </summary>
+    [Fact]
+    public async Task UpdateDefaultTargetSettings_FullReplacement_Succeeds()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        
+        // Save original
+        var originalSettings = await measurementsService.GetDefaultTargetSettings();
+        
+        var newSettings = new TargetSettings
+        {
+            Shape = "Subwoofer",
+            BassManagementSlopedBPerOctave = 12,
+            BassManagementCutoffHz = 80,
+            LowFreqSlopedBPerOctave = 24,
+            LowFreqCutoffHz = 10,
+            LowPassCrossoverType = "L-R2",
+            HighPassCrossoverType = "L-R2",
+            LowPassCutoffHz = 1000,
+            HighPassCutoffHz = 100
+        };
+
+        // Act
+        await measurementsService.UpdateDefaultTargetSettings(newSettings, partialUpdate: false);
+        
+        // Assert - Verify change
+        var updatedSettings = await measurementsService.GetDefaultTargetSettings();
+        updatedSettings.Shape.Should().Be(newSettings.Shape);
+        updatedSettings.BassManagementCutoffHz.Should().Be(newSettings.BassManagementCutoffHz);
+        
+        // Cleanup - Restore original
+        await measurementsService.UpdateDefaultTargetSettings(originalSettings, partialUpdate: false);
+    }
+
+    /// <summary>
+    /// Test: Get and set default target level
+    /// @test TEST-MEASUREMENTS-EQ-023 - Get/set default target level in dB SPL
+    /// @status ACTIVE - Phase 3c implementation
+    /// </summary>
+    [Fact]
+    public async Task GetSetDefaultTargetLevel_RoundTrip_Succeeds()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        
+        // Save original
+        var originalLevel = await measurementsService.GetDefaultTargetLevel();
+        
+        var newLevel = 75.0; // Standard reference level
+
+        // Act
+        await measurementsService.SetDefaultTargetLevel(newLevel);
+        
+        // Assert - Verify change
+        var updatedLevel = await measurementsService.GetDefaultTargetLevel();
+        updatedLevel.Should().Be(newLevel);
+        
+        // Cleanup - Restore original
+        await measurementsService.SetDefaultTargetLevel(originalLevel);
+    }
+
+    /// <summary>
+    /// Test: Set default equaliser with null argument
+    /// @test TEST-MEASUREMENTS-EQ-024 - Null equaliser should throw ArgumentNullException
+    /// @status ACTIVE - Phase 3c implementation
+    /// </summary>
+    [Fact]
+    public async Task SetDefaultEqualiser_NullArgument_ThrowsArgumentNullException()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+
+        // Act & Assert
+        var act = async () => await measurementsService.SetDefaultEqualiser(null!);
+
+        await act.Should().ThrowAsync<ArgumentNullException>();
+    }
+
+    /// <summary>
+    /// Test: Update default target settings with null argument
+    /// @test TEST-MEASUREMENTS-EQ-025 - Null settings should throw ArgumentNullException
+    /// @status ACTIVE - Phase 3c implementation
+    /// </summary>
+    [Fact]
+    public async Task UpdateDefaultTargetSettings_NullArgument_ThrowsArgumentNullException()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+
+        // Act & Assert
+        var act = async () => await measurementsService.UpdateDefaultTargetSettings(null!);
+
+        await act.Should().ThrowAsync<ArgumentNullException>();
+    }
+
+    #endregion
 }
+

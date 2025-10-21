@@ -576,6 +576,19 @@ namespace REWApi.Domain
     }
 
     /// <summary>
+    /// EQ Command Result
+    /// Returned from executing EQ commands (Match target, Optimize, etc.)
+    /// </summary>
+    public class EQCommandResult
+    {
+        /// <summary>Status/progress message from command execution</summary>
+        public string Message { get; set; } = string.Empty;
+        
+        /// <summary>Operation ID for tracking progress (if long-running)</summary>
+        public int? Id { get; set; }
+    }
+
+    /// <summary>
     /// SPL Meter Command Parameters
     /// </summary>
     public class SPLMeterCommandParameters
