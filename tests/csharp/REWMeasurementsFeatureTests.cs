@@ -1892,4 +1892,145 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     }
 
     #endregion
+
+    #region Task 2 - Analysis & Metadata Methods
+
+    /// <summary>
+    /// Test: GetSchroeder returns Schroeder integration curve data
+    /// @test TEST-MEASUREMENTS-PHASE4-009 - Get Schroeder integration curve
+    /// @status SKIPPED - Endpoint does not exist in REW API
+    /// @note The /measurements/:id/schroeder endpoint returns 404 - feature may not be implemented
+    /// </summary>
+    [Fact(Skip = "REW API endpoint /measurements/:id/schroeder returns 404 - not implemented")]
+    public async Task GetSchroeder_WithDefaultParameters_ReturnsSchroederData()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        var measurementId = measurements[0].UUID;
+
+        // Act
+        var schroeder = await measurementsService.GetSchroeder(measurementId);
+
+        // Assert
+        schroeder.Should().NotBeNull("Schroeder curve should be returned");
+        schroeder.Data.Should().NotBeNull("Schroeder curve should have data array");
+        // Note: Data may be empty if no impulse response exists
+    }
+
+    /// <summary>
+    /// Test: GetSchroeder with custom unit parameter
+    /// @test TEST-MEASUREMENTS-PHASE4-010 - Get Schroeder with unit parameter
+    /// @status SKIPPED - Endpoint does not exist in REW API
+    /// @note The /measurements/:id/schroeder endpoint returns 404 - feature may not be implemented
+    /// </summary>
+    [Fact(Skip = "REW API endpoint /measurements/:id/schroeder returns 404 - not implemented")]
+    public async Task GetSchroeder_WithCustomUnit_ReturnsSchroederData()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        var measurementId = measurements[0].UUID;
+
+        // Act
+        var schroeder = await measurementsService.GetSchroeder(measurementId, unit: "SPL");
+
+        // Assert
+        schroeder.Should().NotBeNull("Schroeder curve should be returned");
+        schroeder.Data.Should().NotBeNull("Schroeder curve should have data array");
+    }
+
+    /// <summary>
+    /// Test: GetCommands returns list of available commands for measurement
+    /// @test TEST-MEASUREMENTS-PHASE4-011 - Get measurement commands
+    /// @status ACTIVE - Phase 4 implementation
+    /// </summary>
+    [Fact]
+    public async Task GetCommands_ValidMeasurement_ReturnsCommandsList()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        var measurementId = measurements[0].UUID;
+
+        // Act
+        var commands = await measurementsService.GetCommands(measurementId);
+
+        // Assert
+        commands.Should().NotBeNull("commands list should not be null");
+        // Note: Commands array may be empty if no commands are available
+        // Common commands may include: "generate waterfall", "generate spectrogram", etc.
+    }
+
+    /// <summary>
+    /// Test: UpdateMeasurement updates title
+    /// @test TEST-MEASUREMENTS-PHASE4-012 - Update measurement title
+    /// @status ACTIVE - Phase 4 implementation
+    /// </summary>
+    [Fact]
+    public async Task UpdateMeasurement_UpdateTitle_Success()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        var measurementId = measurements[0].UUID;
+        var newTitle = $"Test Title {DateTime.Now:yyyyMMddHHmmss}";
+
+        // Act
+        Func<Task> act = async () => await measurementsService.UpdateMeasurement(measurementId, title: newTitle);
+
+        // Assert
+        await act.Should().NotThrowAsync("updating measurement title should succeed");
+    }
+
+    /// <summary>
+    /// Test: UpdateMeasurement updates notes
+    /// @test TEST-MEASUREMENTS-PHASE4-013 - Update measurement notes
+    /// @status ACTIVE - Phase 4 implementation
+    /// </summary>
+    [Fact]
+    public async Task UpdateMeasurement_UpdateNotes_Success()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        var measurementId = measurements[0].UUID;
+        var newNotes = $"Test Notes {DateTime.Now:yyyyMMddHHmmss}";
+
+        // Act
+        Func<Task> act = async () => await measurementsService.UpdateMeasurement(measurementId, notes: newNotes);
+
+        // Assert
+        await act.Should().NotThrowAsync("updating measurement notes should succeed");
+    }
+
+    /// <summary>
+    /// Test: UpdateMeasurement throws when no fields provided
+    /// @test TEST-MEASUREMENTS-PHASE4-014 - Update measurement validation
+    /// @status ACTIVE - Phase 4 implementation
+    /// </summary>
+    [Fact]
+    public async Task UpdateMeasurement_NoFieldsProvided_ThrowsArgumentException()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        var measurementId = measurements[0].UUID;
+
+        // Act
+        Func<Task> act = async () => await measurementsService.UpdateMeasurement(measurementId);
+
+        // Assert
+        await act.Should().ThrowAsync<ArgumentException>()
+            .WithMessage("*At least one of title or notes must be provided*", "should validate that at least one field is provided");
+    }
+
+    #endregion
 }
+

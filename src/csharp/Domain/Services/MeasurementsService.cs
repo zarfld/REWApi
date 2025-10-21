@@ -1763,6 +1763,97 @@ namespace REWApi.Domain.Services
             };
         }
 
+        /// <summary>
+        /// Gets the Schroeder integration curve for a measurement
+        /// Maps to GET /measurements/{id}/schroeder
+        /// Returns Schroeder reverse-time integration data (used for RT60 calculations)
+        /// </summary>
+        /// <param name="measurementId">UUID of the measurement</param>
+        /// <param name="unit">Unit for the data (default: "dB")</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Schroeder curve data</returns>
+        /// <exception cref="ArgumentException">If measurementId is null or empty</exception>
+        /// <exception cref="InvalidOperationException">If deserialization fails</exception>
+        public async Task<ImpulseResponseData> GetSchroeder(
+            string measurementId,
+            string unit = "dB",
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            var url = $"{_baseUrl}/measurements/{measurementId}/schroeder?unit={Uri.EscapeDataString(unit)}";
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            var data = JsonSerializer.Deserialize<JsonElement>(json);
+
+            return ParseImpulseResponse(data);
+        }
+
+        /// <summary>
+        /// Gets the list of available commands for a measurement
+        /// Maps to GET /measurements/{id}/commands
+        /// Returns array of command names that can be issued to this measurement
+        /// </summary>
+        /// <param name="measurementId">UUID of the measurement</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Array of available command names</returns>
+        /// <exception cref="ArgumentException">If measurementId is null or empty</exception>
+        /// <exception cref="InvalidOperationException">If deserialization fails</exception>
+        public async Task<string[]> GetCommands(
+            string measurementId,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            var url = $"{_baseUrl}/measurements/{measurementId}/commands";
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            var commands = JsonSerializer.Deserialize<string[]>(json);
+
+            return commands ?? Array.Empty<string>();
+        }
+
+        /// <summary>
+        /// Updates a measurement's metadata (title and/or notes)
+        /// Maps to PUT /measurements/{id}
+        /// Allows changing the measurement's name and description
+        /// </summary>
+        /// <param name="measurementId">UUID of the measurement</param>
+        /// <param name="title">New title for the measurement (optional)</param>
+        /// <param name="notes">New notes for the measurement (optional)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Task representing the async operation</returns>
+        /// <exception cref="ArgumentException">If measurementId is null or empty, or both title and notes are null</exception>
+        /// <exception cref="InvalidOperationException">If update fails</exception>
+        public async Task UpdateMeasurement(
+            string measurementId,
+            string? title = null,
+            string? notes = null,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+            if (title == null && notes == null)
+                throw new ArgumentException("At least one of title or notes must be provided", nameof(title));
+
+            var updateData = new Dictionary<string, string>();
+            if (title != null) updateData["title"] = title;
+            if (notes != null) updateData["notes"] = notes;
+
+            var json = JsonSerializer.Serialize(updateData);
+            var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+            var url = $"{_baseUrl}/measurements/{measurementId}";
+            var response = await _httpClient.PutAsync(url, content, cancellationToken);
+            response.EnsureSuccessStatusCode();
+        }
+
         #endregion
 
         // Internal helper methods
