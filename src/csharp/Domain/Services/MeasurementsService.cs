@@ -1854,6 +1854,52 @@ namespace REWApi.Domain.Services
             response.EnsureSuccessStatusCode();
         }
 
+        /// <summary>
+        /// Gets the UUID of the currently selected measurement in REW
+        /// Maps to GET /measurements/selected-uuid
+        /// Returns the UUID of the selected measurement, or null if no measurement is selected
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>UUID of selected measurement, or null if none selected</returns>
+        public async Task<string?> GetSelectedMeasurementId(CancellationToken cancellationToken = default)
+        {
+            var url = $"{_baseUrl}/measurements/selected-uuid";
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            var data = JsonSerializer.Deserialize<JsonElement>(json);
+            
+            // API may return empty string or null if no measurement is selected
+            if (data.ValueKind == JsonValueKind.String)
+            {
+                var uuid = data.GetString();
+                return string.IsNullOrEmpty(uuid) ? null : uuid;
+            }
+            
+            return null;
+        }
+
+        /// <summary>
+        /// Selects a measurement in REW by its UUID
+        /// Maps to POST /measurements/selected-uuid
+        /// Sets the specified measurement as the currently selected measurement
+        /// </summary>
+        /// <param name="measurementId">UUID of the measurement to select</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <exception cref="ArgumentException">Thrown when measurementId is null or empty</exception>
+        public async Task SetSelectedMeasurementId(string measurementId, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            var url = $"{_baseUrl}/measurements/selected-uuid";
+            var content = new StringContent($"\"{measurementId}\"", System.Text.Encoding.UTF8, "application/json");
+            
+            var response = await _httpClient.PostAsync(url, content, cancellationToken);
+            response.EnsureSuccessStatusCode();
+        }
+
         #endregion
 
         // Internal helper methods

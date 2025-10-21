@@ -2032,5 +2032,81 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     }
 
     #endregion
+
+    #region Task 3 - Selection State Methods
+
+    /// <summary>
+    /// Test: GetSelectedMeasurementId returns currently selected measurement UUID
+    /// @test TEST-MEASUREMENTS-PHASE4-015 - Get selected measurement ID
+    /// @status ACTIVE - Phase 4 implementation
+    /// </summary>
+    [Fact]
+    public async Task GetSelectedMeasurementId_WhenMeasurementSelected_ReturnsUUID()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        
+        // Ensure a measurement is selected first
+        var measurementId = measurements[0].UUID;
+        await measurementsService.SetSelectedMeasurementId(measurementId);
+
+        // Act
+        var selectedId = await measurementsService.GetSelectedMeasurementId();
+
+        // Assert
+        selectedId.Should().NotBeNullOrEmpty("a measurement should be selected");
+        selectedId.Should().Be(measurementId, "the selected measurement should be the one we just set");
+    }
+
+    /// <summary>
+    /// Test: SetSelectedMeasurementId selects a measurement
+    /// @test TEST-MEASUREMENTS-PHASE4-016 - Set selected measurement ID
+    /// @status ACTIVE - Phase 4 implementation
+    /// </summary>
+    [Fact]
+    public async Task SetSelectedMeasurementId_ValidId_SelectsMeasurement()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        var measurementId = measurements[0].UUID;
+
+        // Act
+        Func<Task> act = async () => await measurementsService.SetSelectedMeasurementId(measurementId);
+
+        // Assert
+        await act.Should().NotThrowAsync("selecting a valid measurement should succeed");
+        
+        // Verify the selection
+        var selectedId = await measurementsService.GetSelectedMeasurementId();
+        selectedId.Should().Be(measurementId, "the measurement should now be selected");
+    }
+
+    /// <summary>
+    /// Test: SetSelectedMeasurementId throws when ID is null or empty
+    /// @test TEST-MEASUREMENTS-PHASE4-017 - Set selected measurement validation
+    /// @status ACTIVE - Phase 4 implementation
+    /// </summary>
+    [Fact]
+    public async Task SetSelectedMeasurementId_NullOrEmptyId_ThrowsArgumentException()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+
+        // Act
+        Func<Task> actNull = async () => await measurementsService.SetSelectedMeasurementId(null!);
+        Func<Task> actEmpty = async () => await measurementsService.SetSelectedMeasurementId("");
+
+        // Assert
+        await actNull.Should().ThrowAsync<ArgumentException>()
+            .WithMessage("*Measurement ID cannot be null or empty*", "null ID should be rejected");
+        await actEmpty.Should().ThrowAsync<ArgumentException>()
+            .WithMessage("*Measurement ID cannot be null or empty*", "empty ID should be rejected");
+    }
+
+    #endregion
 }
 
