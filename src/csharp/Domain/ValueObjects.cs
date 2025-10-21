@@ -722,4 +722,204 @@ namespace REWApi.Domain
                 && RightWindowWidthms >= 0;
         }
     }
+
+    #region SPL Meter Domain Objects
+
+    /// <summary>
+    /// SPL Meter configuration value object with domain behavior
+    /// ISO/IEC/IEEE 29148:2018 - Requirements Engineering
+    /// Maps to REW API /spl-meter/{id}/configuration
+    /// </summary>
+    public class SPLMeterConfiguration
+    {
+        /// <summary>
+        /// Display mode (only affects meter display, not data returned)
+        /// Options: "SPL", etc. (get from /spl-meter/modes)
+        /// </summary>
+        public string Mode { get; set; }
+
+        /// <summary>
+        /// Frequency weighting
+        /// Options: "A", "C", "Z" (get from /spl-meter/weightings)
+        /// </summary>
+        public string Weighting { get; set; }
+
+        /// <summary>
+        /// Time weighting filter
+        /// Options: "Fast", "Slow", "Impulse" (get from /spl-meter/filters)
+        /// </summary>
+        public string Filter { get; set; }
+
+        /// <summary>
+        /// High-pass filter active flag
+        /// </summary>
+        public bool HighPassActive { get; set; }
+
+        /// <summary>
+        /// Rolling Leq calculation active flag
+        /// </summary>
+        public bool RollingLeqActive { get; set; }
+
+        /// <summary>
+        /// Rolling Leq time window in minutes
+        /// </summary>
+        public int RollingLeqMinutes { get; set; }
+
+        #region Domain Behavior
+
+        /// <summary>
+        /// Domain behavior: Validate configuration
+        /// Ensures all required fields are set with valid values
+        /// </summary>
+        public bool IsValid()
+        {
+            return !string.IsNullOrEmpty(Mode)
+                && !string.IsNullOrEmpty(Weighting)
+                && !string.IsNullOrEmpty(Filter)
+                && RollingLeqMinutes > 0;
+        }
+
+        /// <summary>
+        /// Domain behavior: Set standard A-weighting Fast configuration
+        /// Common configuration for general sound level monitoring
+        /// </summary>
+        public void SetStandardAWeightingFast()
+        {
+            Mode = "SPL";
+            Weighting = "A";
+            Filter = "Fast";
+            HighPassActive = false;
+            RollingLeqActive = false;
+            RollingLeqMinutes = 1;
+        }
+
+        /// <summary>
+        /// Domain behavior: Set C-weighting Slow with rolling Leq
+        /// Common configuration for long-term monitoring
+        /// </summary>
+        public void SetLongTermMonitoring(int rollingMinutes = 15)
+        {
+            Mode = "SPL";
+            Weighting = "C";
+            Filter = "Slow";
+            HighPassActive = false;
+            RollingLeqActive = true;
+            RollingLeqMinutes = rollingMinutes;
+        }
+
+        #endregion
+    }
+
+    /// <summary>
+    /// SPL meter reading values
+    /// ISO/IEC/IEEE 29148:2018 - Requirements Engineering
+    /// Maps to REW API /spl-meter/{id}/levels
+    /// Contains SPL, Leq, SEL measurements
+    /// </summary>
+    public class SPLValues
+    {
+        /// <summary>
+        /// Meter number (1-4)
+        /// </summary>
+        public int MeterNumber { get; set; }
+
+        /// <summary>
+        /// Weighting applied to measurements
+        /// </summary>
+        public string Weighting { get; set; }
+
+        /// <summary>
+        /// Time weighting filter applied
+        /// </summary>
+        public string Filter { get; set; }
+
+        /// <summary>
+        /// Current SPL value in dB
+        /// </summary>
+        public double SPL { get; set; }
+
+        /// <summary>
+        /// Equivalent continuous sound level (Leq) in dB
+        /// </summary>
+        public double Leq { get; set; }
+
+        /// <summary>
+        /// Indicates if Leq is a rolling (time-windowed) value
+        /// </summary>
+        public bool IsRollingLeq { get; set; }
+
+        /// <summary>
+        /// Rolling Leq time window in minutes (if applicable)
+        /// </summary>
+        public int RollingLeqMinutes { get; set; }
+
+        /// <summary>
+        /// 1-minute Leq value
+        /// </summary>
+        public double Leq1m { get; set; }
+
+        /// <summary>
+        /// 10-minute Leq value
+        /// </summary>
+        public double Leq10m { get; set; }
+
+        /// <summary>
+        /// Sound Exposure Level (SEL) in dB
+        /// </summary>
+        public double SEL { get; set; }
+
+        /// <summary>
+        /// Elapsed measurement time in seconds
+        /// </summary>
+        public double ElapsedTime { get; set; }
+
+        #region Domain Behavior
+
+        /// <summary>
+        /// Domain behavior: Check if measurement is valid
+        /// Ensures values are within reasonable ranges
+        /// </summary>
+        public bool IsValid()
+        {
+            return SPL >= 0 && SPL <= 200 // Typical SPL range 0-200 dB
+                && Leq >= 0 && Leq <= 200
+                && SEL >= 0
+                && ElapsedTime >= 0
+                && !string.IsNullOrEmpty(Weighting)
+                && !string.IsNullOrEmpty(Filter);
+        }
+
+        /// <summary>
+        /// Domain behavior: Check if SPL exceeds threshold
+        /// Useful for protection/monitoring scenarios
+        /// </summary>
+        public bool ExceedsThreshold(double thresholdDb)
+        {
+            return SPL > thresholdDb;
+        }
+
+        /// <summary>
+        /// Domain behavior: Get equivalent Leq for specified time window
+        /// Returns Leq1m or Leq10m based on requested minutes
+        /// </summary>
+        public double GetLeqForTimeWindow(int minutes)
+        {
+            if (minutes <= 1) return Leq1m;
+            if (minutes <= 10) return Leq10m;
+            return Leq; // Rolling Leq for longer periods
+        }
+
+        /// <summary>
+        /// Domain behavior: Format SPL reading as string with weighting
+        /// Example: "85.3 dB(A) Fast"
+        /// </summary>
+        public string FormatReading()
+        {
+            return $"{SPL:F1} dB({Weighting}) {Filter}";
+        }
+
+        #endregion
+    }
+
+    #endregion
 }
