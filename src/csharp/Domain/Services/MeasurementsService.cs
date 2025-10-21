@@ -658,6 +658,35 @@ namespace REWApi.Domain.Services
             return ParseDistortion(data, unit, ppo);
         }
 
+        /// <summary>
+        /// Get RT60 (reverberation time) analysis data for a measurement
+        /// Maps to GET /measurements/{id}/rt60?octaveFrac={octaveFrac}
+        /// </summary>
+        /// <param name="measurementId">Measurement UUID</param>
+        /// <param name="octaveFrac">Octave fraction: 1 for octave, 3 for one-third octave</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>RT60Result with frequencies and RT60/T20/T30/EDT values</returns>
+        public async Task<RT60Result> GetRT60(
+            string measurementId,
+            int octaveFrac = 3,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            if (octaveFrac != 1 && octaveFrac != 3)
+                throw new ArgumentException("Octave fraction must be 1 (octave) or 3 (one-third octave)", nameof(octaveFrac));
+
+            var url = $"{_baseUrl}/measurements/{measurementId}/rt60?octaveFrac={octaveFrac}";
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            var data = JsonSerializer.Deserialize<JsonElement>(json);
+
+            return ParseRT60(data, octaveFrac);
+        }
+
         // Internal helper methods
 
         private async Task<string> PollJobCompletion(string jobId, CancellationToken cancellationToken)
@@ -965,21 +994,83 @@ namespace REWApi.Domain.Services
 
         private DistortionData ParseDistortion(JsonElement data, string unit, int ppo)
         {
-            var frequenciesData = data.TryGetProperty("frequencies", out var freqs) ? freqs.GetString() : null;
-            var thdData = data.TryGetProperty("thd", out var thd) ? thd.GetString() : null;
-            var thdPlusNData = data.TryGetProperty("thdPlusN", out var thdPlusN) ? thdPlusN.GetString() : null;
-            var h2Data = data.TryGetProperty("secondHarmonic", out var h2) ? h2.GetString() : null;
-            var h3Data = data.TryGetProperty("thirdHarmonic", out var h3) ? h3.GetString() : null;
+            // REW API returns: { "type": "...", "columnHeaders": ["col1", "col2"], "data": [[...], [...]] }
+            var type = data.TryGetProperty("type", out var typeElem) ? typeElem.GetString() ?? "" : "";
+            
+            var headers = Array.Empty<string>();
+            if (data.TryGetProperty("columnHeaders", out var headersElem) && headersElem.ValueKind == JsonValueKind.Array)
+            {
+                headers = headersElem.EnumerateArray()
+                    .Select(h => h.GetString() ?? "")
+                    .ToArray();
+            }
+
+            var dataArray = Array.Empty<double[]>();
+            if (data.TryGetProperty("data", out var dataElem) && dataElem.ValueKind == JsonValueKind.Array)
+            {
+                dataArray = dataElem.EnumerateArray()
+                    .Select(row => row.ValueKind == JsonValueKind.Array
+                        ? row.EnumerateArray().Select(v => v.GetDouble()).ToArray()
+                        : Array.Empty<double>())
+                    .ToArray();
+            }
 
             return new DistortionData
             {
-                Frequencies = !string.IsNullOrEmpty(frequenciesData) ? _arrayCodec.DecodeDoubleArray(frequenciesData) : Array.Empty<double>(),
-                THD = !string.IsNullOrEmpty(thdData) ? _arrayCodec.DecodeDoubleArray(thdData) : Array.Empty<double>(),
-                THDPlusN = !string.IsNullOrEmpty(thdPlusNData) ? _arrayCodec.DecodeDoubleArray(thdPlusNData) : Array.Empty<double>(),
-                SecondHarmonic = !string.IsNullOrEmpty(h2Data) ? _arrayCodec.DecodeDoubleArray(h2Data) : Array.Empty<double>(),
-                ThirdHarmonic = !string.IsNullOrEmpty(h3Data) ? _arrayCodec.DecodeDoubleArray(h3Data) : Array.Empty<double>(),
+                Type = type,
+                Headers = headers,
+                Data = dataArray,
                 Unit = unit,
                 PPO = ppo
+            };
+        }
+
+        private RT60Result ParseRT60(JsonElement data, int octaveFrac)
+        {
+            // REW API returns RT60 as a map of frequency -> { EDT, T20, T30, Topt, ... }
+            // The API returns a JSON object where keys are frequency values (as strings)
+            // and values are objects with ISO 3382 acoustical parameters
+            // Note: Property names are UPPERCASE (EDT, T20, T30)
+            // RT60 is typically derived from T30 (most reliable) or Topt (optimal)
+            
+            var freqList = new List<double>();
+            var rt60List = new List<double>(); // Will use T30 as RT60
+            var t20List = new List<double>();
+            var t30List = new List<double>();
+            var edtList = new List<double>();
+
+            // Enumerate the properties (frequency keys), ordered numerically
+            foreach (var property in data.EnumerateObject().OrderBy(p => 
+                double.TryParse(p.Name, System.Globalization.NumberStyles.Float, 
+                    System.Globalization.CultureInfo.InvariantCulture, out var freq) ? freq : double.MaxValue))
+            {
+                if (double.TryParse(property.Name, System.Globalization.NumberStyles.Float,
+                    System.Globalization.CultureInfo.InvariantCulture, out var frequency))
+                {
+                    freqList.Add(frequency);
+                    
+                    var values = property.Value;
+                    // API uses uppercase property names
+                    var edt = values.TryGetProperty("EDT", out var edtVal) ? edtVal.GetDouble() : 0.0;
+                    var t20 = values.TryGetProperty("T20", out var t20Val) ? t20Val.GetDouble() : 0.0;
+                    var t30 = values.TryGetProperty("T30", out var t30Val) ? t30Val.GetDouble() : 0.0;
+                    
+                    edtList.Add(edt);
+                    t20List.Add(t20);
+                    t30List.Add(t30);
+                    rt60List.Add(t30); // RT60 is typically T30 value (most reliable estimate)
+                }
+            }
+
+            return new RT60Result
+            {
+                Frequencies = freqList.ToArray(),
+                RT60Values = rt60List.ToArray(), // T30 values
+                T20Values = t20List.ToArray(),
+                T30Values = t30List.ToArray(),
+                EDTValues = edtList.ToArray(),
+                Method = RT60Method.T30, // Using T30 as RT60
+                OctaveFraction = octaveFrac
             };
         }
 

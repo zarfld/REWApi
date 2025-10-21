@@ -374,15 +374,34 @@ namespace REWApi.Domain
 
     /// <summary>
     /// Distortion analysis data
+    /// Returns data as 2D array with column headers as per REW API spec
     /// </summary>
     public class DistortionData
     {
-        public double[] Frequencies { get; set; } = Array.Empty<double>();
-        public double[] THD { get; set; } = Array.Empty<double>();
-        public double[] THDPlusN { get; set; } = Array.Empty<double>();
-        public double[] SecondHarmonic { get; set; } = Array.Empty<double>();
-        public double[] ThirdHarmonic { get; set; } = Array.Empty<double>();
+        /// <summary>
+        /// Type of distortion data (e.g., "Sweep distortion")
+        /// </summary>
+        public string Type { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Column headers for the data (e.g., ["Frequency (Hz)", "THD (%)", "THD+N (%)"])
+        /// </summary>
+        public string[] Headers { get; set; } = Array.Empty<string>();
+
+        /// <summary>
+        /// 2D array of distortion data [row][column]
+        /// Each row is a frequency point, columns correspond to Headers
+        /// </summary>
+        public double[][] Data { get; set; } = Array.Empty<double[]>();
+
+        /// <summary>
+        /// Unit for distortion values (e.g., "%" or "dBr")
+        /// </summary>
         public string Unit { get; set; } = "%";
+
+        /// <summary>
+        /// Points per octave (for sweep distortion)
+        /// </summary>
         public int PPO { get; set; } = 12;
     }
 

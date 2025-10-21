@@ -1,7 +1,9 @@
 using Xunit;
 using FluentAssertions;
 using REWApi.Domain.Services;
+using REWApi.Domain;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace REWApi.Tests.CSharp;
 
@@ -112,8 +114,102 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     }
 
     /// <summary>
+    /// Test: Get distortion data for a measurement
+    /// @test TEST-MEASUREMENTS-FEATURE-004 - Get distortion analysis
+    /// @trace-to MEAS-FR-006 - Distortion Analysis
+    /// </summary>
+    [Fact]
+    public async Task GetDistortion_ValidId_ReturnsDistortionData()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeEmpty("test requires at least one measurement in REW");
+        var firstMeasurementId = measurements[0].UUID;
+
+        // Act
+        var distortion = await measurementsService.GetDistortion(firstMeasurementId, unit: "percent", ppo: 12);
+
+        // Assert
+        distortion.Should().NotBeNull();
+        distortion.Type.Should().NotBeNullOrEmpty("should have distortion type description");
+        distortion.Headers.Should().NotBeEmpty("should have column headers");
+        distortion.Data.Should().NotBeEmpty("should have distortion data rows");
+        distortion.Unit.Should().Be("percent");
+        distortion.PPO.Should().Be(12);
+
+        // Verify data structure consistency
+        // Note: REW may return rows with fewer columns than headers when harmonic data is unavailable
+        if (distortion.Data.Length > 0)
+        {
+            var firstRow = distortion.Data[0];
+            
+            // All rows should have at least 1 column and at most as many as headers
+            foreach (var row in distortion.Data)
+            {
+                row.Length.Should().BeGreaterThan(0, "row should have at least one value");
+                row.Length.Should().BeLessOrEqualTo(distortion.Headers.Length, "row should not exceed header count");
+            }
+        }
+    }
+
+    /// <summary>
+    /// Test: Get RT60 reverberation time data for a measurement
+    /// @test TEST-MEASUREMENTS-FEATURE-005 - Get RT60 data
+    /// @req FR-MEAS-002 - Get measurement data (RT60)
+    /// @phase Phase 2c - Measurement data retrieval (RT60)
+    /// </summary>
+    [Fact]
+    public async Task GetRT60_ValidId_ReturnsRT60Data()
+    {
+        // Arrange
+        var measurementsService = _rewClient.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeEmpty("test requires at least one measurement in REW");
+        var firstMeasurementId = measurements[0].UUID;
+
+        // Note: RT60 data must be generated first via POST command before GET retrieval
+        // This test assumes RT60 has been generated (see setup or run "Generate RT60" command)
+
+        // Act - Test with one-third octave bands (octaveFrac=3)
+        var rt60 = await measurementsService.GetRT60(firstMeasurementId, octaveFrac: 3);
+
+        // Assert
+        rt60.Should().NotBeNull();
+        rt60.Frequencies.Should().NotBeEmpty("should have frequency data");
+        rt60.RT60Values.Should().NotBeEmpty("should have RT60 values");
+        rt60.T20Values.Should().NotBeEmpty("should have T20 values");
+        rt60.T30Values.Should().NotBeEmpty("should have T30 values");
+        rt60.EDTValues.Should().NotBeEmpty("should have EDT values");
+        rt60.OctaveFraction.Should().Be(3, "should match requested octave fraction");
+        rt60.Method.Should().Be(RT60Method.T30, "should use T30 method");
+
+        // Verify data structure consistency - all arrays should have same length
+        var expectedLength = rt60.Frequencies.Length;
+        rt60.RT60Values.Length.Should().Be(expectedLength, "RT60 values length should match frequencies");
+        rt60.T20Values.Length.Should().Be(expectedLength, "T20 values length should match frequencies");
+        rt60.T30Values.Length.Should().Be(expectedLength, "T30 values length should match frequencies");
+        rt60.EDTValues.Length.Should().Be(expectedLength, "EDT values length should match frequencies");
+
+        // Verify frequency 0 (full band/unfiltered) is present as first entry
+        rt60.Frequencies[0].Should().Be(0.0, "first frequency should be 0.0 (full band unfiltered result)");
+
+        // Verify frequencies are ordered
+        var sortedFrequencies = rt60.Frequencies.OrderBy(f => f).ToArray();
+        rt60.Frequencies.Should().BeEquivalentTo(sortedFrequencies, 
+            options => options.WithStrictOrdering(), 
+            "frequencies should be in ascending order");
+
+        // Verify RT60 values are positive (reverberation times should be > 0)
+        rt60.RT60Values.Should().OnlyContain(v => v >= 0, "RT60 values should be non-negative");
+        rt60.T20Values.Should().OnlyContain(v => v >= 0, "T20 values should be non-negative");
+        rt60.T30Values.Should().OnlyContain(v => v >= 0, "T30 values should be non-negative");
+        rt60.EDTValues.Should().OnlyContain(v => v >= 0, "EDT values should be non-negative");
+    }
+
+    /// <summary>
     /// Test: Export measurement to file
-    /// @test TEST-MEASUREMENTS-FEATURE-004 - Export measurement
+    /// @test TEST-MEASUREMENTS-FEATURE-006 - Export measurement
     /// @status TODO - Not yet implemented
     /// </summary>
     [Fact(Skip = "TODO: Implement export test")]
