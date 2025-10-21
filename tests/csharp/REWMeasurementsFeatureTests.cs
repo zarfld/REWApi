@@ -24,13 +24,9 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     /// <summary>
     /// Test: Get frequency response data using domain service
     /// @test TEST-MEASUREMENTS-FEATURE-001 - Get frequency response data
-    /// @status TODO - Response parsing needs investigation
-    /// @issue Magnitudes/Phases arrays are empty, need to verify:
-    ///        1. REW API response format for /measurements/{id}/frequency-response
-    ///        2. ParseFrequencyResponse implementation
-    ///        3. Whether measurement needs to be selected first
+    /// @status ACTIVE - Bug fixed: REW uses "magnitude"/"phase" not "magnitudeData"/"phaseData", and "startFreq"/"freqStep" not "startFrequency"/"frequencyStep"
     /// </summary>
-    [Fact(Skip = "TODO: Fix frequency response data parsing - Magnitudes array empty")]
+    [Fact]
     public async Task GetFrequencyResponse_ValidId_ReturnsFrequencyData()
     {
         // Arrange

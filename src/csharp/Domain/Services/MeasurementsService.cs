@@ -788,15 +788,17 @@ namespace REWApi.Domain.Services
 
         private FrequencyResponseData ParseFrequencyResponse(JsonElement data)
         {
-            var magnitudeData = data.TryGetProperty("magnitudeData", out var magData) ? magData.GetString() : null;
-            var phaseData = data.TryGetProperty("phaseData", out var phData) ? phData.GetString() : null;
+            // REW API uses "magnitude" and "phase", not "magnitudeData" and "phaseData"
+            var magnitudeData = data.TryGetProperty("magnitude", out var magData) ? magData.GetString() : null;
+            var phaseData = data.TryGetProperty("phase", out var phData) ? phData.GetString() : null;
 
             var result = new FrequencyResponseData
             {
                 Smoothing = data.TryGetProperty("smoothing", out var smooth) ? smooth.GetString() ?? string.Empty : string.Empty,
-                StartFrequency = data.TryGetProperty("startFrequency", out var startF) ? startF.GetDouble() : 0,
+                // REW uses "startFreq" and "freqStep", not "startFrequency" and "frequencyStep"
+                StartFrequency = data.TryGetProperty("startFreq", out var startF) ? startF.GetDouble() : 0,
                 PointsPerOctave = data.TryGetProperty("pointsPerOctave", out var ppo) ? ppo.GetInt32() : null,
-                FrequencyStep = data.TryGetProperty("frequencyStep", out var step) ? step.GetDouble() : null,
+                FrequencyStep = data.TryGetProperty("freqStep", out var step) ? step.GetDouble() : null,
                 Magnitudes = !string.IsNullOrEmpty(magnitudeData) ? _arrayCodec.DecodeFloatArray(magnitudeData) : Array.Empty<float>(),
                 Phases = !string.IsNullOrEmpty(phaseData) ? _arrayCodec.DecodeFloatArray(phaseData) : Array.Empty<float>()
             };
