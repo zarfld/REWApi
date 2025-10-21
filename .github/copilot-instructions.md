@@ -197,6 +197,9 @@ build/                  # Root build directory
 ✅ Include acceptance criteria in user stories  
 ✅ Run all tests before committing code  
 ✅ Update documentation when code changes  
+✅ in implementation follow the object model and keep it constistent accross different implementations (see \03-architecture\views\object-model.md )
+✅ always check what code is already existing to avoid duplications
+✅ 
 
 ### Never Do
 ❌ Proceed with ambiguous requirements  
@@ -206,7 +209,10 @@ build/                  # Root build directory
 ❌ Break existing tests  
 ❌ Commit untested code  
 ❌ Create circular dependencies  
-❌ Ignore security considerations  
+❌ Ignore security considerations 
+❌ pollute the codebase with duplicate code
+❌ leave uncomplete non working artifacts present in commits
+
 
 ## 🔍 When to Ask Questions
 

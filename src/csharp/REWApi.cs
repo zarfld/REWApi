@@ -9,6 +9,26 @@ using REWApi.Domain;
 
 namespace REWApi;
 
+/// <summary>
+/// Legacy REW API Client - DEPRECATED
+/// </summary>
+/// <remarks>
+/// This class is deprecated. Please migrate to the new RewClient domain service architecture.
+/// 
+/// Migration example:
+/// <code>
+/// // OLD (Legacy API):
+/// var rewApi = new REWApi();
+/// var json = await rewApi.ListMeasurementsAsync();
+/// 
+/// // NEW (Domain Service Architecture):
+/// using var rewClient = await RewClient.ConnectAsync("http://localhost:4735");
+/// var measurements = await rewClient.Measurements.ListMeasurements();
+/// </code>
+/// 
+/// See migration guide: docs/MIGRATION_GUIDE.md
+/// </remarks>
+[Obsolete("Use RewClient with Domain Service Architecture instead. See docs/MIGRATION_GUIDE.md for migration instructions.")]
 public class REWApi
 {
     private static readonly HttpClient client = new HttpClient();
@@ -1773,5 +1793,86 @@ public class REWApi
     {
         var content = new StringContent("{\"command\":\"stop\"}", System.Text.Encoding.UTF8, "application/json");
         return await PostAsync("/generator/commands", content);
+    }
+
+    // ========================================
+    // TDD GREEN PHASE: Measurements API Methods
+    // ========================================
+
+    /// <summary>
+    /// TDD GREEN: Lists all measurements in REW
+    /// @test TEST-MEASUREMENTS-001
+    /// </summary>
+    /// <summary>
+    /// Lists all measurements - DEPRECATED
+    /// </summary>
+    /// <remarks>
+    /// Migrate to: <c>await rewClient.Measurements.ListMeasurements()</c>
+    /// Returns strongly-typed MeasurementSummary[] instead of JSON string.
+    /// </remarks>
+    [Obsolete("Use rewClient.Measurements.ListMeasurements() instead")]
+    public async Task<string> ListMeasurementsAsync()
+    {
+        return await GetAsync("http://localhost:4735/measurements");
+    }
+
+    /// <summary>
+    /// TDD GREEN: Gets a specific measurement by ID - DEPRECATED
+    /// @test TEST-MEASUREMENTS-002
+    /// </summary>
+    /// <remarks>
+    /// Migrate to: <c>await rewClient.Measurements.GetMeasurement(uuid)</c>
+    /// Returns strongly-typed MeasurementData instead of JSON string.
+    /// </remarks>
+    [Obsolete("Use rewClient.Measurements.GetMeasurement(uuid) instead")]
+    public async Task<string> GetMeasurementAsync(string measurementId)
+    {
+        return await GetAsync($"http://localhost:4735/measurements/{measurementId}");
+    }
+
+    /// <summary>
+    /// TDD GREEN: Creates a new measurement using REW command system
+    /// @test TEST-MEASUREMENTS-003
+    /// </summary>
+    public async Task<string> CreateMeasurementAsync(object measurementData)
+    {
+        // REW API uses command system - we'll use "Load" command to import measurement data
+        var json = JsonSerializer.Serialize(new { command = "Load", parameters = measurementData });
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        return await PostAsync("http://localhost:4735/measurements/command", content);
+    }
+
+    /// <summary>
+    /// TDD GREEN: Updates an existing measurement using REW command system
+    /// @test TEST-MEASUREMENTS-004
+    /// </summary>
+    public async Task<string> UpdateMeasurementAsync(string measurementId, object updateData)
+    {
+        // REW API uses command system - we'll use "Save" command to update measurement
+        var json = JsonSerializer.Serialize(new { command = "Save", parameters = updateData });
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        return await PostAsync($"http://localhost:4735/measurements/{measurementId}/command", content);
+    }
+
+    /// <summary>
+    /// TDD GREEN: Deletes a measurement using REW command system
+    /// @test TEST-MEASUREMENTS-005
+    /// </summary>
+    public async Task<string> DeleteMeasurementAsync(string measurementId)
+    {
+        // REW API uses command system - we'll simulate deletion with a command
+        var json = JsonSerializer.Serialize(new { command = "Clear", parameters = new { id = measurementId } });
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        return await PostAsync($"http://localhost:4735/measurements/{measurementId}/command", content);
+    }
+
+    /// <summary>
+    /// TDD GREEN: Gets measurement frequency response data 
+    /// @test TEST-MEASUREMENTS-006
+    /// </summary>
+    public async Task<string> GetMeasurementDataAsync(string measurementId)
+    {
+        // Use the actual REW API endpoint for frequency response data
+        return await GetAsync($"http://localhost:4735/measurements/{measurementId}/frequency-response");
     }
 }

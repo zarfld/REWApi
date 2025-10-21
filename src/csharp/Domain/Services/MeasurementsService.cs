@@ -240,7 +240,22 @@ namespace REWApi.Domain.Services
             var data = JsonSerializer.Deserialize<JsonElement>(json);
 
             var measurements = new List<MeasurementSummary>();
-            if (data.TryGetProperty("measurements", out var measurementsArray))
+            
+            // REW API returns object with numeric keys like: {"1": {...}, "2": {...}}
+            // NOT an array with "measurements" property
+            if (data.ValueKind == JsonValueKind.Object)
+            {
+                foreach (var property in data.EnumerateObject())
+                {
+                    // Skip non-numeric keys if any
+                    if (int.TryParse(property.Name, out _))
+                    {
+                        measurements.Add(ParseMeasurementSummary(property.Value));
+                    }
+                }
+            }
+            // Also support wrapped format {"measurements": [...]} if REW changes in future
+            else if (data.TryGetProperty("measurements", out var measurementsArray))
             {
                 foreach (var measurement in measurementsArray.EnumerateArray())
                 {
