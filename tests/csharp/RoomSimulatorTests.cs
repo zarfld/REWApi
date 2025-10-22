@@ -13,6 +13,7 @@ namespace REWApi.Tests
     /// 
     /// Uses baseline sample data loading to ensure test isolation and consistent state.
     /// </summary>
+    [Collection("REW Integration Tests")]
     public class RoomSimulatorTests : BaseServiceTests
     {
         public override async Task InitializeAsync()

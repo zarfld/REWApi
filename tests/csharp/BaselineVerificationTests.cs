@@ -7,6 +7,7 @@ namespace REWApi.Tests
     /// Tests to verify the baseline sample data loading mechanism works correctly.
     /// These tests validate the test infrastructure before using it in actual service tests.
     /// </summary>
+    [Collection("REW Integration Tests")]
     public class BaselineVerificationTests : BaseServiceTests
     {
         [Fact]
