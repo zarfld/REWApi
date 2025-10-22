@@ -38,7 +38,7 @@ namespace REWApi.Tests
             Assert.Contains("start", commands, StringComparer.OrdinalIgnoreCase);
         }
 
-        [Fact(Skip = "Requires manual verification - sends command to REW")]
+        [Fact]
         public async Task SendCommand_Start_ShouldExecuteSuccessfully()
         {
             // Arrange
@@ -93,7 +93,7 @@ namespace REWApi.Tests
             Assert.NotEmpty(currentType);
         }
 
-        [Fact(Skip = "Requires manual verification - changes REW configuration")]
+        [Fact]
         public async Task SetType_ValidType_ShouldSetSuccessfully()
         {
             // Arrange
@@ -128,7 +128,7 @@ namespace REWApi.Tests
             Assert.True(freqSpan.Ppo > 0);
         }
 
-        [Fact(Skip = "Requires manual verification - changes REW configuration")]
+        [Fact]
         public async Task SetFrequencySpan_ValidConfiguration_ShouldSetSuccessfully()
         {
             // Arrange
@@ -146,7 +146,7 @@ namespace REWApi.Tests
             Assert.True(result);
         }
 
-        [Fact(Skip = "Requires manual verification - changes REW configuration")]
+        [Fact]
         public async Task UpdateFrequencySpan_ValidConfiguration_ShouldUpdateSuccessfully()
         {
             // Arrange
@@ -191,7 +191,7 @@ namespace REWApi.Tests
             Assert.True(levelSpan.Step > 0);
         }
 
-        [Fact(Skip = "Requires manual verification - changes REW configuration")]
+        [Fact]
         public async Task SetLevelSpan_ValidConfiguration_ShouldSetSuccessfully()
         {
             // Arrange
@@ -209,7 +209,7 @@ namespace REWApi.Tests
             Assert.True(result);
         }
 
-        [Fact(Skip = "Requires manual verification - changes REW configuration")]
+        [Fact]
         public async Task UpdateLevelSpan_ValidConfiguration_ShouldUpdateSuccessfully()
         {
             // Arrange
@@ -241,7 +241,7 @@ namespace REWApi.Tests
             Assert.NotNull(fftConfig.Window);
         }
 
-        [Fact(Skip = "Requires manual verification - changes REW configuration")]
+        [Fact]
         public async Task SetFftConfiguration_ValidConfiguration_ShouldSetSuccessfully()
         {
             // Arrange
@@ -260,7 +260,7 @@ namespace REWApi.Tests
             Assert.True(result);
         }
 
-        [Fact(Skip = "Requires manual verification - changes REW configuration")]
+        [Fact]
         public async Task UpdateFftConfiguration_ValidConfiguration_ShouldUpdateSuccessfully()
         {
             // Arrange
@@ -350,7 +350,7 @@ namespace REWApi.Tests
             Assert.True(options.SilenceIntervalSeconds >= 0);
         }
 
-        [Fact(Skip = "Requires manual verification - changes REW configuration")]
+        [Fact]
         public async Task SetOptions_ValidConfiguration_ShouldSetSuccessfully()
         {
             // Arrange
@@ -371,7 +371,7 @@ namespace REWApi.Tests
             Assert.True(result);
         }
 
-        [Fact(Skip = "Requires manual verification - changes REW configuration")]
+        [Fact]
         public async Task UpdateOptions_ValidConfiguration_ShouldUpdateSuccessfully()
         {
             // Arrange
@@ -418,7 +418,7 @@ namespace REWApi.Tests
             Assert.NotNull(progress.Message);
         }
 
-        [Fact(Skip = "Requires manual verification - subscription setup")]
+        [Fact]
         public async Task SubscribeToProgress_ValidUrl_ShouldSubscribeSuccessfully()
         {
             // Arrange
@@ -434,7 +434,7 @@ namespace REWApi.Tests
             await _client.SteppedMeasurement.UnsubscribeFromProgress(callbackUrl);
         }
 
-        [Fact(Skip = "Requires manual verification - subscription setup")]
+        [Fact]
         public async Task UnsubscribeFromProgress_ExistingSubscription_ShouldUnsubscribeSuccessfully()
         {
             // Arrange
@@ -463,7 +463,7 @@ namespace REWApi.Tests
 
         #region Results Subscription Tests
 
-        [Fact(Skip = "Requires manual verification - subscription setup")]
+        [Fact]
         public async Task SubscribeToResults_ValidUrl_ShouldSubscribeSuccessfully()
         {
             // Arrange
@@ -479,7 +479,7 @@ namespace REWApi.Tests
             await _client.SteppedMeasurement.UnsubscribeFromResults(callbackUrl);
         }
 
-        [Fact(Skip = "Requires manual verification - subscription setup")]
+        [Fact]
         public async Task UnsubscribeFromResults_ExistingSubscription_ShouldUnsubscribeSuccessfully()
         {
             // Arrange
@@ -508,7 +508,7 @@ namespace REWApi.Tests
 
         #region Integration Tests
 
-        [Fact(Skip = "Requires manual verification - full workflow test")]
+        [Fact]
         public async Task SteppedMeasurement_CompleteWorkflow_ShouldExecuteSuccessfully()
         {
             // Arrange
