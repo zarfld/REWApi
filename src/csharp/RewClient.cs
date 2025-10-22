@@ -52,6 +52,7 @@ namespace REWApi
         public GeneratorService Generator { get; }
         public RTAService RTA { get; }
         public MeasureService Measure { get; }
+        public GroupsService Groups { get; }
 
         // Internal properties for testing
         internal HttpClient HttpClient => _httpClient;
@@ -93,6 +94,7 @@ namespace REWApi
             Generator = new GeneratorService(_httpClient, _baseUrl);
             RTA = new RTAService(_httpClient, _baseUrl);
             Measure = new MeasureService(_httpClient, _baseUrl);
+            Groups = new GroupsService(_commandGate, _httpClient, _baseUrl);
         }
 
         /// <summary>

@@ -212,8 +212,8 @@ build/                  # Root build directory
 ✅ Run all tests before committing code  
 ✅ Update documentation when code changes  
 ✅ in implementation follow the object model and keep it constistent accross different implementations (see \03-architecture\views\object-model.md )
-✅ always check what code is already existing to avoid duplications
-✅ 
+✅ always check proactively what code is already existing to avoid duplications
+✅ always proactively check API documentation for existing endpoints and data models before creating new ones
 
 ### Never Do
 ❌ Proceed with ambiguous requirements  
@@ -226,7 +226,11 @@ build/                  # Root build directory
 ❌ Ignore security considerations 
 ❌ pollute the codebase with duplicate code
 ❌ leave uncomplete non working artifacts present in commits
-
+❌ rely on assumptions without confirmation
+❌ start implementation without full understanding of requirements
+❌ start implementation without full understanding of actual implementation state
+❌ ignore existing code and architecture
+❌ start an reimplementation if you can fix the existing code
 
 ## 🔍 When to Ask Questions
 
