@@ -56,6 +56,7 @@ namespace REWApi
         public InputLevelsService InputLevels { get; }
         public ImportService Import { get; }
         public AlignmentToolService AlignmentTool { get; }
+        public SteppedMeasurementService SteppedMeasurement { get; }
 
         // Internal properties for testing
         internal HttpClient HttpClient => _httpClient;
@@ -101,6 +102,7 @@ namespace REWApi
             InputLevels = new InputLevelsService(_commandGate, _httpClient, _baseUrl);
             Import = new ImportService(_commandGate, _httpClient, _baseUrl);
             AlignmentTool = new AlignmentToolService(_commandGate, _httpClient, _baseUrl);
+            SteppedMeasurement = new SteppedMeasurementService(_httpClient, _baseUrl);
         }
 
         /// <summary>

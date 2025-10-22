@@ -2052,4 +2052,158 @@ namespace REWApi.Domain
     }
 
     #endregion
+
+    #region Stepped Measurement Data Models
+
+    /// <summary>
+    /// Frequency span configuration for stepped measurements
+    /// </summary>
+    public class SteppedFreqSpan
+    {
+        /// <summary>
+        /// Start frequency in Hz
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("startFreq")]
+        public double StartFreq { get; set; }
+
+        /// <summary>
+        /// End frequency in Hz
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("endFreq")]
+        public double EndFreq { get; set; }
+
+        /// <summary>
+        /// Points per octave
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("ppo")]
+        public int Ppo { get; set; }
+    }
+
+    /// <summary>
+    /// Level span configuration for stepped measurements
+    /// </summary>
+    public class SteppedLevelSpan
+    {
+        /// <summary>
+        /// Start level in dBFS
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("startLevel")]
+        public double StartLevel { get; set; }
+
+        /// <summary>
+        /// End level in dBFS
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("endLevel")]
+        public double EndLevel { get; set; }
+
+        /// <summary>
+        /// Step size in dB
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("step")]
+        public double Step { get; set; }
+    }
+
+    /// <summary>
+    /// FFT configuration for stepped measurements
+    /// </summary>
+    public class SteppedFFTConfiguration
+    {
+        /// <summary>
+        /// FFT length (e.g. "16k", "32k", "65k")
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("fftLength")]
+        public string FftLength { get; set; } = "16k";
+
+        /// <summary>
+        /// Number of averages
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("averages")]
+        public int Averages { get; set; }
+
+        /// <summary>
+        /// Maximum overlap (e.g. "None", "50%", "75%")
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("maximumOverlap")]
+        public string MaximumOverlap { get; set; } = "None";
+
+        /// <summary>
+        /// Window function (e.g. "Hann", "Blackman", "Rectangular")
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("window")]
+        public string Window { get; set; } = "Hann";
+    }
+
+    /// <summary>
+    /// Options for stepped measurements
+    /// </summary>
+    public class SteppedOptions
+    {
+        /// <summary>
+        /// Silence interval in seconds between measurement points
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("silenceIntervalSeconds")]
+        public int SilenceIntervalSeconds { get; set; }
+
+        /// <summary>
+        /// Whether to capture spectrum data
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("captureSpectrum")]
+        public bool CaptureSpectrum { get; set; }
+
+        /// <summary>
+        /// Whether to stop measurement on heavy clipping
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("stopForHeavyClipping")]
+        public bool StopForHeavyClipping { get; set; }
+
+        /// <summary>
+        /// Whether to stop at distortion limit
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("stopAtDistortionLimit")]
+        public bool StopAtDistortionLimit { get; set; }
+
+        /// <summary>
+        /// Distortion limit in percent
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("distortionLimitPercent")]
+        public double DistortionLimitPercent { get; set; }
+
+        /// <summary>
+        /// Whether to reduce step size if distortion limit is hit
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("reduceStepIfDistortionLimitHit")]
+        public bool ReduceStepIfDistortionLimitHit { get; set; }
+    }
+
+    /// <summary>
+    /// Progress information for stepped measurements
+    /// </summary>
+    public class SteppedProgress
+    {
+        /// <summary>
+        /// Current measurement point
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("point")]
+        public int Point { get; set; }
+
+        /// <summary>
+        /// Total number of measurement points
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("points")]
+        public int Points { get; set; }
+
+        /// <summary>
+        /// Progress message
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string Message { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Estimated time remaining in seconds
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("timeRemainingSeconds")]
+        public int TimeRemainingSeconds { get; set; }
+    }
+
+    #endregion
 }
