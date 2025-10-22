@@ -736,33 +736,39 @@ namespace REWApi.Domain
         /// Display mode (only affects meter display, not data returned)
         /// Options: "SPL", etc. (get from /spl-meter/modes)
         /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("mode")]
         public string Mode { get; set; }
 
         /// <summary>
         /// Frequency weighting
         /// Options: "A", "C", "Z" (get from /spl-meter/weightings)
         /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("weighting")]
         public string Weighting { get; set; }
 
         /// <summary>
         /// Time weighting filter
         /// Options: "Fast", "Slow", "Impulse" (get from /spl-meter/filters)
         /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("filter")]
         public string Filter { get; set; }
 
         /// <summary>
         /// High-pass filter active flag
         /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("highPassActive")]
         public bool HighPassActive { get; set; }
 
         /// <summary>
         /// Rolling Leq calculation active flag
         /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("rollingLeqActive")]
         public bool RollingLeqActive { get; set; }
 
         /// <summary>
         /// Rolling Leq time window in minutes
         /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("rollingLeqMinutes")]
         public int RollingLeqMinutes { get; set; }
 
         #region Domain Behavior
@@ -821,56 +827,68 @@ namespace REWApi.Domain
         /// <summary>
         /// Meter number (1-4)
         /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("meterNumber")]
         public int MeterNumber { get; set; }
 
         /// <summary>
         /// Weighting applied to measurements
         /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("weighting")]
         public string Weighting { get; set; }
 
         /// <summary>
         /// Time weighting filter applied
         /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("filter")]
         public string Filter { get; set; }
 
         /// <summary>
         /// Current SPL value in dB
         /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("SPL")]
         public double SPL { get; set; }
 
         /// <summary>
         /// Equivalent continuous sound level (Leq) in dB
         /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Leq")]
         public double Leq { get; set; }
 
         /// <summary>
         /// Indicates if Leq is a rolling (time-windowed) value
         /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("isRollingLeq")]
         public bool IsRollingLeq { get; set; }
 
         /// <summary>
         /// Rolling Leq time window in minutes (if applicable)
         /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("rollingLeqMinutes")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(Domain.JsonConverters.EmptyStringToIntConverter))]
         public int RollingLeqMinutes { get; set; }
 
         /// <summary>
         /// 1-minute Leq value
         /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Leq1m")]
         public double Leq1m { get; set; }
 
         /// <summary>
         /// 10-minute Leq value
         /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Leq10m")]
         public double Leq10m { get; set; }
 
         /// <summary>
         /// Sound Exposure Level (SEL) in dB
         /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("SEL")]
         public double SEL { get; set; }
 
         /// <summary>
         /// Elapsed measurement time in seconds
         /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("elapsedTime")]
         public double ElapsedTime { get; set; }
 
         #region Domain Behavior
@@ -915,10 +933,236 @@ namespace REWApi.Domain
         /// </summary>
         public string FormatReading()
         {
-            return $"{SPL:F1} dB({Weighting}) {Filter}";
+            return $"{SPL.ToString("F1", System.Globalization.CultureInfo.InvariantCulture)} dB({Weighting}) {Filter}";
         }
 
         #endregion
+    }
+
+    #endregion
+
+    #region Generator Domain Objects
+
+    /// <summary>
+    /// Generator status information
+    /// Maps to REW API /generator/status endpoint
+    /// </summary>
+    public class GeneratorStatus
+    {
+        /// <summary>
+        /// Whether the generator is enabled (requires audio output available)
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("enabled")]
+        public bool Enabled { get; set; }
+
+        /// <summary>
+        /// Whether the generator is currently playing
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("playing")]
+        public bool Playing { get; set; }
+
+        /// <summary>
+        /// Currently selected signal type
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("signal")]
+        public string Signal { get; set; } = "";
+
+        /// <summary>
+        /// Current output level
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("level")]
+        public double Level { get; set; }
+
+        /// <summary>
+        /// Unit for the level (e.g., "dBFS")
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("levelUnit")]
+        public string LevelUnit { get; set; } = "dBFS";
+
+        #region Domain Behavior
+
+        /// <summary>
+        /// Domain validation: Check if generator can be started
+        /// </summary>
+        public bool CanStart() => Enabled && !Playing;
+
+        /// <summary>
+        /// Domain validation: Check if generator can be stopped
+        /// </summary>
+        public bool CanStop() => Enabled && Playing;
+
+        #endregion
+    }
+
+    /// <summary>
+    /// Generator signal configuration
+    /// Different signals have different configuration options
+    /// </summary>
+    public class GeneratorConfiguration
+    {
+        // Common settings for all signals
+        
+        /// <summary>
+        /// Add dither to the signal
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("addDither")]
+        public bool AddDither { get; set; }
+
+        /// <summary>
+        /// Dither bit depth (when addDither is true)
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("ditherBits")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(Domain.JsonConverters.EmptyStringToIntConverter))]
+        public int DitherBits { get; set; }
+
+        // Sine signal specific settings
+        
+        /// <summary>
+        /// Frequency for sine wave (Hz)
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("frequency")]
+        public double? Frequency { get; set; }
+
+        // Noise signal specific settings
+        
+        /// <summary>
+        /// Noise color/type (Pink, White, etc.)
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("noiseColor")]
+        public string? NoiseColor { get; set; }
+
+        /// <summary>
+        /// Enable custom filtering for noise
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("customFilter")]
+        public bool? CustomFilter { get; set; }
+
+        /// <summary>
+        /// High-pass filter frequency for custom noise filtering
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("highPassFreq")]
+        public double? HighPassFreq { get; set; }
+
+        /// <summary>
+        /// Low-pass filter frequency for custom noise filtering
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("lowPassFreq")]
+        public double? LowPassFreq { get; set; }
+
+        #region Domain Behavior
+
+        /// <summary>
+        /// Domain validation: Check if configuration is valid for sine signal
+        /// </summary>
+        public bool IsValidForSine()
+        {
+            return Frequency.HasValue && Frequency.Value > 0 && Frequency.Value <= 24000;
+        }
+
+        /// <summary>
+        /// Domain validation: Check if custom filter settings are valid
+        /// Requires both HPF and LPF to be set, with HPF < LPF
+        /// </summary>
+        public bool IsValidCustomFilter()
+        {
+            // Both filters must be specified
+            if (!HighPassFreq.HasValue || !LowPassFreq.HasValue)
+                return false;
+            
+            // HPF must be less than LPF
+            if (HighPassFreq.Value >= LowPassFreq.Value)
+                return false;
+            
+            // Frequencies must be in valid range
+            return HighPassFreq.Value > 0 && LowPassFreq.Value <= 24000;
+        }
+
+        #endregion
+    }
+
+    /// <summary>
+    /// Generator protection settings
+    /// Stops generator if input signal exceeds threshold or clips
+    /// </summary>
+    public class GeneratorProtectionSettings
+    {
+        /// <summary>
+        /// Enable SPL limit abort - generator stops if input exceeds threshold
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("splLimitAbort")]
+        public bool SPLLimitAbort { get; set; }
+
+        /// <summary>
+        /// Enable clipping abort - stops generator if input clips
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("clippingAbort")]
+        public bool ClippingAbort { get; set; }
+
+        /// <summary>
+        /// dB SPL limit - threshold for SPL abort
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("dBSPLLimit")]
+        public double DBSPLLimit { get; set; }
+
+        #region Domain Behavior
+
+        /// <summary>
+        /// Domain validation: Check if threshold is reasonable
+        /// </summary>
+        public bool IsReasonableThreshold()
+        {
+            // Typical SPL threshold range: 80-140 dB
+            return DBSPLLimit >= 80 && DBSPLLimit <= 140;
+        }
+
+        /// <summary>
+        /// Domain behavior: Create safe default protection settings
+        /// </summary>
+        public static GeneratorProtectionSettings CreateSafeDefaults()
+        {
+            return new GeneratorProtectionSettings
+            {
+                SPLLimitAbort = true,
+                ClippingAbort = true,
+                DBSPLLimit = 110.0 // Safe listening level
+            };
+        }
+
+        #endregion
+    }
+
+    /// <summary>
+    /// Generator signal response wrapper
+    /// </summary>
+    public class GeneratorSignalResponse
+    {
+        [System.Text.Json.Serialization.JsonPropertyName("signal")]
+        public string Signal { get; set; } = "";
+    }
+
+    /// <summary>
+    /// Generator level response wrapper
+    /// </summary>
+    public class GeneratorLevelResponse
+    {
+        [System.Text.Json.Serialization.JsonPropertyName("value")]
+        public double Value { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("unit")]
+        public string Unit { get; set; } = "dBFS";
+    }
+
+    /// <summary>
+    /// Wrapper for frequency response from API
+    /// API returns {"value":1000.0, "unit":"Hz"}
+    /// </summary>
+    public class GeneratorFrequencyResponse
+    {
+        [System.Text.Json.Serialization.JsonPropertyName("value")]
+        public double Value { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("unit")]
+        public string Unit { get; set; } = "Hz";
     }
 
     #endregion

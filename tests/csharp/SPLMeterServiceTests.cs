@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using REWApi.Domain;
 using REWApi.Domain.Services;
+using REWApi.Tests.CSharp;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -23,13 +24,13 @@ namespace REWApi.Tests
     /// - GET /spl-meter/filters
     /// - GET /spl-meter/{id}/levels
     /// </summary>
-    public class SPLMeterServiceTests : IClassFixture<REWTestFixture>
+    public class SPLMeterServiceTests : IClassFixture<RewClientFixture>
     {
-        private readonly REWTestFixture _fixture;
+        private readonly RewClientFixture _fixture;
         private readonly ITestOutputHelper _output;
         private readonly SPLMeterService _splMeterService;
 
-        public SPLMeterServiceTests(REWTestFixture fixture, ITestOutputHelper output)
+        public SPLMeterServiceTests(RewClientFixture fixture, ITestOutputHelper output)
         {
             _fixture = fixture;
             _output = output;

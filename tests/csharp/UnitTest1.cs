@@ -16,6 +16,10 @@ public class RewClientFixture : IAsyncLifetime
 {
     public RewClient? Client { get; private set; }
     
+    // Expose HttpClient and BaseUrl for backward compatibility with service-level tests
+    public HttpClient HttpClient => Client?.HttpClient ?? throw new InvalidOperationException("Fixture not initialized");
+    public string BaseUrl => Client?.BaseUrl ?? "http://localhost:4735";
+    
     public async Task InitializeAsync()
     {
         // Connect to REW API (assumes REW is running on localhost:4735)

@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using REWApi.Domain;
 using REWApi.Domain.Services;
 using REWApi.Infrastructure;
+
+[assembly: InternalsVisibleTo("REWApi.Tests.CSharp")]
 
 namespace REWApi
 {
@@ -45,6 +48,12 @@ namespace REWApi
         public ApplicationService Application { get; }
         public AudioService Audio { get; }
         public MeasurementsService Measurements { get; }
+        public SPLMeterService SPLMeter { get; }
+        public GeneratorService Generator { get; }
+
+        // Internal properties for testing
+        internal HttpClient HttpClient => _httpClient;
+        internal string BaseUrl => _baseUrl;
 
         private RewClient(
             HttpClient httpClient,
@@ -78,6 +87,8 @@ namespace REWApi
             Application = new ApplicationService(_commandGate, _httpClient, _baseUrl, _subscriptionManager);
             Audio = new AudioService(_commandGate, _httpClient, _baseUrl);
             Measurements = new MeasurementsService(_commandGate, _httpClient, _baseUrl);
+            SPLMeter = new SPLMeterService(_httpClient, _baseUrl);
+            Generator = new GeneratorService(_httpClient, _baseUrl);
         }
 
         /// <summary>
