@@ -53,6 +53,7 @@ namespace REWApi
         public RTAService RTA { get; }
         public MeasureService Measure { get; }
         public GroupsService Groups { get; }
+        public InputLevelsService InputLevels { get; }
 
         // Internal properties for testing
         internal HttpClient HttpClient => _httpClient;
@@ -95,6 +96,7 @@ namespace REWApi
             RTA = new RTAService(_httpClient, _baseUrl);
             Measure = new MeasureService(_httpClient, _baseUrl);
             Groups = new GroupsService(_commandGate, _httpClient, _baseUrl);
+            InputLevels = new InputLevelsService(_commandGate, _httpClient, _baseUrl);
         }
 
         /// <summary>
