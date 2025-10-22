@@ -2206,4 +2206,152 @@ namespace REWApi.Domain
     }
 
     #endregion
+
+    #region Room Simulator Data Models
+
+    /// <summary>
+    /// Room size configuration for room simulator
+    /// </summary>
+    public class RoomSize
+    {
+        [System.Text.Json.Serialization.JsonPropertyName("unit")]
+        public string Unit { get; set; } = "metres";
+
+        [System.Text.Json.Serialization.JsonPropertyName("length")]
+        public double Length { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("width")]
+        public double Width { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("height")]
+        public double Height { get; set; }
+    }
+
+    /// <summary>
+    /// Surface absorption coefficients for room simulator
+    /// </summary>
+    public class RoomAbsorptions
+    {
+        [System.Text.Json.Serialization.JsonPropertyName("front")]
+        public double Front { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("back")]
+        public double Back { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("left")]
+        public double Left { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("right")]
+        public double Right { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("ceiling")]
+        public double Ceiling { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("floor")]
+        public double Floor { get; set; }
+    }
+
+    /// <summary>
+    /// Room simulator options configuration
+    /// </summary>
+    public class RoomSimOptions
+    {
+        [System.Text.Json.Serialization.JsonPropertyName("showAnechoicResponses")]
+        public bool ShowAnechoicResponses { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("timeAlignSpeakersAndSubs")]
+        public bool TimeAlignSpeakersAndSubs { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("alignSubsIndividually")]
+        public bool AlignSubsIndividually { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("useCrossoverFilter")]
+        public bool UseCrossoverFilter { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("crossoverFrequencyHz")]
+        public int CrossoverFrequencyHz { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("subsHaveSameDelay")]
+        public bool SubsHaveSameDelay { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("subsDelayms")]
+        public double SubsDelayms { get; set; }
+    }
+
+    /// <summary>
+    /// Position in room (head, mic, or source)
+    /// </summary>
+    public class RoomPosition
+    {
+        [System.Text.Json.Serialization.JsonPropertyName("unit")]
+        public string Unit { get; set; } = "metres";
+
+        [System.Text.Json.Serialization.JsonPropertyName("fromRear")]
+        public double FromRear { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("fromLeft")]
+        public double FromLeft { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("fromFloor")]
+        public double FromFloor { get; set; }
+    }
+
+    /// <summary>
+    /// Microphone position offsets for room simulator
+    /// </summary>
+    public class MicPositionOffsets
+    {
+        [System.Text.Json.Serialization.JsonPropertyName("unit")]
+        public string Unit { get; set; } = "metres";
+
+        [System.Text.Json.Serialization.JsonPropertyName("inFront")]
+        public double InFront { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("behind")]
+        public double Behind { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("left")]
+        public double Left { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("right")]
+        public double Right { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("above")]
+        public double Above { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("below")]
+        public double Below { get; set; }
+    }
+
+    /// <summary>
+    /// Source configuration for room simulator
+    /// </summary>
+    public class SourceConfiguration
+    {
+        [System.Text.Json.Serialization.JsonPropertyName("lfMinus3dBHz")]
+        public int LfMinus3dBHz { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("enclosureType")]
+        public string EnclosureType { get; set; } = "Ported";
+
+        [System.Text.Json.Serialization.JsonPropertyName("invert")]
+        public bool Invert { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("delayms")]
+        public double Delayms { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("gaindB")]
+        public double GaindB { get; set; }
+    }
+
+    /// <summary>
+    /// Sources list wrapper
+    /// </summary>
+    public class SourcesList
+    {
+        [System.Text.Json.Serialization.JsonPropertyName("sources")]
+        public List<string> Sources { get; set; } = new();
+    }
+
+    #endregion
 }
