@@ -43,7 +43,7 @@ namespace REWApi.Tests
             }
         }
 
-        [Fact(Skip = "REW API CommandGate operations don't persist changes in current test environment. Group creation succeeds but doesn't appear in subsequent ListGroups. Requires investigation of REW blocking mode or Pro version features.")]
+        [Fact(Skip = "CreateGroup returns success but group not actually created - requires investigation of CommandGate or serialization")]
         public async Task CreateGroup_ShouldCreateNewGroup()
         {
             // Arrange
@@ -60,6 +60,9 @@ namespace REWApi.Tests
             // Assert
             result.Should().BeTrue();
             _output.WriteLine($"Created group: {groupName}");
+
+            // Wait longer for REW to process (CommandGate operations may take time)
+            await Task.Delay(2000); // Increased to 2 seconds - REW needs significant time
 
             // Verify it exists
             var groups = await _client.Groups.ListGroups();
@@ -91,13 +94,16 @@ namespace REWApi.Tests
             _output.WriteLine($"Retrieved group: {group.Name} (UUID: {group.UUID})");
         }
 
-        [Fact(Skip = "REW API CommandGate operations don't persist. Requires existing group from API - can't create test data via CreateGroup.")]
+        [Fact(Skip = "Depends on CreateGroup which has silent failure issue")]
         public async Task UpdateGroup_ShouldUpdateGroupInfo()
         {
             // Arrange - Create a test group
             var originalName = $"Original Group {Guid.NewGuid()}";
             var newGroup = new GroupInfo { Name = originalName, Notes = "Original notes" };
             await _client.Groups.CreateGroup(newGroup);
+
+            // Wait for creation to complete (CommandGate operations)
+            await Task.Delay(2000); // Increased to 2 seconds
 
             var groups = await _client.Groups.ListGroups();
             var createdGroup = groups.First(g => g.Name == originalName);
@@ -110,19 +116,26 @@ namespace REWApi.Tests
 
             // Assert
             result.Should().BeTrue();
+            
+            // Wait for update to complete
+            await Task.Delay(2000); // Increased to 2 seconds
+            
             var updatedGroup = await _client.Groups.GetGroup(createdGroup.UUID);
             updatedGroup.Name.Should().Be(updatedName);
             updatedGroup.Notes.Should().Be("Updated notes");
             _output.WriteLine($"Updated group: {originalName} → {updatedName}");
         }
 
-        [Fact(Skip = "REW API CommandGate operations don't persist. Requires existing group from API - can't create test data via CreateGroup.")]
+        [Fact(Skip = "Depends on CreateGroup which has silent failure issue")]
         public async Task DeleteGroup_ShouldRemoveGroup()
         {
             // Arrange - Create a test group
             var groupName = $"To Delete Group {Guid.NewGuid()}";
             var newGroup = new GroupInfo { Name = groupName, Notes = "Will be deleted" };
             await _client.Groups.CreateGroup(newGroup);
+
+            // Wait for creation to complete
+            await Task.Delay(2000); // Increased to 2 seconds
 
             var groups = await _client.Groups.ListGroups();
             var createdGroup = groups.First(g => g.Name == groupName);
@@ -132,6 +145,10 @@ namespace REWApi.Tests
 
             // Assert
             result.Should().BeTrue();
+            
+            // Wait for deletion to complete
+            await Task.Delay(2000); // Increased to 2 seconds
+            
             var groupsAfterDelete = await _client.Groups.ListGroups();
             groupsAfterDelete.Should().NotContain(g => g.UUID == createdGroup.UUID);
             _output.WriteLine($"Deleted group: {groupName}");
@@ -162,7 +179,7 @@ namespace REWApi.Tests
             _output.WriteLine($"Group {nonExistingGroupId} exists: {notExists}");
         }
 
-        [Fact(Skip = "REW API CommandGate operations don't persist. FindGroupsByName uses LINQ on ListGroups result, which returns Group0-Group8 but no custom created groups.")]
+        [Fact(Skip = "Depends on CreateGroup which has silent failure issue")]
         public async Task FindGroupsByName_ShouldReturnMatchingGroups()
         {
             // Arrange - Create groups with specific names
@@ -174,6 +191,9 @@ namespace REWApi.Tests
             await _client.Groups.CreateGroup(group1);
             await _client.Groups.CreateGroup(group2);
             await _client.Groups.CreateGroup(group3);
+
+            // Wait longer for REW to process all creations (CommandGate batching)
+            await Task.Delay(3000); // Increased to 3 seconds for 3 sequential creates
 
             // Act
             var foundGroups = await _client.Groups.FindGroupsByName(prefix);

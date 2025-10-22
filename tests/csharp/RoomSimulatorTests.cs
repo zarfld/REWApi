@@ -126,10 +126,16 @@ namespace REWApi.Tests
                 var result = await _client.RoomSimulator.UpdateRoomSize(modified);
                 Assert.True(result);
 
+                // Wait for REW to process
+                await Task.Delay(100);
+
                 var updated = await _client.RoomSimulator.GetRoomSize();
 
-                // Assert
-                Assert.Equal(original.Length + 0.5, updated.Length, 2);
+                // Assert - verify length was increased by 0.5
+                Assert.Equal(original.Length + 0.5, updated.Length, precision: 2);
+                // Verify other dimensions remained unchanged
+                Assert.Equal(original.Width, updated.Width, precision: 2);
+                Assert.Equal(original.Height, updated.Height, precision: 2);
             }
             finally
             {
@@ -217,16 +223,22 @@ namespace REWApi.Tests
                 var result = await _client.RoomSimulator.SetAbsorptions(newAbsorptions);
                 Assert.True(result);
 
+                // Wait a moment for REW to process the change
+                await Task.Delay(100);
+
                 var updated = await _client.RoomSimulator.GetAbsorptions();
 
-                // Assert
-                Assert.Equal(0.2, updated.Front);
-                Assert.Equal(0.15, updated.Ceiling);
-                Assert.Equal(0.1, updated.Floor);
+                // Assert - use tolerance for floating point comparison
+                Assert.Equal(0.2, updated.Front, precision: 2);
+                Assert.Equal(0.2, updated.Back, precision: 2);
+                Assert.Equal(0.2, updated.Left, precision: 2);
+                Assert.Equal(0.2, updated.Right, precision: 2);
+                Assert.Equal(0.15, updated.Ceiling, precision: 2);
+                Assert.Equal(0.1, updated.Floor, precision: 2);
             }
             finally
             {
-                // Cleanup
+                // Cleanup - restore original state
                 await _client.RoomSimulator.SetAbsorptions(original);
             }
         }
@@ -252,10 +264,17 @@ namespace REWApi.Tests
                 var result = await _client.RoomSimulator.UpdateAbsorptions(modified);
                 Assert.True(result);
 
+                // Wait a moment for REW to process the change
+                await Task.Delay(100);
+
                 var updated = await _client.RoomSimulator.GetAbsorptions();
 
-                // Assert
-                Assert.Equal(0.25, updated.Ceiling);
+                // Assert - verify ceiling was updated
+                Assert.Equal(0.25, updated.Ceiling, precision: 2);
+                // Verify other values remained unchanged
+                Assert.Equal(original.Front, updated.Front, precision: 2);
+                Assert.Equal(original.Back, updated.Back, precision: 2);
+                Assert.Equal(original.Floor, updated.Floor, precision: 2);
             }
             finally
             {
@@ -303,11 +322,19 @@ namespace REWApi.Tests
                 var result = await _client.RoomSimulator.SetOptions(newOptions);
                 Assert.True(result);
 
+                // Wait for REW to process
+                await Task.Delay(100);
+
                 var updated = await _client.RoomSimulator.GetOptions();
 
-                // Assert
+                // Assert - verify all set values
                 Assert.Equal(!original.ShowAnechoicResponses, updated.ShowAnechoicResponses);
+                Assert.True(updated.TimeAlignSpeakersAndSubs);
+                Assert.False(updated.AlignSubsIndividually);
+                Assert.True(updated.UseCrossoverFilter);
                 Assert.Equal(100, updated.CrossoverFrequencyHz);
+                Assert.False(updated.SubsHaveSameDelay);
+                Assert.Equal(0, updated.SubsDelayms);
             }
             finally
             {
@@ -338,10 +365,17 @@ namespace REWApi.Tests
                 var result = await _client.RoomSimulator.UpdateOptions(modified);
                 Assert.True(result);
 
+                // Wait for REW to process
+                await Task.Delay(100);
+
                 var updated = await _client.RoomSimulator.GetOptions();
 
-                // Assert
+                // Assert - verify CrossoverFrequencyHz was updated
                 Assert.Equal(90, updated.CrossoverFrequencyHz);
+                // Verify other values remained unchanged
+                Assert.Equal(original.ShowAnechoicResponses, updated.ShowAnechoicResponses);
+                Assert.Equal(original.TimeAlignSpeakersAndSubs, updated.TimeAlignSpeakersAndSubs);
+                Assert.Equal(original.AlignSubsIndividually, updated.AlignSubsIndividually);
             }
             finally
             {
@@ -440,11 +474,18 @@ namespace REWApi.Tests
                 var result = await _client.RoomSimulator.SetMicPositionOffsets(newOffsets);
                 Assert.True(result);
 
+                // Wait for REW to process
+                await Task.Delay(100);
+
                 var updated = await _client.RoomSimulator.GetMicPositionOffsets();
 
-                // Assert
-                Assert.Equal(0.4, updated.InFront, 2);
-                Assert.Equal(0.4, updated.Behind, 2);
+                // Assert - verify all offsets were set
+                Assert.Equal(0.4, updated.InFront, precision: 2);
+                Assert.Equal(0.4, updated.Behind, precision: 2);
+                Assert.Equal(0.4, updated.Left, precision: 2);
+                Assert.Equal(0.4, updated.Right, precision: 2);
+                Assert.Equal(0.4, updated.Above, precision: 2);
+                Assert.Equal(0.4, updated.Below, precision: 2);
             }
             finally
             {
@@ -464,7 +505,7 @@ namespace REWApi.Tests
                 InFront = 0.35,
                 Behind = original.Behind,
                 Left = original.Left,
-                Right = original.Right,
+                Right = 0.35,
                 Above = original.Above,
                 Below = original.Below
             };
@@ -475,10 +516,19 @@ namespace REWApi.Tests
                 var result = await _client.RoomSimulator.UpdateMicPositionOffsets(modified);
                 Assert.True(result);
 
+                // Wait for REW to process
+                await Task.Delay(100);
+
                 var updated = await _client.RoomSimulator.GetMicPositionOffsets();
 
-                // Assert
-                Assert.Equal(0.35, updated.InFront, 2);
+                // Assert - verify modified values
+                Assert.Equal(0.35, updated.InFront, precision: 2);
+                Assert.Equal(0.35, updated.Right, precision: 2);
+                // Verify unmodified values remained unchanged
+                Assert.Equal(original.Behind, updated.Behind, precision: 2);
+                Assert.Equal(original.Left, updated.Left, precision: 2);
+                Assert.Equal(original.Above, updated.Above, precision: 2);
+                Assert.Equal(original.Below, updated.Below, precision: 2);
             }
             finally
             {
@@ -704,12 +754,17 @@ namespace REWApi.Tests
                 var result = await _client.RoomSimulator.SetSourceConfiguration(sourceName, newConfig);
                 Assert.True(result);
 
+                // Wait for REW to process
+                await Task.Delay(100);
+
                 var updated = await _client.RoomSimulator.GetSourceConfiguration(sourceName);
 
-                // Assert
+                // Assert - verify all set values with appropriate precision
                 Assert.Equal(40, updated.LfMinus3dBHz);
                 Assert.Equal("Sealed", updated.EnclosureType);
-                Assert.Equal(3.0, updated.GaindB);
+                Assert.False(updated.Invert);
+                Assert.Equal(1.0, updated.Delayms, precision: 1);
+                Assert.Equal(3.0, updated.GaindB, precision: 1);
             }
             finally
             {
