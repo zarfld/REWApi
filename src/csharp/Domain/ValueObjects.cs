@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace REWApi.Domain
 {
@@ -1562,6 +1563,492 @@ namespace REWApi.Domain
         }
 
         #endregion
+    }
+
+    #endregion
+
+    #region Measure Service Domain Objects
+
+    /// <summary>
+    /// Measurement naming configuration
+    /// Controls how measurements are automatically named
+    /// </summary>
+    public class MeasureNaming
+    {
+        /// <summary>
+        /// Selected naming option (e.g., "Automatic", "Custom", "Sequential")
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("option")]
+        public string Option { get; set; } = "Automatic";
+
+        /// <summary>
+        /// Custom prefix for measurement names
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("prefix")]
+        public string Prefix { get; set; } = "";
+
+        /// <summary>
+        /// Whether to include date in measurement name
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("includeDate")]
+        public bool IncludeDate { get; set; } = false;
+
+        /// <summary>
+        /// Date format string
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("dateFormat")]
+        public string DateFormat { get; set; } = "";
+
+        /// <summary>
+        /// Whether to include time in measurement name
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("includeTime")]
+        public bool IncludeTime { get; set; } = false;
+
+        /// <summary>
+        /// Time format string
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("timeFormat")]
+        public string TimeFormat { get; set; } = "";
+
+        /// <summary>
+        /// Sequential number for naming
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("sequenceNumber")]
+        public int SequenceNumber { get; set; } = 1;
+
+        /// <summary>
+        /// Format of the next measurement name (read-only from API)
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("nextName")]
+        public string NextName { get; set; } = "";
+
+        #region Domain Behavior
+
+        /// <summary>
+        /// Domain validation: Check if naming configuration is valid
+        /// </summary>
+        public bool IsValidConfiguration()
+        {
+            return SequenceNumber > 0;
+        }
+
+        #endregion
+    }
+
+    /// <summary>
+    /// Measurement notes
+    /// Notes to be included with the next measurement
+    /// </summary>
+    public class MeasureNotes
+    {
+        /// <summary>
+        /// Notes text
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("notes")]
+        public string Notes { get; set; } = "";
+    }
+
+    /// <summary>
+    /// Measurement output level configuration
+    /// </summary>
+    public class MeasureLevel
+    {
+        /// <summary>
+        /// Level value
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("level")]
+        public double Level { get; set; } = -12.0;
+
+        /// <summary>
+        /// Unit for level (dBFS, dBu, dBV, SPL)
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("unit")]
+        public string Unit { get; set; } = "dBFS";
+
+        #region Domain Behavior
+
+        /// <summary>
+        /// Domain validation: Check if level is within safe range
+        /// </summary>
+        public bool IsSafeLevel()
+        {
+            if (Unit == "dBFS")
+                return Level <= 0.0 && Level >= -96.0;
+            if (Unit == "dBu" || Unit == "dBV")
+                return Level <= 20.0 && Level >= -60.0;
+            if (Unit == "SPL")
+                return Level <= 120.0 && Level >= 40.0;
+            return true; // Unknown unit, assume safe
+        }
+
+        #endregion
+    }
+
+    /// <summary>
+    /// Protection options for measurements
+    /// Abort measurements if limits are exceeded
+    /// </summary>
+    public class MeasureProtectionOptions
+    {
+        /// <summary>
+        /// Abort on excessive input clipping
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("abortOnClipping")]
+        public bool AbortOnClipping { get; set; } = false;
+
+        /// <summary>
+        /// Clipping detection threshold (%)
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("clippingThreshold")]
+        public double ClippingThreshold { get; set; } = 0.5;
+
+        /// <summary>
+        /// Abort if SPL exceeds limit
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("abortOnSPLExceeded")]
+        public bool AbortOnSPLExceeded { get; set; } = false;
+
+        /// <summary>
+        /// SPL limit in dB
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("splLimit")]
+        public double SPLLimit { get; set; } = 100.0;
+
+        #region Domain Behavior
+
+        /// <summary>
+        /// Domain validation: Check if protection settings are reasonable
+        /// </summary>
+        public bool IsValidConfiguration()
+        {
+            return ClippingThreshold >= 0.0 && ClippingThreshold <= 100.0 &&
+                   SPLLimit >= 40.0 && SPLLimit <= 140.0;
+        }
+
+        /// <summary>
+        /// Domain behavior: Check if any protection is active
+        /// </summary>
+        public bool HasActiveProtection()
+        {
+            return AbortOnClipping || AbortOnSPLExceeded;
+        }
+
+        #endregion
+    }
+
+    /// <summary>
+    /// Sweep configuration for measurements
+    /// </summary>
+    public class SweepConfiguration
+    {
+        /// <summary>
+        /// Sweep start frequency in Hz
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("startFreq")]
+        public double StartFreq { get; set; } = 20.0;
+
+        /// <summary>
+        /// Sweep end frequency in Hz
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("endFreq")]
+        public double EndFreq { get; set; } = 20000.0;
+
+        /// <summary>
+        /// Sweep length (API returns strings like "256k", "512k", "1024k", etc.)
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("length")]
+        public string Length { get; set; } = "256k";
+
+        /// <summary>
+        /// Fill silence with dither to keep audio path active
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("fillSilenceWithDither")]
+        public bool FillSilenceWithDither { get; set; } = false;
+
+        #region Domain Behavior
+
+        /// <summary>
+        /// Domain validation: Check if frequency range is valid
+        /// </summary>
+        public bool IsValidFrequencyRange()
+        {
+            return StartFreq > 0 && EndFreq > StartFreq && 
+                   StartFreq >= 1.0 && EndFreq <= 96000.0;
+        }
+
+        /// <summary>
+        /// Domain validation: Check if sweep length is valid (must be one of REW's supported values as string)
+        /// </summary>
+        public bool IsValidLength()
+        {
+            // REW supports specific sweep lengths as strings: "32k", "64k", "128k", "256k", "512k", "1024k", "2048k", "4096k"
+            var validLengths = new[] { "32k", "64k", "128k", "256k", "512k", "1024k", "2048k", "4096k" };
+            return validLengths.Contains(Length);
+        }
+
+        /// <summary>
+        /// Domain calculation: Calculate frequency span in octaves
+        /// </summary>
+        public double GetFrequencySpanOctaves()
+        {
+            return Math.Log2(EndFreq / StartFreq);
+        }
+
+        #endregion
+    }
+
+    /// <summary>
+    /// Sweep repetitions configuration
+    /// </summary>
+    public class SweepRepetitions
+    {
+        /// <summary>
+        /// Number of sweep repetitions (1-16)
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("repetitions")]
+        public int Repetitions { get; set; } = 1;
+
+        #region Domain Behavior
+
+        /// <summary>
+        /// Domain validation: Check if repetitions count is valid
+        /// </summary>
+        public bool IsValidCount()
+        {
+            return Repetitions >= 1 && Repetitions <= 16;
+        }
+
+        #endregion
+    }
+
+    /// <summary>
+    /// Timing reference configuration
+    /// </summary>
+    public class TimingReference
+    {
+        /// <summary>
+        /// Selected timing reference mode
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("reference")]
+        public string Reference { get; set; } = "None";
+
+        // Additional configuration properties would be added based on reference mode
+
+        #region Domain Behavior
+
+        /// <summary>
+        /// Domain validation: Check if reference mode is recognized
+        /// </summary>
+        public bool IsValidReference()
+        {
+            var validReferences = new[] { "None", "Loopback", "Acoustic", "Wired", "USB mic" };
+            return validReferences.Contains(Reference);
+        }
+
+        #endregion
+    }
+
+    /// <summary>
+    /// Timing offset configuration
+    /// </summary>
+    public class TimingOffset
+    {
+        /// <summary>
+        /// Timing offset in milliseconds
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("offset")]
+        public double Offset { get; set; } = 0.0;
+
+        #region Domain Behavior
+
+        /// <summary>
+        /// Domain validation: Check if offset is reasonable
+        /// </summary>
+        public bool IsReasonableOffset()
+        {
+            return Math.Abs(Offset) <= 100.0; // ±100ms is reasonable
+        }
+
+        #endregion
+    }
+
+    /// <summary>
+    /// Playback mode configuration
+    /// </summary>
+    public class PlaybackMode
+    {
+        /// <summary>
+        /// Selected playback mode
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("mode")]
+        public string Mode { get; set; } = "REW sweep";
+
+        #region Domain Behavior
+
+        /// <summary>
+        /// Domain validation: Check if playback mode is valid
+        /// </summary>
+        public bool IsValidMode()
+        {
+            var validModes = new[] { "REW sweep", "File playback" };
+            return validModes.Contains(Mode);
+        }
+
+        #endregion
+    }
+
+    /// <summary>
+    /// File playback stimulus path
+    /// </summary>
+    public class FilePlaybackStimulus
+    {
+        /// <summary>
+        /// Path to stimulus file
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("path")]
+        public string Path { get; set; } = "";
+    }
+
+    /// <summary>
+    /// Measurement mode configuration
+    /// </summary>
+    public class MeasurementMode
+    {
+        /// <summary>
+        /// Selected measurement mode
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("mode")]
+        public string Mode { get; set; } = "Single";
+
+        #region Domain Behavior
+
+        /// <summary>
+        /// Domain validation: Check if measurement mode is valid
+        /// </summary>
+        public bool IsValidMode()
+        {
+            var validModes = new[] { "Single", "Repeated", "Ramped", "Sequential" };
+            return validModes.Contains(Mode);
+        }
+
+        /// <summary>
+        /// Domain behavior: Check if mode requires multiple measurements
+        /// </summary>
+        public bool IsMultiMeasurementMode()
+        {
+            return Mode == "Repeated" || Mode == "Ramped" || Mode == "Sequential";
+        }
+
+        #endregion
+    }
+
+    /// <summary>
+    /// Number of repetitions for repeated/ramped measurements
+    /// </summary>
+    public class MeasurementRepetitions
+    {
+        /// <summary>
+        /// Number of repetitions
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("repetitions")]
+        public int Repetitions { get; set; } = 1;
+
+        #region Domain Behavior
+
+        /// <summary>
+        /// Domain validation: Check if repetitions count is reasonable
+        /// </summary>
+        public bool IsReasonableCount()
+        {
+            return Repetitions >= 1 && Repetitions <= 100;
+        }
+
+        #endregion
+    }
+
+    /// <summary>
+    /// Sequential channel configuration
+    /// </summary>
+    public class SequentialChannels
+    {
+        /// <summary>
+        /// List of channels to measure sequentially
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("channels")]
+        public List<string> Channels { get; set; } = new List<string>();
+
+        #region Domain Behavior
+
+        /// <summary>
+        /// Domain validation: Check if channel list is valid
+        /// </summary>
+        public bool HasChannels()
+        {
+            return Channels != null && Channels.Count > 0;
+        }
+
+        #endregion
+    }
+
+    /// <summary>
+    /// Start delay configuration
+    /// </summary>
+    public class StartDelay
+    {
+        /// <summary>
+        /// Delay in seconds before measurement starts
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("delay")]
+        public double Delay { get; set; } = 0.0;
+
+        #region Domain Behavior
+
+        /// <summary>
+        /// Domain validation: Check if delay is reasonable
+        /// </summary>
+        public bool IsReasonableDelay()
+        {
+            return Delay >= 0.0 && Delay <= 300.0; // Max 5 minutes
+        }
+
+        #endregion
+    }
+
+    /// <summary>
+    /// Invert second output flag
+    /// </summary>
+    public class InvertSecondOutput
+    {
+        /// <summary>
+        /// Whether to invert the second output
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("invert")]
+        public bool Invert { get; set; } = false;
+    }
+
+    /// <summary>
+    /// Fill silence with dither flag
+    /// </summary>
+    public class FillSilenceWithDither
+    {
+        /// <summary>
+        /// Whether to fill silence with dither
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("fill")]
+        public bool Fill { get; set; } = false;
+    }
+
+    /// <summary>
+    /// Capture noise floor flag
+    /// </summary>
+    public class CaptureNoiseFloor
+    {
+        /// <summary>
+        /// Whether to capture noise floor before measurement
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("capture")]
+        public bool Capture { get; set; } = false;
     }
 
     #endregion

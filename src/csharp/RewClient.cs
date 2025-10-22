@@ -51,6 +51,7 @@ namespace REWApi
         public SPLMeterService SPLMeter { get; }
         public GeneratorService Generator { get; }
         public RTAService RTA { get; }
+        public MeasureService Measure { get; }
 
         // Internal properties for testing
         internal HttpClient HttpClient => _httpClient;
@@ -91,6 +92,7 @@ namespace REWApi
             SPLMeter = new SPLMeterService(_httpClient, _baseUrl);
             Generator = new GeneratorService(_httpClient, _baseUrl);
             RTA = new RTAService(_httpClient, _baseUrl);
+            Measure = new MeasureService(_httpClient, _baseUrl);
         }
 
         /// <summary>
