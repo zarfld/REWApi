@@ -54,6 +54,8 @@ namespace REWApi
         public MeasureService Measure { get; }
         public GroupsService Groups { get; }
         public InputLevelsService InputLevels { get; }
+        public ImportService Import { get; }
+        public AlignmentToolService AlignmentTool { get; }
 
         // Internal properties for testing
         internal HttpClient HttpClient => _httpClient;
@@ -97,6 +99,8 @@ namespace REWApi
             Measure = new MeasureService(_httpClient, _baseUrl);
             Groups = new GroupsService(_commandGate, _httpClient, _baseUrl);
             InputLevels = new InputLevelsService(_commandGate, _httpClient, _baseUrl);
+            Import = new ImportService(_commandGate, _httpClient, _baseUrl);
+            AlignmentTool = new AlignmentToolService(_commandGate, _httpClient, _baseUrl);
         }
 
         /// <summary>
