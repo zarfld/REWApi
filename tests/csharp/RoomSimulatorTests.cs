@@ -10,20 +10,17 @@ namespace REWApi.Tests
     /// <summary>
     /// Tests for Room Simulator Service (all 15 endpoints)
     /// Covers room configuration, source management, and frequency response
+    /// 
+    /// Uses baseline sample data loading to ensure test isolation and consistent state.
     /// </summary>
-    public class RoomSimulatorTests : IAsyncLifetime
+    public class RoomSimulatorTests : BaseServiceTests
     {
-        private RewClient? _client;
-
-        public async Task InitializeAsync()
+        public override async Task InitializeAsync()
         {
-            _client = await RewClient.ConnectAsync();
-        }
-
-        public async Task DisposeAsync()
-        {
-            _client?.Dispose();
-            await Task.CompletedTask;
+            await base.InitializeAsync();
+            
+            // Load baseline sample data before each test to ensure consistent state
+            await LoadBaselineAsync();
         }
 
         #region Length Units Tests

@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -28,7 +30,19 @@ namespace REWApi.Tests
         private const string SampleDataPath = "D:/Repos/REWApi/tests/resources/Sampledata.mdat";
         private const int ExpectedMinimumMeasurements = 7;  // REW de-duplicates some measurements
 
-        protected RewClient? _client;
+        // REW startup configuration
+        private static readonly string DefaultREWPath = 
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), 
+                         "Programs", "REW", "roomeqwizard.exe");
+        private const int REWStartupTimeout = 120000;  // 120 seconds (2 minutes) for REW to start
+        private const int REWInitialWait = 10000;  // Wait 10 seconds after launching before first health check
+        private const int REWHealthCheckInterval = 2000;  // Check every 2 seconds
+        private const int REWPostHealthyWait = 5000;  // Wait 5 seconds after API becomes healthy
+        
+    private static Process? _rewProcess;
+    private static bool _rewStartedByTests = false;
+    private static readonly object _rewLock = new object();
+    private static readonly SemaphoreSlim _baselineLoadSemaphore = new SemaphoreSlim(1, 1);        protected RewClient? _client;
         private readonly HttpClient _httpClient;
         private readonly string _baseUrl = "http://127.0.0.1:4735";
 
@@ -38,10 +52,11 @@ namespace REWApi.Tests
         }
 
         /// <summary>
-        /// Initialize client connection
+        /// Initialize client connection, starting REW if needed
         /// </summary>
         public virtual async Task InitializeAsync()
         {
+            await EnsureREWIsRunningAsync();
             _client = await RewClient.ConnectAsync();
         }
 
@@ -56,16 +71,175 @@ namespace REWApi.Tests
         }
 
         /// <summary>
+        /// Ensure REW is running with API enabled. Starts REW if not already running.
+        /// </summary>
+        private async Task EnsureREWIsRunningAsync()
+        {
+            // Check if REW API is already responsive
+            if (await IsREWApiHealthyAsync())
+            {
+                return;
+            }
+
+            // Try to start REW
+            bool needsStartup = false;
+            lock (_rewLock)
+            {
+                // Double-check in case another thread started it
+                if (_rewProcess != null && !_rewProcess.HasExited)
+                {
+                    needsStartup = false;
+                }
+                else
+                {
+                    needsStartup = true;
+                }
+            }
+
+            if (!needsStartup)
+            {
+                // Another thread already started REW, just wait for it
+                await WaitForREWHealthyAsync();
+                return;
+            }
+
+            // Start REW process
+            lock (_rewLock)
+            {
+                // Final check before starting
+                if (_rewProcess != null && !_rewProcess.HasExited)
+                {
+                    return;
+                }
+
+                // Check if REW executable exists
+                if (!System.IO.File.Exists(DefaultREWPath))
+                {
+                    throw new InvalidOperationException(
+                        $"REW executable not found at {DefaultREWPath}. " +
+                        "Please install REW or update the path in BaseServiceTests.");
+                }
+
+                // Start REW with API enabled
+                var startInfo = new ProcessStartInfo
+                {
+                    FileName = DefaultREWPath,
+                    Arguments = "-api",
+                    UseShellExecute = false,
+                    CreateNoWindow = false,
+                    WindowStyle = ProcessWindowStyle.Minimized
+                };
+
+                _rewProcess = Process.Start(startInfo);
+                _rewStartedByTests = true;
+
+                if (_rewProcess == null)
+                {
+                    throw new InvalidOperationException("Failed to start REW process.");
+                }
+            }
+
+            // Give REW time to launch before checking health (outside lock)
+            Console.WriteLine($"REW started, waiting {REWInitialWait}ms for initialization...");
+            await Task.Delay(REWInitialWait);
+
+            // Wait for REW API to become healthy
+            await WaitForREWHealthyAsync();
+        }
+
+        /// <summary>
+        /// Wait for REW API to become healthy with progress reporting
+        /// </summary>
+        private async Task WaitForREWHealthyAsync()
+        {
+            var startTime = DateTime.UtcNow;
+            var checksPerformed = 0;
+            while (DateTime.UtcNow - startTime < TimeSpan.FromMilliseconds(REWStartupTimeout))
+            {
+                checksPerformed++;
+                if (await IsREWApiHealthyAsync())
+                {
+                    Console.WriteLine($"REW API healthy after {(DateTime.UtcNow - startTime).TotalSeconds:F1}s ({checksPerformed} health checks)");
+                    // Give REW more time to fully initialize after API becomes available
+                    Console.WriteLine($"Waiting additional {REWPostHealthyWait}ms for full initialization...");
+                    await Task.Delay(REWPostHealthyWait);
+                    return;
+                }
+
+                if (checksPerformed % 10 == 0)
+                {
+                    Console.WriteLine($"Still waiting for REW API... ({(DateTime.UtcNow - startTime).TotalSeconds:F1}s elapsed)");
+                }
+
+                await Task.Delay(REWHealthCheckInterval);
+            }
+
+            throw new TimeoutException(
+                $"REW API did not become healthy within {REWStartupTimeout}ms. " +
+                "Check if REW started correctly and API is enabled.");
+        }
+
+        /// <summary>
+        /// Check if REW API is responsive
+        /// </summary>
+        private async Task<bool> IsREWApiHealthyAsync()
+        {
+            try
+            {
+                using var healthClient = new HttpClient { Timeout = TimeSpan.FromSeconds(2) };
+                // Use /measurements endpoint as health check - it always exists
+                var response = await healthClient.GetAsync($"{_baseUrl}/measurements");
+                return response.IsSuccessStatusCode;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Static cleanup method to shut down REW if started by tests.
+        /// Call this in test assembly cleanup or at end of test run.
+        /// </summary>
+        public static void ShutdownREWIfStartedByTests()
+        {
+            lock (_rewLock)
+            {
+                if (_rewStartedByTests && _rewProcess != null && !_rewProcess.HasExited)
+                {
+                    try
+                    {
+                        _rewProcess.Kill();
+                        _rewProcess.WaitForExit(5000);
+                    }
+                    catch
+                    {
+                        // Best effort cleanup
+                    }
+                    finally
+                    {
+                        _rewProcess?.Dispose();
+                        _rewProcess = null;
+                        _rewStartedByTests = false;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Load baseline sample data before each test.
         /// Call this in test SetUp/constructor if you want baseline for every test.
+        /// This method is thread-safe and ensures only one test loads baseline at a time.
         /// </summary>
         protected async Task LoadBaselineAsync()
         {
+            await _baselineLoadSemaphore.WaitAsync();
             try
             {
                 // Clear all existing measurements
                 await _httpClient.DeleteAsync($"{_baseUrl}/measurements");
-                await Task.Delay(CommandDelay);
+                // Give REW time to process the delete before loading new data
+                await Task.Delay(StateChange);
 
                 // Load official sample data
                 var loadCommand = new
@@ -101,6 +275,10 @@ namespace REWApi.Tests
                     $"Error: {ex.Message}",
                     ex
                 );
+            }
+            finally
+            {
+                _baselineLoadSemaphore.Release();
             }
         }
 

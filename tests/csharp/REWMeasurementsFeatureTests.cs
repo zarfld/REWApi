@@ -14,13 +14,12 @@ namespace REWApi.Tests.CSharp;
 /// @module REW.Measurements.Features
 /// </summary>
 [Collection("REW Integration Tests")]
-public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
+public class REWMeasurementsFeatureTests : BaseServiceTests
 {
-    private readonly RewClient _rewClient;
-
-    public REWMeasurementsFeatureTests(RewClientFixture fixture)
+    public override async Task InitializeAsync()
     {
-        _rewClient = fixture.Client ?? throw new InvalidOperationException("RewClient not initialized");
+        await base.InitializeAsync();
+        await LoadBaselineAsync(); // Load sample data before each test
     }
 
     /// <summary>
@@ -32,7 +31,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetFrequencyResponse_ValidId_ReturnsFrequencyData()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeEmpty("test requires at least one measurement in REW");
         var firstMeasurementId = measurements[0].UUID;
@@ -59,7 +58,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetImpulseResponse_ValidId_ReturnsImpulseData()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeEmpty("test requires at least one measurement in REW");
         var firstMeasurementId = measurements[0].UUID;
@@ -84,7 +83,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetGroupDelay_ValidId_ReturnsGroupDelayData()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeEmpty("test requires at least one measurement in REW");
         var firstMeasurementId = measurements[0].UUID;
@@ -122,7 +121,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetDistortion_ValidId_ReturnsDistortionData()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeEmpty("test requires at least one measurement in REW");
         var firstMeasurementId = measurements[0].UUID;
@@ -163,7 +162,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetRT60_ValidId_ReturnsRT60Data()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeEmpty("test requires at least one measurement in REW");
         var firstMeasurementId = measurements[0].UUID;
@@ -216,7 +215,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task ExportMeasurement_ValidId_CreatesFile()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeEmpty("test requires at least one measurement in REW");
         var firstMeasurementId = measurements[0].UUID;
@@ -242,7 +241,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task DeleteMeasurement_ValidId_RemovesMeasurement()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurementsBefore = await measurementsService.ListMeasurements();
         measurementsBefore.Should().NotBeEmpty("test requires at least one measurement in REW");
         var measurementToDelete = measurementsBefore[^1]; // Get last measurement to delete
@@ -268,7 +267,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task DeleteMeasurement_InvalidId_ReturnsFalse()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var nonExistentId = "00000000-0000-0000-0000-000000000000";
         
         // Act
@@ -288,7 +287,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task DeleteAllMeasurements_WhenMeasurementsExist_ClearsAll()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurementsBefore = await measurementsService.ListMeasurements();
         if (measurementsBefore.Length == 0)
         {
@@ -317,7 +316,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetMeasurementEqualiser_ValidId_ReturnsEqualiser()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeEmpty("test requires at least one measurement in REW");
         var firstMeasurementId = measurements[0].UUID;
@@ -340,7 +339,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task UpdateMeasurementEqualiser_ValidEqualiser_Succeeds()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeEmpty("test requires at least one measurement in REW");
         var firstMeasurementId = measurements[0].UUID;
@@ -374,7 +373,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetMeasurementFilters_ValidId_ReturnsFilters()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeEmpty("test requires at least one measurement in REW");
         var firstMeasurementId = measurements[0].UUID;
@@ -403,7 +402,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task UpdateMeasurementFilter_ValidFilter_Succeeds()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeEmpty("test requires at least one measurement in REW");
         var firstMeasurementId = measurements[0].UUID;
@@ -437,13 +436,13 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     /// <summary>
     /// Test: Update multiple filters
     /// @test TEST-MEASUREMENTS-EQ-005 - Batch update filter settings
-    /// @status SKIP - API POST /measurements/:id/filters returns 400 - may not be implemented
+    /// @status ACTIVE - Fixed: POST requires FilterList wrapper { filters: [...] }
     /// </summary>
-    [Fact(Skip = "API endpoint POST /measurements/:id/filters returns 400 - batch update may not be fully implemented")]
+    [Fact]
     public async Task UpdateMeasurementFilters_ValidFilters_Succeeds()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeEmpty("test requires at least one measurement in REW");
         var firstMeasurementId = measurements[0].UUID;
@@ -482,7 +481,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetMeasurementTargetSettings_ValidId_ReturnsSettings()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeEmpty("test requires at least one measurement in REW");
         var firstMeasurementId = measurements[0].UUID;
@@ -506,7 +505,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task UpdateMeasurementTargetSettings_ValidSettings_Succeeds()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeEmpty("test requires at least one measurement in REW");
         var firstMeasurementId = measurements[0].UUID;
@@ -546,7 +545,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetMeasurementTargetLevel_ValidId_ReturnsLevel()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeEmpty("test requires at least one measurement in REW");
         var firstMeasurementId = measurements[0].UUID;
@@ -568,7 +567,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task UpdateMeasurementTargetLevel_ValidLevel_Succeeds()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeEmpty("test requires at least one measurement in REW");
         var firstMeasurementId = measurements[0].UUID;
@@ -600,7 +599,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetEQCommands_ReturnsEightCommands()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
 
         // Act
         var commands = await measurementsService.GetEQCommands();
@@ -629,7 +628,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task ExecuteEQCommand_CalculateTargetLevel_Succeeds()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeEmpty("test requires at least one measurement in REW");
         var firstMeasurementId = measurements[0].UUID;
@@ -654,7 +653,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task ExecuteEQCommand_OptimiseGains_Succeeds()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeEmpty("test requires at least one measurement in REW");
         var firstMeasurementId = measurements[0].UUID;
@@ -678,7 +677,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task ExecuteEQCommand_GeneratePredictedMeasurement_Succeeds()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeEmpty("test requires at least one measurement in REW");
         var firstMeasurementId = measurements[0].UUID;
@@ -703,7 +702,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task ExecuteEQCommand_MatchTarget_Succeeds()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeEmpty("test requires at least one measurement in REW");
         var firstMeasurementId = measurements[0].UUID;
@@ -729,7 +728,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task ExecuteEQCommand_InvalidCommand_ThrowsException()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeEmpty("test requires at least one measurement in REW");
         var firstMeasurementId = measurements[0].UUID;
@@ -752,7 +751,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task ExecuteEQCommand_EmptyMeasurementId_ThrowsArgumentException()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
 
         // Act & Assert
         var act = async () => await measurementsService.ExecuteEQCommand(
@@ -772,7 +771,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task ExecuteEQCommand_EmptyCommand_ThrowsArgumentException()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeEmpty("test requires at least one measurement in REW");
         var firstMeasurementId = measurements[0].UUID;
@@ -799,7 +798,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetAvailableEqualisers_ReturnsAllProfiles()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
 
         // Act
         var equalisers = await measurementsService.GetAvailableEqualisers();
@@ -819,7 +818,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetAvailableEqualisers_WithManufacturerFilter_ReturnsFiltered()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
 
         // Act
         var equalisers = await measurementsService.GetAvailableEqualisers("MiniDSP");
@@ -839,7 +838,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetManufacturers_Returns33Manufacturers()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
 
         // Act
         var manufacturers = await measurementsService.GetManufacturers();
@@ -860,7 +859,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetSetDefaultEqualiser_RoundTrip_Succeeds()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         
         // Save original
         var originalEqualiser = await measurementsService.GetDefaultEqualiser();
@@ -892,7 +891,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetDefaultTargetSettings_ReturnsSettings()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
 
         // Act
         var targetSettings = await measurementsService.GetDefaultTargetSettings();
@@ -912,7 +911,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task UpdateDefaultTargetSettings_FullReplacement_Succeeds()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         
         // Save original
         var originalSettings = await measurementsService.GetDefaultTargetSettings();
@@ -951,7 +950,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetSetDefaultTargetLevel_RoundTrip_Succeeds()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         
         // Save original
         var originalLevel = await measurementsService.GetDefaultTargetLevel();
@@ -978,7 +977,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task SetDefaultEqualiser_NullArgument_ThrowsArgumentNullException()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
 
         // Act & Assert
         var act = async () => await measurementsService.SetDefaultEqualiser(null!);
@@ -995,7 +994,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task UpdateDefaultTargetSettings_NullArgument_ThrowsArgumentNullException()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
 
         // Act & Assert
         var act = async () => await measurementsService.UpdateDefaultTargetSettings(null!);
@@ -1016,7 +1015,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetDefaultRoomCurveSettings_ReturnsSettings()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
 
         // Act
         var settings = await measurementsService.GetDefaultRoomCurveSettings();
@@ -1036,7 +1035,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task UpdateDefaultRoomCurveSettings_FullReplacement_Succeeds()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var originalSettings = await measurementsService.GetDefaultRoomCurveSettings();
 
         var newSettings = new RoomCurveSettings
@@ -1076,7 +1075,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetMeasurementRoomCurveSettings_ValidId_ReturnsSettings()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeEmpty("at least one measurement must exist in REW");
         var measurementId = measurements[0].UUID;
@@ -1099,7 +1098,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task UpdateMeasurementRoomCurveSettings_ValidId_Succeeds()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeEmpty("at least one measurement must exist in REW");
         var measurementId = measurements[0].UUID;
@@ -1142,7 +1141,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetHouseCurve_ReturnsPathOrEmpty()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
 
         // Act
         var houseCurve = await measurementsService.GetHouseCurve();
@@ -1160,7 +1159,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task SetAndClearHouseCurve_RoundTrip_Succeeds()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var originalHouseCurve = await measurementsService.GetHouseCurve();
 
         // Note: REW API may require an existing file path for SetHouseCurve
@@ -1221,7 +1220,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task UpdateDefaultRoomCurveSettings_PartialUpdate_Succeeds()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var originalSettings = await measurementsService.GetDefaultRoomCurveSettings();
 
         var partialSettings = new RoomCurveSettings
@@ -1259,7 +1258,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetMeasurementRoomCurveSettings_NullId_ThrowsArgumentException()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
 
         // Act & Assert
         var act = async () => await measurementsService.GetMeasurementRoomCurveSettings(null!);
@@ -1276,7 +1275,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task UpdateMeasurementRoomCurveSettings_NullId_ThrowsArgumentException()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var settings = new RoomCurveSettings();
 
         // Act & Assert
@@ -1294,7 +1293,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task UpdateDefaultRoomCurveSettings_NullSettings_ThrowsArgumentNullException()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
 
         // Act & Assert
         var act = async () => await measurementsService.UpdateDefaultRoomCurveSettings(null!);
@@ -1311,7 +1310,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task SetHouseCurve_NullPath_ThrowsArgumentNullException()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
 
         // Act & Assert
         var act = async () => await measurementsService.SetHouseCurve(null!);
@@ -1332,7 +1331,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetMatchTargetSettings_ReturnsSettings()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
 
         // Act
         var settings = await measurementsService.GetMatchTargetSettings();
@@ -1354,7 +1353,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task UpdateMatchTargetSettings_FullReplacement_Succeeds()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var originalSettings = await measurementsService.GetMatchTargetSettings();
 
         var newSettings = new MatchTargetSettings
@@ -1403,7 +1402,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task UpdateMatchTargetSettings_PartialUpdate_Succeeds()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var originalSettings = await measurementsService.GetMatchTargetSettings();
 
         var partialSettings = new MatchTargetSettings
@@ -1449,7 +1448,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetMatchTargetSettings_ValidatesAllProperties()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
 
         // Act
         var settings = await measurementsService.GetMatchTargetSettings();
@@ -1484,7 +1483,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task UpdateMatchTargetSettings_NullSettings_ThrowsArgumentNullException()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
 
         // Act & Assert
         var act = async () => await measurementsService.UpdateMatchTargetSettings(null!);
@@ -1505,7 +1504,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetTargetResponse_ReturnsCurveData()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
         var measurementId = measurements[0].UUID;
@@ -1533,7 +1532,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetEQFrequencyResponse_ReturnsEQdResponse()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
         var measurementId = measurements[0].UUID;
@@ -1561,7 +1560,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetEQFrequencyResponse_WithCustomUnit_ReturnsData()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
         var measurementId = measurements[0].UUID;
@@ -1593,7 +1592,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetEQGroupDelay_ReturnsGroupDelayData()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
         var measurementId = measurements[0].UUID;
@@ -1623,7 +1622,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetEQImpulseResponse_ReturnsImpulseData()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
         var measurementId = measurements[0].UUID;
@@ -1651,7 +1650,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetEQImpulseResponse_Windowed_ReturnsWindowedData()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
         var measurementId = measurements[0].UUID;
@@ -1685,7 +1684,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetProcessedFrequencyResponse_DefaultParameters_ReturnsProcessedData()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
         var measurementId = measurements[0].UUID;
@@ -1710,7 +1709,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetProcessedFrequencyResponse_CustomParameters_ReturnsCustomProcessedData()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
         var measurementId = measurements[0].UUID;
@@ -1741,7 +1740,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetFiltersImpulseResponse_DefaultParameters_ReturnsFilterImpulseData()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
         var measurementId = measurements[0].UUID;
@@ -1771,7 +1770,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetFiltersImpulseResponse_CustomParameters_ReturnsCustomFilterImpulseData()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
         var measurementId = measurements[0].UUID;
@@ -1804,7 +1803,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetFiltersImpulseResponse_InvalidSampleRate_ThrowsArgumentException()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
         var measurementId = measurements[0].UUID;
@@ -1824,7 +1823,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetFiltersImpulseResponse_InvalidLength_ThrowsArgumentException()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
         var measurementId = measurements[0].UUID;
@@ -1845,7 +1844,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetWaterfall_ValidId_ReturnsWaterfallData()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
         var measurementId = measurements[0].UUID;
@@ -1872,7 +1871,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetSpectrogram_ValidId_ReturnsSpectrogramData()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
         var measurementId = measurements[0].UUID;
@@ -1905,7 +1904,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetSchroeder_WithDefaultParameters_ReturnsSchroederData()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
         var measurementId = measurements[0].UUID;
@@ -1929,7 +1928,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetSchroeder_WithCustomUnit_ReturnsSchroederData()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
         var measurementId = measurements[0].UUID;
@@ -1951,7 +1950,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetCommands_ValidMeasurement_ReturnsCommandsList()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
         var measurementId = measurements[0].UUID;
@@ -1974,7 +1973,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task UpdateMeasurement_UpdateTitle_Success()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
         var measurementId = measurements[0].UUID;
@@ -1996,7 +1995,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task UpdateMeasurement_UpdateNotes_Success()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
         var measurementId = measurements[0].UUID;
@@ -2018,7 +2017,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task UpdateMeasurement_NoFieldsProvided_ThrowsArgumentException()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
         var measurementId = measurements[0].UUID;
@@ -2044,7 +2043,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetSelectedMeasurementId_WhenMeasurementSelected_ReturnsUUID()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
         
@@ -2069,7 +2068,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task SetSelectedMeasurementId_ValidId_SelectsMeasurement()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
         var measurementId = measurements[0].UUID;
@@ -2094,7 +2093,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task SetSelectedMeasurementId_NullOrEmptyId_ThrowsArgumentException()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
 
         // Act
         Func<Task> actNull = async () => await measurementsService.SetSelectedMeasurementId(null!);
@@ -2120,7 +2119,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task GetIRWindows_ValidMeasurementId_ReturnsWindowSettings()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
         var measurementId = measurements[0].UUID;
@@ -2145,7 +2144,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task SetIRWindows_ValidSettings_UpdatesWindowSettings()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
         var measurementId = measurements[0].UUID;
@@ -2181,7 +2180,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task SetIRWindows_InvalidSettings_ThrowsArgumentException()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
         var measurementId = measurements[0].UUID;
@@ -2215,7 +2214,7 @@ public class REWMeasurementsFeatureTests : IClassFixture<RewClientFixture>
     public async Task UpdateIRWindows_ValidSettings_UpdatesWindowSettings()
     {
         // Arrange
-        var measurementsService = _rewClient.Measurements;
+        var measurementsService = _client.Measurements;
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
         var measurementId = measurements[0].UUID;

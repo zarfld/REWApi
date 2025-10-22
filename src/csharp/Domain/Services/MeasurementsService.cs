@@ -839,8 +839,11 @@ namespace REWApi.Domain.Services
                 throw new ArgumentException("Filters array cannot be null or empty", nameof(filters));
 
             var url = $"{_baseUrl}/measurements/{measurementId}/filters";
+            
+            // REW API expects FilterList wrapper: { "filters": [...] }
+            var filterList = new { filters = filters };
             var content = new StringContent(
-                JsonSerializer.Serialize(filters, new JsonSerializerOptions 
+                JsonSerializer.Serialize(filterList, new JsonSerializerOptions 
                 { 
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase 
                 }),
