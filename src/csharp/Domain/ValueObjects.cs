@@ -1166,4 +1166,403 @@ namespace REWApi.Domain
     }
 
     #endregion
+
+    #region RTA (Real-Time Analyzer) Domain Objects
+
+    /// <summary>
+    /// RTA status from REW API
+    /// Indicates whether RTA is enabled and running
+    /// </summary>
+    public class RTAStatus
+    {
+        /// <summary>
+        /// Whether the RTA is enabled (audio input available)
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("enabled")]
+        public bool Enabled { get; set; }
+
+        /// <summary>
+        /// Whether the RTA is currently running
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("running")]
+        public bool Running { get; set; }
+
+        #region Domain Behavior
+
+        /// <summary>
+        /// Domain validation: Check if RTA can be started
+        /// </summary>
+        public bool CanStart() => Enabled && !Running;
+
+        /// <summary>
+        /// Domain validation: Check if RTA can be stopped
+        /// </summary>
+        public bool CanStop() => Enabled && Running;
+
+        #endregion
+    }
+
+    /// <summary>
+    /// RTA main configuration
+    /// Controls frequency resolution, averaging, and analysis mode
+    /// </summary>
+    public class RTAConfiguration
+    {
+        /// <summary>
+        /// Spectrum or fractional octave mode ("Spectrum" or "1/3", "1/6", etc.)
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("mode")]
+        public string Mode { get; set; } = "1/3";
+
+        /// <summary>
+        /// FFT length (samples) for spectrum mode
+        /// REW API returns this as a string, so we use a converter
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("fftLength")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(Domain.JsonConverters.EmptyStringToIntConverter))]
+        public int FFTLength { get; set; } = 32768;
+
+        /// <summary>
+        /// Averaging type ("None", "Exponential", "Linear")
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("averaging")]
+        public string Averaging { get; set; } = "Exponential";
+
+        /// <summary>
+        /// Number of averages for linear averaging
+        /// REW API returns this as a string, so we use a converter
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("averages")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(Domain.JsonConverters.EmptyStringToIntConverter))]
+        public int Averages { get; set; } = 8;
+
+        /// <summary>
+        /// Decay rate for exponential averaging (0.0-1.0)
+        /// REW API returns this as a string, so we use a converter
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("decay")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(Domain.JsonConverters.EmptyStringToDoubleConverter))]
+        public double Decay { get; set; } = 0.5;
+
+        /// <summary>
+        /// Window type for FFT analysis
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("window")]
+        public string Window { get; set; } = "Hann";
+
+        #region Domain Behavior
+
+        /// <summary>
+        /// Domain validation: Check if FFT length is valid (power of 2)
+        /// </summary>
+        public bool IsValidFFTLength()
+        {
+            return FFTLength >= 512 && FFTLength <= 131072 && 
+                   (FFTLength & (FFTLength - 1)) == 0; // Power of 2 check
+        }
+
+        /// <summary>
+        /// Domain validation: Check if averaging settings are valid
+        /// </summary>
+        public bool IsValidAveraging()
+        {
+            if (Averaging == "Linear")
+                return Averages >= 1 && Averages <= 100;
+            if (Averaging == "Exponential")
+                return Decay >= 0.0 && Decay <= 1.0;
+            return Averaging == "None";
+        }
+
+        #endregion
+    }
+
+    /// <summary>
+    /// RTA appearance/display configuration
+    /// Controls visual aspects of the RTA display
+    /// </summary>
+    public class RTAAppearanceConfiguration
+    {
+        /// <summary>
+        /// Display peak hold
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("peakHold")]
+        public bool PeakHold { get; set; }
+
+        /// <summary>
+        /// Peak hold time in seconds
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("peakHoldTime")]
+        public double PeakHoldTime { get; set; } = 5.0;
+
+        /// <summary>
+        /// Show RTA overlays
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("showOverlays")]
+        public bool ShowOverlays { get; set; } = true;
+
+        /// <summary>
+        /// RTA trace color (hex format)
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("traceColor")]
+        public string TraceColor { get; set; } = "#00FF00";
+    }
+
+    /// <summary>
+    /// RTA distortion measurement configuration
+    /// Controls harmonic distortion analysis
+    /// </summary>
+    public class RTADistortionConfiguration
+    {
+        /// <summary>
+        /// Enable harmonic distortion measurement
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("enabled")]
+        public bool Enabled { get; set; }
+
+        /// <summary>
+        /// Number of harmonics to measure (2-10)
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("harmonics")]
+        public int Harmonics { get; set; } = 5;
+
+        /// <summary>
+        /// High-pass filter frequency (Hz) for distortion measurement
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("hpFreq")]
+        public double HPFreq { get; set; } = 20;
+
+        /// <summary>
+        /// Low-pass filter frequency (Hz) for distortion measurement
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("lpFreq")]
+        public double LPFreq { get; set; } = 20000;
+
+        #region Domain Behavior
+
+        /// <summary>
+        /// Domain validation: Check if harmonic count is valid
+        /// </summary>
+        public bool IsValidHarmonics()
+        {
+            return Harmonics >= 2 && Harmonics <= 10;
+        }
+
+        /// <summary>
+        /// Domain validation: Check if filter settings are valid
+        /// </summary>
+        public bool IsValidFilterRange()
+        {
+            return HPFreq > 0 && LPFreq <= 24000 && HPFreq < LPFreq;
+        }
+
+        #endregion
+    }
+
+    /// <summary>
+    /// RTA input level reading
+    /// Timestamp + running sample count + level value
+    /// </summary>
+    public class RTALevel
+    {
+        /// <summary>
+        /// Nanosecond timestamp of reading
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("timestampNanos")]
+        public long TimestampNanos { get; set; }
+
+        /// <summary>
+        /// Running sum of samples processed since RTA started
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("sampleCount")]
+        public long SampleCount { get; set; }
+
+        /// <summary>
+        /// RMS level value (unit specified in request)
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("rms")]
+        public double RMS { get; set; }
+
+        /// <summary>
+        /// Peak level value (unit specified in request)
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("peak")]
+        public double Peak { get; set; }
+
+        /// <summary>
+        /// Unit for level values (dBFS, dBu, dBV, SPL)
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("unit")]
+        public string Unit { get; set; } = "dBFS";
+    }
+
+    /// <summary>
+    /// RTA distortion measurement results
+    /// Includes fundamental, harmonics, THD, THD+N
+    /// </summary>
+    public class RTADistortion
+    {
+        /// <summary>
+        /// Nanosecond timestamp of reading
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("timestampNanos")]
+        public long TimestampNanos { get; set; }
+
+        /// <summary>
+        /// Running sum of samples processed since RTA started
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("sampleCount")]
+        public long SampleCount { get; set; }
+
+        /// <summary>
+        /// Fundamental frequency detected (Hz)
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("fundamental")]
+        public double Fundamental { get; set; }
+
+        /// <summary>
+        /// Fundamental level (unit specified in request)
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("fundamentalLevel")]
+        public double FundamentalLevel { get; set; }
+
+        /// <summary>
+        /// Array of harmonic levels (2nd, 3rd, 4th, etc.)
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("harmonicLevels")]
+        public double[] HarmonicLevels { get; set; } = Array.Empty<double>();
+
+        /// <summary>
+        /// Total Harmonic Distortion (THD) in specified unit
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("thd")]
+        public double THD { get; set; }
+
+        /// <summary>
+        /// Total Harmonic Distortion + Noise (THD+N) in specified unit
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("thdPlusN")]
+        public double THDPlusN { get; set; }
+
+        /// <summary>
+        /// Unit for level values (dBFS, dBu, dBV, SPL)
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("levelUnit")]
+        public string LevelUnit { get; set; } = "dBFS";
+
+        /// <summary>
+        /// Unit for distortion values (dB or percent)
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("distortionUnit")]
+        public string DistortionUnit { get; set; } = "dB";
+
+        #region Domain Behavior
+
+        /// <summary>
+        /// Domain calculation: Get level of specific harmonic
+        /// </summary>
+        public double GetHarmonicLevel(int harmonicNumber)
+        {
+            if (harmonicNumber < 2 || harmonicNumber > HarmonicLevels.Length + 1)
+                throw new ArgumentOutOfRangeException(nameof(harmonicNumber));
+            return HarmonicLevels[harmonicNumber - 2]; // 2nd harmonic is index 0
+        }
+
+        /// <summary>
+        /// Domain validation: Check if distortion is within acceptable limits
+        /// </summary>
+        public bool IsLowDistortion(double thresholdPercent = 1.0)
+        {
+            if (DistortionUnit == "percent")
+                return THD < thresholdPercent;
+            else // dB
+                return THD < -40; // ~1% = -40dB
+        }
+
+        #endregion
+    }
+
+    /// <summary>
+    /// RTA graph display limits
+    /// Y-axis range for the RTA display
+    /// </summary>
+    public class RTAGraphLimits
+    {
+        /// <summary>
+        /// Minimum Y-axis value
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("min")]
+        public double Min { get; set; } = 0;
+
+        /// <summary>
+        /// Maximum Y-axis value
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("max")]
+        public double Max { get; set; } = 120;
+
+        #region Domain Behavior
+
+        /// <summary>
+        /// Domain validation: Check if limits are valid
+        /// </summary>
+        public bool IsValidRange()
+        {
+            return Max > Min && (Max - Min) >= 10; // At least 10 dB range
+        }
+
+        #endregion
+    }
+
+    /// <summary>
+    /// RTA image capture settings
+    /// For saving RTA graph screenshots
+    /// </summary>
+    public class RTAImageCaptureSettings
+    {
+        /// <summary>
+        /// Image width in pixels
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("width")]
+        public int Width { get; set; } = 1920;
+
+        /// <summary>
+        /// Image height in pixels
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("height")]
+        public int Height { get; set; } = 1080;
+
+        /// <summary>
+        /// Image format ("PNG", "JPEG", "SVG")
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("format")]
+        public string Format { get; set; } = "PNG";
+
+        /// <summary>
+        /// JPEG quality (1-100, only for JPEG format)
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("quality")]
+        public int Quality { get; set; } = 95;
+
+        #region Domain Behavior
+
+        /// <summary>
+        /// Domain validation: Check if dimensions are reasonable
+        /// </summary>
+        public bool IsValidDimensions()
+        {
+            return Width >= 640 && Width <= 7680 && // 640p to 8K
+                   Height >= 480 && Height <= 4320;
+        }
+
+        /// <summary>
+        /// Domain validation: Check if quality is valid for JPEG
+        /// </summary>
+        public bool IsValidQuality()
+        {
+            return Format != "JPEG" || (Quality >= 1 && Quality <= 100);
+        }
+
+        #endregion
+    }
+
+    #endregion
 }

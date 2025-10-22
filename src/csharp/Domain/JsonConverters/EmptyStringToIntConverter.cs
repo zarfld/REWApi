@@ -22,6 +22,26 @@ namespace REWApi.Domain.JsonConverters
                     return 0;
                 }
                 
+                // Handle shorthand notations like "64k", "128k", "32k"
+                if (stringValue.EndsWith("k", StringComparison.OrdinalIgnoreCase))
+                {
+                    var numPart = stringValue.Substring(0, stringValue.Length - 1);
+                    if (int.TryParse(numPart, out int kValue))
+                    {
+                        return kValue * 1024;
+                    }
+                }
+                
+                // Handle shorthand notations like "1M", "2M"
+                if (stringValue.EndsWith("M", StringComparison.OrdinalIgnoreCase))
+                {
+                    var numPart = stringValue.Substring(0, stringValue.Length - 1);
+                    if (int.TryParse(numPart, out int mValue))
+                    {
+                        return mValue * 1024 * 1024;
+                    }
+                }
+                
                 // Try to parse the string as an integer
                 if (int.TryParse(stringValue, out int result))
                 {
