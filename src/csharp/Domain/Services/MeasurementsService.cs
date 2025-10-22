@@ -1767,35 +1767,6 @@ namespace REWApi.Domain.Services
         }
 
         /// <summary>
-        /// Gets the Schroeder integration curve for a measurement
-        /// Maps to GET /measurements/{id}/schroeder
-        /// Returns Schroeder reverse-time integration data (used for RT60 calculations)
-        /// </summary>
-        /// <param name="measurementId">UUID of the measurement</param>
-        /// <param name="unit">Unit for the data (default: "dB")</param>
-        /// <param name="cancellationToken">Cancellation token</param>
-        /// <returns>Schroeder curve data</returns>
-        /// <exception cref="ArgumentException">If measurementId is null or empty</exception>
-        /// <exception cref="InvalidOperationException">If deserialization fails</exception>
-        public async Task<ImpulseResponseData> GetSchroeder(
-            string measurementId,
-            string unit = "dB",
-            CancellationToken cancellationToken = default)
-        {
-            if (string.IsNullOrEmpty(measurementId))
-                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
-
-            var url = $"{_baseUrl}/measurements/{measurementId}/schroeder?unit={Uri.EscapeDataString(unit)}";
-            var response = await _httpClient.GetAsync(url, cancellationToken);
-            response.EnsureSuccessStatusCode();
-
-            var json = await response.Content.ReadAsStringAsync(cancellationToken);
-            var data = JsonSerializer.Deserialize<JsonElement>(json);
-
-            return ParseImpulseResponse(data);
-        }
-
-        /// <summary>
         /// Gets the list of available commands for a measurement
         /// Maps to GET /measurements/{id}/commands
         /// Returns array of command names that can be issued to this measurement

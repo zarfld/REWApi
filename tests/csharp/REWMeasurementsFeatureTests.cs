@@ -1895,53 +1895,6 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
     #region Task 2 - Analysis & Metadata Methods
 
     /// <summary>
-    /// Test: GetSchroeder returns Schroeder integration curve data
-    /// @test TEST-MEASUREMENTS-PHASE4-009 - Get Schroeder integration curve
-    /// @status SKIPPED - Endpoint does not exist in REW API
-    /// @note The /measurements/:id/schroeder endpoint returns 404 - feature may not be implemented
-    /// </summary>
-    [Fact(Skip = "REW API endpoint /measurements/:id/schroeder returns 404 - not implemented")]
-    public async Task GetSchroeder_WithDefaultParameters_ReturnsSchroederData()
-    {
-        // Arrange
-        var measurementsService = _client.Measurements;
-        var measurements = await measurementsService.ListMeasurements();
-        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
-        var measurementId = measurements[0].UUID;
-
-        // Act
-        var schroeder = await measurementsService.GetSchroeder(measurementId);
-
-        // Assert
-        schroeder.Should().NotBeNull("Schroeder curve should be returned");
-        schroeder.Data.Should().NotBeNull("Schroeder curve should have data array");
-        // Note: Data may be empty if no impulse response exists
-    }
-
-    /// <summary>
-    /// Test: GetSchroeder with custom unit parameter
-    /// @test TEST-MEASUREMENTS-PHASE4-010 - Get Schroeder with unit parameter
-    /// @status SKIPPED - Endpoint does not exist in REW API
-    /// @note The /measurements/:id/schroeder endpoint returns 404 - feature may not be implemented
-    /// </summary>
-    [Fact(Skip = "REW API endpoint /measurements/:id/schroeder returns 404 - not implemented")]
-    public async Task GetSchroeder_WithCustomUnit_ReturnsSchroederData()
-    {
-        // Arrange
-        var measurementsService = _client.Measurements;
-        var measurements = await measurementsService.ListMeasurements();
-        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
-        var measurementId = measurements[0].UUID;
-
-        // Act
-        var schroeder = await measurementsService.GetSchroeder(measurementId, unit: "SPL");
-
-        // Assert
-        schroeder.Should().NotBeNull("Schroeder curve should be returned");
-        schroeder.Data.Should().NotBeNull("Schroeder curve should have data array");
-    }
-
-    /// <summary>
     /// Test: GetCommands returns list of available commands for measurement
     /// @test TEST-MEASUREMENTS-PHASE4-011 - Get measurement commands
     /// @status ACTIVE - Phase 4 implementation
