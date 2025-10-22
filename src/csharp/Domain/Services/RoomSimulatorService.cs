@@ -334,25 +334,27 @@ namespace REWApi.Domain.Services
         #region Frequency Response
 
         /// <summary>
-        /// Get combined frequency response for all sources
+        /// Get combined frequency response for all sources at a specified microphone position
         /// </summary>
+        /// <param name="micPosition">The microphone position (e.g., "Main", "Left", "Right", "Front", "Behind", "Above", "Below"). Defaults to "Main".</param>
         /// <returns>Frequency response data</returns>
-        public async Task<FrequencyResponseData> GetFrequencyResponse()
+        public async Task<FrequencyResponseData> GetFrequencyResponse(string micPosition = "Main")
         {
-            var response = await _httpClient.GetAsync($"{_baseUrl}/roomsim/frequency-response");
+            var response = await _httpClient.GetAsync($"{_baseUrl}/roomsim/frequency-response?micposition={Uri.EscapeDataString(micPosition)}");
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<FrequencyResponseData>(content) ?? new FrequencyResponseData();
         }
 
         /// <summary>
-        /// Get frequency response for specific source
+        /// Get frequency response for specific source at a specified microphone position
         /// </summary>
         /// <param name="sourceName">Name of source</param>
+        /// <param name="micPosition">The microphone position (e.g., "Main", "Left", "Right", "Front", "Behind", "Above", "Below"). Defaults to "Main".</param>
         /// <returns>Frequency response data for source</returns>
-        public async Task<FrequencyResponseData> GetSourceFrequencyResponse(string sourceName)
+        public async Task<FrequencyResponseData> GetSourceFrequencyResponse(string sourceName, string micPosition = "Main")
         {
-            var response = await _httpClient.GetAsync($"{_baseUrl}/roomsim/{sourceName}/frequency-response");
+            var response = await _httpClient.GetAsync($"{_baseUrl}/roomsim/{sourceName}/frequency-response?micposition={Uri.EscapeDataString(micPosition)}");
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<FrequencyResponseData>(content) ?? new FrequencyResponseData();

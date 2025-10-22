@@ -548,28 +548,43 @@ namespace REWApi.Tests
         #region Frequency Response Tests
 
         [Fact]
-        public async Task GetFrequencyResponse_ReturnsCombinedResponse()
+        public async Task GetFrequencyResponse_WithDefaultMicPosition_ReturnsCombinedResponse()
         {
-            // Arrange & Act
+            // Act - Uses default "Main" mic position as required by API
             var response = await _client!.RoomSimulator.GetFrequencyResponse();
 
             // Assert
             Assert.NotNull(response);
+            Assert.NotNull(response.Frequencies);
+            Assert.NotNull(response.Magnitudes);
         }
 
         [Fact]
-        public async Task GetSourceFrequencyResponse_ReturnsSourceResponse()
+        public async Task GetFrequencyResponse_WithSpecifiedMicPosition_ReturnsResponse()
         {
-            // Arrange
-            var sources = await _client!.RoomSimulator.GetSources();
-            Assert.NotEmpty(sources);
-            var firstSource = sources.First();
-
-            // Act
-            var response = await _client.RoomSimulator.GetSourceFrequencyResponse(firstSource);
+            // Act - Explicitly specify "Main" mic position
+            var response = await _client!.RoomSimulator.GetFrequencyResponse("Main");
 
             // Assert
             Assert.NotNull(response);
+            Assert.NotNull(response.Frequencies);
+            Assert.NotNull(response.Magnitudes);
+        }
+
+        [Fact]
+        public async Task GetSourceFrequencyResponse_WithMicPosition_ReturnsSourceResponse()
+        {
+            // Arrange - Get first source name (GetSources returns SourcesList with Sources = List<string>)
+            var sourcesList = await _client!.RoomSimulator.GetSourceNames();
+            var sourceName = sourcesList.FirstOrDefault() ?? "L";
+
+            // Act - Specify "Main" mic position as required by API documentation
+            var response = await _client.RoomSimulator.GetSourceFrequencyResponse(sourceName, "Main");
+
+            // Assert
+            Assert.NotNull(response);
+            Assert.NotNull(response.Frequencies);
+            Assert.NotNull(response.Magnitudes);
         }
 
         #endregion

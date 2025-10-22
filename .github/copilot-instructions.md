@@ -152,19 +152,21 @@ applyTo:
   - "**/docs/**"        # All documentation
 ```
 ## REW API
-REW has a REST API accessible over http at localhost (127.0.0.1), the default port is 4735. It cannot be accessed outside the machine REW is running on. Port numbers between 1024 and 65535 may be entered in the port field to specify a port for REW to use. To start the API server use the button above or run REW with the -api argument. On Windows with the default REW installation that could be done using
+REW has a REST API accessible over http at localhost (127.0.0.1), the default port is 4735. It cannot be accessed outside the machine REW is running on. Port numbers between 1024 and 65535 may be entered in the port field to specify a port for REW to use. To start the API server use the button above or run REW with the -api argument. 
+
+On Windows with the default REW installation that could be done using
 C:\Program Files\REW\roomeqwizard.exe -api
-On macOS it could be done from a terminal using
-open -a REW.app --args -api
-To specify a different port, e.g. 4567, add another argument -port 4567. Port numbers below 1024 will be ignored.
+
 
 All API GET methods are available whenever the API is running, allowing the API to be used to retrieve data from REW. PUT and POST are also supported by default for most endpoints, but to control REW via the API to make automated sweep measurements requires a Pro upgrade license.
+
 The API documentation is served by swagger-ui and can be accessed by browsing to localhost:4735. The OpenAPI specification for the API can be accessed at localhost:4735/doc.json or localhost:4735/doc.yaml for JSON or YAML formats. Setting values using the data models can be done with POST or, for models with multiple fields, PUT, however both methods will accept data models with a subset of the defined fields.
 
-Online help can be found at https://www.roomeqwizard.com/help/help_en-GB/html/api.html
+Online help for REW-API can be found at https://www.roomeqwizard.com/help/help_en-GB/html/api.html use it to find more information about the REW API endpoints and data models.
 
 for testing we might use example data as provided on https://www.roomeqwizard.com/Sampledata.mdat
 
+REW Onlinehelp Help Contents is provided at https://www.roomeqwizard.com/help.html Use it to find more information about expected workflow of REW
 
 ### Build Management
 
@@ -214,6 +216,7 @@ build/                  # Root build directory
 ✅ in implementation follow the object model and keep it constistent accross different implementations (see \03-architecture\views\object-model.md )
 ✅ always check proactively what code is already existing to avoid duplications
 ✅ always proactively check API documentation for existing endpoints and data models before creating new ones
+✅ Always check official documentation before making assumptions about API behavior
 
 ### Never Do
 ❌ Proceed with ambiguous requirements  
