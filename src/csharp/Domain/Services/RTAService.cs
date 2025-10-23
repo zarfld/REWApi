@@ -114,6 +114,99 @@ namespace REWApi.Domain.Services
             await SendCommand("Restart", cancellationToken);
         }
 
+        /// <summary>
+        /// Reset the RTA (clears all data and averages)
+        /// Convenience method that sends "Reset" command
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task Reset(CancellationToken cancellationToken = default)
+        {
+            await SendCommand("Reset", cancellationToken);
+        }
+
+        /// <summary>
+        /// Set SPL offset for the RTA
+        /// Convenience method that sends "Set SPL offset" command with value
+        /// </summary>
+        /// <param name="offsetDb">SPL offset in dB</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task SetSPLOffset(double offsetDb, CancellationToken cancellationToken = default)
+        {
+            var commandData = new
+            {
+                command = "Set SPL offset",
+                parameters = new { offset = offsetDb }
+            };
+
+            var json = JsonSerializer.Serialize(commandData);
+            var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
+            
+            var response = await _httpClient.PostAsync($"{_baseUrl}/rta/command", httpContent, cancellationToken);
+            response.EnsureSuccessStatusCode();
+        }
+
+        /// <summary>
+        /// Import calibration file for RTA input
+        /// Convenience method that sends "Import cal" command with file path
+        /// </summary>
+        /// <param name="filePath">Path to calibration file (.txt format)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task ImportCalibration(string filePath, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(filePath))
+                throw new ArgumentException("File path cannot be null or empty", nameof(filePath));
+
+            var commandData = new
+            {
+                command = "Import cal",
+                parameters = new { filePath }
+            };
+
+            var json = JsonSerializer.Serialize(commandData);
+            var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
+            
+            var response = await _httpClient.PostAsync($"{_baseUrl}/rta/command", httpContent, cancellationToken);
+            response.EnsureSuccessStatusCode();
+        }
+
+        /// <summary>
+        /// Import reference calibration file for RTA
+        /// Convenience method that sends "Import reference" command with file path
+        /// </summary>
+        /// <param name="filePath">Path to reference calibration file (.txt format)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task ImportReference(string filePath, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(filePath))
+                throw new ArgumentException("File path cannot be null or empty", nameof(filePath));
+
+            var commandData = new
+            {
+                command = "Import reference",
+                parameters = new { filePath }
+            };
+
+            var json = JsonSerializer.Serialize(commandData);
+            var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
+            
+            var response = await _httpClient.PostAsync($"{_baseUrl}/rta/command", httpContent, cancellationToken);
+            response.EnsureSuccessStatusCode();
+        }
+
+        /// <summary>
+        /// Save RTA graph as image
+        /// Convenience method that sends "Save graph image" command
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <remarks>
+        /// Image capture settings can be configured via GetImageCaptureSettings/UpdateImageCaptureSettings
+        /// The image will be saved to the location specified in those settings
+        /// </remarks>
+        public async Task SaveGraphImage(CancellationToken cancellationToken = default)
+        {
+            await SendCommand("Save graph image", cancellationToken);
+        }
+
         #endregion
 
         #region Configuration

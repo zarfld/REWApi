@@ -206,6 +206,33 @@ namespace REWApi.Tests
             _output.WriteLine($"✅ Available RTA commands: {string.Join(", ", commands)}");
         }
 
+        [Fact]
+        public async Task Reset_ShouldExecuteSuccessfully()
+        {
+            // Act & Assert (should not throw)
+            await _rtaService.Reset();
+            _output.WriteLine($"✅ RTA Reset command executed successfully");
+        }
+
+        [Fact]
+        public async Task SetSPLOffset_ValidOffset_ShouldExecuteSuccessfully()
+        {
+            // Arrange
+            double offsetDb = -3.5;
+
+            // Act & Assert (should not throw)
+            await _rtaService.SetSPLOffset(offsetDb);
+            _output.WriteLine($"✅ RTA SPL Offset set to {offsetDb} dB");
+        }
+
+        [Fact]
+        public async Task SaveGraphImage_ShouldExecuteSuccessfully()
+        {
+            // Act & Assert (should not throw)
+            await _rtaService.SaveGraphImage();
+            _output.WriteLine($"✅ RTA Save Graph Image command executed successfully");
+        }
+
         #endregion
 
         #region Configuration Tests
