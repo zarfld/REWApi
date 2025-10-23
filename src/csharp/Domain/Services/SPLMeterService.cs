@@ -100,23 +100,31 @@ namespace REWApi.Domain.Services
 
         /// <summary>
         /// Update SPL meter configuration
-        /// POST /spl-meter/{meterNumber}/configuration
+        /// POST /spl-meter/{meterNumber}/configuration (full configuration)
+        /// PUT /spl-meter/{meterNumber}/configuration (partial configuration)
         /// </summary>
         /// <param name="meterNumber">Meter ID (1-4)</param>
         /// <param name="configuration">Configuration with mode, weighting, filter settings</param>
-        public async Task UpdateConfiguration(int meterNumber, SPLMeterConfiguration configuration)
+        /// <param name="partialUpdate">If true, uses PUT for partial update; if false, uses POST for full configuration replacement</param>
+        public async Task UpdateConfiguration(
+            int meterNumber, 
+            SPLMeterConfiguration configuration, 
+            bool partialUpdate = false)
         {
             ValidateMeterNumber(meterNumber);
             if (configuration == null)
                 throw new ArgumentNullException(nameof(configuration));
             
-            if (!configuration.IsValid())
+            if (!partialUpdate && !configuration.IsValid())
                 throw new ArgumentException("Invalid SPL meter configuration", nameof(configuration));
 
             var json = JsonSerializer.Serialize(configuration);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             
-            var response = await _httpClient.PostAsync($"{_baseUrl}/spl-meter/{meterNumber}/configuration", content);
+            var response = partialUpdate
+                ? await _httpClient.PutAsync($"{_baseUrl}/spl-meter/{meterNumber}/configuration", content)
+                : await _httpClient.PostAsync($"{_baseUrl}/spl-meter/{meterNumber}/configuration", content);
+            
             response.EnsureSuccessStatusCode();
         }
 
