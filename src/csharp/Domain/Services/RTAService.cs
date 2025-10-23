@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -658,26 +659,419 @@ namespace REWApi.Domain.Services
 
         #endregion
 
-        #region Subscription Management (For Future Implementation)
+        #region Subscription Management - Status
 
-        // Note: Subscription support requires HTTP server implementation to receive callbacks
-        // Subscriptions available for:
-        // - POST /rta/status/subscribe
-        // - POST /rta/levels/subscribe (with unit parameter)
-        // - POST /rta/captured-data/subscribe (with unit parameter)
-        // - POST /rta/captured-peak-data/subscribe (with unit parameter)
-        // - POST /rta/distortion/subscribe (with unit and distortion parameters)
-        
-        // Each subscription requires a Subscriber object with:
-        // - url: Callback URL for updates
-        // - parameters: Optional dict with unit/distortion parameters
+        /// <summary>
+        /// Subscribe to RTA status updates
+        /// POST /rta/status/subscribe
+        /// </summary>
+        /// <param name="subscriberUrl">URL to receive status update notifications</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <remarks>
+        /// Receives notifications when RTA status changes (enabled/disabled, running/stopped)
+        /// </remarks>
+        public async Task SubscribeToRTAStatus(string subscriberUrl, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(subscriberUrl))
+                throw new ArgumentException("Subscriber URL cannot be null or empty", nameof(subscriberUrl));
 
-        // Unsubscribe endpoints:
-        // - POST /rta/status/unsubscribe
-        // - POST /rta/levels/unsubscribe
-        // - POST /rta/captured-data/unsubscribe
-        // - POST /rta/captured-peak-data/unsubscribe
-        // - POST /rta/distortion/unsubscribe
+            var subscriberData = new { url = subscriberUrl };
+            var json = JsonSerializer.Serialize(subscriberData);
+            var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
+            
+            var response = await _httpClient.PostAsync($"{_baseUrl}/rta/status/subscribe", httpContent, cancellationToken);
+            response.EnsureSuccessStatusCode();
+        }
+
+        /// <summary>
+        /// Unsubscribe from RTA status updates
+        /// POST /rta/status/unsubscribe
+        /// </summary>
+        /// <param name="subscriberUrl">URL to remove from status update notifications</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task UnsubscribeFromRTAStatus(string subscriberUrl, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(subscriberUrl))
+                throw new ArgumentException("Subscriber URL cannot be null or empty", nameof(subscriberUrl));
+
+            var subscriberData = new { url = subscriberUrl };
+            var json = JsonSerializer.Serialize(subscriberData);
+            var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
+            
+            var response = await _httpClient.PostAsync($"{_baseUrl}/rta/status/unsubscribe", httpContent, cancellationToken);
+            response.EnsureSuccessStatusCode();
+        }
+
+        /// <summary>
+        /// Get list of current RTA status subscribers
+        /// GET /rta/status/subscribers
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Array of subscriber URLs currently subscribed to RTA status updates</returns>
+        public async Task<string[]> GetRTAStatusSubscribers(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/rta/status/subscribers", cancellationToken);
+            response.EnsureSuccessStatusCode();
+            
+            var content = await response.Content.ReadAsStringAsync();
+            var subscribers = JsonSerializer.Deserialize<List<object>>(content) ?? new List<object>();
+            
+            // Extract URL from each Subscriber object
+            return subscribers
+                .Select(s => {
+                    var element = (JsonElement)s;
+                    return element.TryGetProperty("url", out var urlProp) ? urlProp.GetString() : null;
+                })
+                .Where(url => !string.IsNullOrEmpty(url))
+                .ToArray()!;
+        }
+
+        #endregion
+
+        #region Subscription Management - Levels
+
+        /// <summary>
+        /// Subscribe to RTA input level updates
+        /// POST /rta/levels/subscribe
+        /// </summary>
+        /// <param name="subscriberUrl">URL to receive level update notifications</param>
+        /// <param name="unit">Unit for level values (dBFS, dBu, dBV, SPL). Optional - uses parameters field in Subscriber object</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <remarks>
+        /// Receives notifications when RTA input levels change
+        /// Use unit parameter to specify desired level unit
+        /// </remarks>
+        public async Task SubscribeToRTALevels(string subscriberUrl, string? unit = null, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(subscriberUrl))
+                throw new ArgumentException("Subscriber URL cannot be null or empty", nameof(subscriberUrl));
+
+            object subscriberData;
+            if (!string.IsNullOrWhiteSpace(unit))
+            {
+                subscriberData = new 
+                { 
+                    url = subscriberUrl,
+                    parameters = new Dictionary<string, string> { { "unit", unit } }
+                };
+            }
+            else
+            {
+                subscriberData = new { url = subscriberUrl };
+            }
+
+            var json = JsonSerializer.Serialize(subscriberData);
+            var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
+            
+            var response = await _httpClient.PostAsync($"{_baseUrl}/rta/levels/subscribe", httpContent, cancellationToken);
+            response.EnsureSuccessStatusCode();
+        }
+
+        /// <summary>
+        /// Unsubscribe from RTA input level updates
+        /// POST /rta/levels/unsubscribe
+        /// </summary>
+        /// <param name="subscriberUrl">URL to remove from level update notifications</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task UnsubscribeFromRTALevels(string subscriberUrl, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(subscriberUrl))
+                throw new ArgumentException("Subscriber URL cannot be null or empty", nameof(subscriberUrl));
+
+            var subscriberData = new { url = subscriberUrl };
+            var json = JsonSerializer.Serialize(subscriberData);
+            var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
+            
+            var response = await _httpClient.PostAsync($"{_baseUrl}/rta/levels/unsubscribe", httpContent, cancellationToken);
+            response.EnsureSuccessStatusCode();
+        }
+
+        /// <summary>
+        /// Get list of current RTA level subscribers
+        /// GET /rta/levels/subscribers
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Array of subscriber URLs currently subscribed to RTA level updates</returns>
+        public async Task<string[]> GetRTALevelsSubscribers(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/rta/levels/subscribers", cancellationToken);
+            response.EnsureSuccessStatusCode();
+            
+            var content = await response.Content.ReadAsStringAsync();
+            var subscribers = JsonSerializer.Deserialize<List<object>>(content) ?? new List<object>();
+            
+            return subscribers
+                .Select(s => {
+                    var element = (JsonElement)s;
+                    return element.TryGetProperty("url", out var urlProp) ? urlProp.GetString() : null;
+                })
+                .Where(url => !string.IsNullOrEmpty(url))
+                .ToArray()!;
+        }
+
+        #endregion
+
+        #region Subscription Management - Captured Data
+
+        /// <summary>
+        /// Subscribe to RTA captured data updates (RMS average)
+        /// POST /rta/captured-data/subscribe
+        /// </summary>
+        /// <param name="subscriberUrl">URL to receive captured data update notifications</param>
+        /// <param name="unit">Unit for magnitude data (dBFS, dBu, dBV, SPL). Optional - uses parameters field in Subscriber object</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <remarks>
+        /// Receives notifications when RTA captured data updates
+        /// Data includes Base64-encoded float array of magnitude values
+        /// Use unit parameter to specify desired magnitude unit
+        /// </remarks>
+        public async Task SubscribeToRTACapturedData(string subscriberUrl, string? unit = null, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(subscriberUrl))
+                throw new ArgumentException("Subscriber URL cannot be null or empty", nameof(subscriberUrl));
+
+            object subscriberData;
+            if (!string.IsNullOrWhiteSpace(unit))
+            {
+                subscriberData = new 
+                { 
+                    url = subscriberUrl,
+                    parameters = new Dictionary<string, string> { { "unit", unit } }
+                };
+            }
+            else
+            {
+                subscriberData = new { url = subscriberUrl };
+            }
+
+            var json = JsonSerializer.Serialize(subscriberData);
+            var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
+            
+            var response = await _httpClient.PostAsync($"{_baseUrl}/rta/captured-data/subscribe", httpContent, cancellationToken);
+            response.EnsureSuccessStatusCode();
+        }
+
+        /// <summary>
+        /// Unsubscribe from RTA captured data updates
+        /// POST /rta/captured-data/unsubscribe
+        /// </summary>
+        /// <param name="subscriberUrl">URL to remove from captured data update notifications</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task UnsubscribeFromRTACapturedData(string subscriberUrl, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(subscriberUrl))
+                throw new ArgumentException("Subscriber URL cannot be null or empty", nameof(subscriberUrl));
+
+            var subscriberData = new { url = subscriberUrl };
+            var json = JsonSerializer.Serialize(subscriberData);
+            var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
+            
+            var response = await _httpClient.PostAsync($"{_baseUrl}/rta/captured-data/unsubscribe", httpContent, cancellationToken);
+            response.EnsureSuccessStatusCode();
+        }
+
+        /// <summary>
+        /// Get list of current RTA captured data subscribers
+        /// GET /rta/captured-data/subscribers
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Array of subscriber URLs currently subscribed to RTA captured data updates</returns>
+        public async Task<string[]> GetRTACapturedDataSubscribers(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/rta/captured-data/subscribers", cancellationToken);
+            response.EnsureSuccessStatusCode();
+            
+            var content = await response.Content.ReadAsStringAsync();
+            var subscribers = JsonSerializer.Deserialize<List<object>>(content) ?? new List<object>();
+            
+            return subscribers
+                .Select(s => {
+                    var element = (JsonElement)s;
+                    return element.TryGetProperty("url", out var urlProp) ? urlProp.GetString() : null;
+                })
+                .Where(url => !string.IsNullOrEmpty(url))
+                .ToArray()!;
+        }
+
+        #endregion
+
+        #region Subscription Management - Captured Peak Data
+
+        /// <summary>
+        /// Subscribe to RTA captured peak data updates
+        /// POST /rta/captured-peak-data/subscribe
+        /// </summary>
+        /// <param name="subscriberUrl">URL to receive captured peak data update notifications</param>
+        /// <param name="unit">Unit for magnitude data (dBFS, dBu, dBV, SPL). Optional - uses parameters field in Subscriber object</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <remarks>
+        /// Receives notifications when RTA captured peak data updates
+        /// Data includes Base64-encoded float array of peak magnitude values
+        /// Use unit parameter to specify desired magnitude unit
+        /// </remarks>
+        public async Task SubscribeToRTACapturedPeakData(string subscriberUrl, string? unit = null, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(subscriberUrl))
+                throw new ArgumentException("Subscriber URL cannot be null or empty", nameof(subscriberUrl));
+
+            object subscriberData;
+            if (!string.IsNullOrWhiteSpace(unit))
+            {
+                subscriberData = new 
+                { 
+                    url = subscriberUrl,
+                    parameters = new Dictionary<string, string> { { "unit", unit } }
+                };
+            }
+            else
+            {
+                subscriberData = new { url = subscriberUrl };
+            }
+
+            var json = JsonSerializer.Serialize(subscriberData);
+            var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
+            
+            var response = await _httpClient.PostAsync($"{_baseUrl}/rta/captured-peak-data/subscribe", httpContent, cancellationToken);
+            response.EnsureSuccessStatusCode();
+        }
+
+        /// <summary>
+        /// Unsubscribe from RTA captured peak data updates
+        /// POST /rta/captured-peak-data/unsubscribe
+        /// </summary>
+        /// <param name="subscriberUrl">URL to remove from captured peak data update notifications</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task UnsubscribeFromRTACapturedPeakData(string subscriberUrl, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(subscriberUrl))
+                throw new ArgumentException("Subscriber URL cannot be null or empty", nameof(subscriberUrl));
+
+            var subscriberData = new { url = subscriberUrl };
+            var json = JsonSerializer.Serialize(subscriberData);
+            var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
+            
+            var response = await _httpClient.PostAsync($"{_baseUrl}/rta/captured-peak-data/unsubscribe", httpContent, cancellationToken);
+            response.EnsureSuccessStatusCode();
+        }
+
+        /// <summary>
+        /// Get list of current RTA captured peak data subscribers
+        /// GET /rta/captured-peak-data/subscribers
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Array of subscriber URLs currently subscribed to RTA captured peak data updates</returns>
+        public async Task<string[]> GetRTACapturedPeakDataSubscribers(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/rta/captured-peak-data/subscribers", cancellationToken);
+            response.EnsureSuccessStatusCode();
+            
+            var content = await response.Content.ReadAsStringAsync();
+            var subscribers = JsonSerializer.Deserialize<List<object>>(content) ?? new List<object>();
+            
+            return subscribers
+                .Select(s => {
+                    var element = (JsonElement)s;
+                    return element.TryGetProperty("url", out var urlProp) ? urlProp.GetString() : null;
+                })
+                .Where(url => !string.IsNullOrEmpty(url))
+                .ToArray()!;
+        }
+
+        #endregion
+
+        #region Subscription Management - Distortion
+
+        /// <summary>
+        /// Subscribe to RTA distortion updates
+        /// POST /rta/distortion/subscribe
+        /// </summary>
+        /// <param name="subscriberUrl">URL to receive distortion update notifications</param>
+        /// <param name="levelUnit">Unit for level values (dBFS, dBu, dBV, SPL). Optional - uses parameters field in Subscriber object</param>
+        /// <param name="distortionUnit">Unit for relative distortion values (dB or percent). Optional - uses parameters field in Subscriber object</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <remarks>
+        /// Receives notifications when RTA distortion measurements update
+        /// Use levelUnit to specify desired level unit
+        /// Use distortionUnit to specify desired distortion unit (dB or percent)
+        /// </remarks>
+        public async Task SubscribeToRTADistortion(
+            string subscriberUrl, 
+            string? levelUnit = null, 
+            string? distortionUnit = null,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(subscriberUrl))
+                throw new ArgumentException("Subscriber URL cannot be null or empty", nameof(subscriberUrl));
+
+            object subscriberData;
+            var hasLevelUnit = !string.IsNullOrWhiteSpace(levelUnit);
+            var hasDistortionUnit = !string.IsNullOrWhiteSpace(distortionUnit);
+
+            if (hasLevelUnit || hasDistortionUnit)
+            {
+                var parameters = new Dictionary<string, string>();
+                if (hasLevelUnit) parameters["unit"] = levelUnit!;
+                if (hasDistortionUnit) parameters["distortion"] = distortionUnit!;
+                
+                subscriberData = new 
+                { 
+                    url = subscriberUrl,
+                    parameters = parameters
+                };
+            }
+            else
+            {
+                subscriberData = new { url = subscriberUrl };
+            }
+
+            var json = JsonSerializer.Serialize(subscriberData);
+            var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
+            
+            var response = await _httpClient.PostAsync($"{_baseUrl}/rta/distortion/subscribe", httpContent, cancellationToken);
+            response.EnsureSuccessStatusCode();
+        }
+
+        /// <summary>
+        /// Unsubscribe from RTA distortion updates
+        /// POST /rta/distortion/unsubscribe
+        /// </summary>
+        /// <param name="subscriberUrl">URL to remove from distortion update notifications</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task UnsubscribeFromRTADistortion(string subscriberUrl, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(subscriberUrl))
+                throw new ArgumentException("Subscriber URL cannot be null or empty", nameof(subscriberUrl));
+
+            var subscriberData = new { url = subscriberUrl };
+            var json = JsonSerializer.Serialize(subscriberData);
+            var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
+            
+            var response = await _httpClient.PostAsync($"{_baseUrl}/rta/distortion/unsubscribe", httpContent, cancellationToken);
+            response.EnsureSuccessStatusCode();
+        }
+
+        /// <summary>
+        /// Get list of current RTA distortion subscribers
+        /// GET /rta/distortion/subscribers
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Array of subscriber URLs currently subscribed to RTA distortion updates</returns>
+        public async Task<string[]> GetRTADistortionSubscribers(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/rta/distortion/subscribers", cancellationToken);
+            response.EnsureSuccessStatusCode();
+            
+            var content = await response.Content.ReadAsStringAsync();
+            var subscribers = JsonSerializer.Deserialize<List<object>>(content) ?? new List<object>();
+            
+            return subscribers
+                .Select(s => {
+                    var element = (JsonElement)s;
+                    return element.TryGetProperty("url", out var urlProp) ? urlProp.GetString() : null;
+                })
+                .Where(url => !string.IsNullOrEmpty(url))
+                .ToArray()!;
+        }
 
         #endregion
     }
