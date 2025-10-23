@@ -2816,7 +2816,7 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
             return; // Test requires at least 2 measurements
         }
 
-        var measurementIds = measurements.Take(2).Select(m => m.UUID).ToArray();
+        var measurementIds = measurements.Take(2).Select(m => m.Index.ToString()).ToArray();
 
         // Act & Assert (should complete without errors)
         await measurementsService.VectorAverage(measurementIds);
@@ -2867,7 +2867,7 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
             return; // Test requires at least 1 measurement
         }
 
-        var measurementIds = measurements.Take(1).Select(m => m.UUID).ToArray();
+        var measurementIds = measurements.Take(1).Select(m => m.Index.ToString()).ToArray();
 
         // Act & Assert (should complete without errors)
         await measurementsService.SmoothBatch(measurementIds, smoothing: "1/6");
@@ -2886,7 +2886,7 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
         
         if (measurements.Length < 2) return;
 
-        var measurementIds = measurements.Take(2).Select(m => m.UUID).ToArray();
+        var measurementIds = measurements.Take(2).Select(m => m.Index.ToString()).ToArray();
 
         // Act & Assert
         await measurementsService.TimeAlign(measurementIds);
@@ -2904,7 +2904,7 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
         
         if (measurements.Length < 2) return;
 
-        var measurementIds = measurements.Take(2).Select(m => m.UUID).ToArray();
+        var measurementIds = measurements.Take(2).Select(m => m.Index.ToString()).ToArray();
 
         // Act & Assert
         await measurementsService.RMSAverage(measurementIds);
@@ -2922,7 +2922,7 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
         
         if (measurements.Length < 2) return;
 
-        var measurementIds = measurements.Take(2).Select(m => m.UUID).ToArray();
+        var measurementIds = measurements.Take(2).Select(m => m.Index.ToString()).ToArray();
 
         // Act & Assert
         await measurementsService.DbAverage(measurementIds);
@@ -2940,7 +2940,7 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
         
         if (measurements.Length < 2) return;
 
-        var measurementIds = measurements.Take(2).Select(m => m.UUID).ToArray();
+        var measurementIds = measurements.Take(2).Select(m => m.Index.ToString()).ToArray();
 
         // Act & Assert
         await measurementsService.VectorSum(measurementIds);
@@ -2958,7 +2958,7 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
         
         if (measurements.Length == 0) return;
 
-        var measurementIds = measurements.Take(1).Select(m => m.UUID).ToArray();
+        var measurementIds = measurements.Take(1).Select(m => m.Index.ToString()).ToArray();
 
         // Act & Assert
         await measurementsService.RemoveIRDelays(measurementIds);

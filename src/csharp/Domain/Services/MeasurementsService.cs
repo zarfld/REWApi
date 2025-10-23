@@ -1341,6 +1341,25 @@ namespace REWApi.Domain.Services
         #region Batch Processing Commands (Process Multiple Measurements)
 
         /// <summary>
+        /// Convert measurement IDs to the format required by the API.
+        /// Handles both numeric indices (0-based, need +1) and UUID strings (pass through).
+        /// REW API accepts string array - either numeric strings like "1", "2" or UUIDs.
+        /// </summary>
+        private string[] ConvertMeasurementIdsForApi(string[] measurementIds)
+        {
+            return measurementIds.Select(id =>
+            {
+                // If it's a numeric string (0-based index), convert to 1-based and return as string
+                if (int.TryParse(id, out int index))
+                {
+                    return (index + 1).ToString(); // Convert to 1-based index string for REW API
+                }
+                // Otherwise it's a UUID - pass through as-is
+                return id;
+            }).ToArray();
+        }
+
+        /// <summary>
         /// Align SPL of multiple measurements to a target level or average
         /// Maps to POST /measurements/process-measurements with "Align SPL" process
         /// </summary>
@@ -1367,10 +1386,9 @@ namespace REWApi.Domain.Services
 
             await _commandGate.ExecuteCommand(async () =>
             {
-                // Convert string indices to integers as required by API
-                // REW uses 1-based indexing, so add 1 to each 0-based index
-                var indices = measurementIds.Select(id => int.Parse(id) + 1).ToArray();
-                
+                // Convert IDs: numeric (0-based) → 1-based int, UUIDs → string
+                var indices = ConvertMeasurementIdsForApi(measurementIds);
+
                 var processData = new
                 {
                     processName = "Align SPL",
@@ -1406,8 +1424,8 @@ namespace REWApi.Domain.Services
 
             await _commandGate.ExecuteCommand(async () =>
             {
-                // Convert string indices to integers as required by API
-                var indices = measurementIds.Select(id => int.Parse(id)).ToArray();
+                // Convert IDs: numeric (0-based) → 1-based int, UUIDs → string
+                var indices = ConvertMeasurementIdsForApi(measurementIds);
                 
                 var processData = new
                 {
@@ -1465,8 +1483,8 @@ namespace REWApi.Domain.Services
                 if (upperLimit.HasValue)
                     parameters["upperLimit"] = upperLimit.Value.ToString();
 
-                // Convert string indices to integers as required by API
-                var indices = new[] { int.Parse(measurementIdA), int.Parse(measurementIdB) };
+                // Convert IDs: numeric (0-based) → 1-based int, UUIDs → string
+                var indices = ConvertMeasurementIdsForApi(new[] { measurementIdA, measurementIdB });
                 
                 var processData = new
                 {
@@ -1502,8 +1520,8 @@ namespace REWApi.Domain.Services
 
             await _commandGate.ExecuteCommand(async () =>
             {
-                // Convert string indices to integers as required by API
-                var indices = measurementIds.Select(id => int.Parse(id)).ToArray();
+                // Convert IDs: numeric (0-based) → 1-based int, UUIDs → string
+                var indices = ConvertMeasurementIdsForApi(measurementIds);
                 
                 var processData = new
                 {
@@ -1538,8 +1556,8 @@ namespace REWApi.Domain.Services
 
             await _commandGate.ExecuteCommand(async () =>
             {
-                // Convert string indices to integers as required by API
-                var indices = measurementIds.Select(id => int.Parse(id)).ToArray();
+                // Convert IDs: numeric (0-based) → 1-based int, UUIDs → string
+                var indices = ConvertMeasurementIdsForApi(measurementIds);
                 
                 var processData = new
                 {
@@ -1570,8 +1588,8 @@ namespace REWApi.Domain.Services
 
             await _commandGate.ExecuteCommand(async () =>
             {
-                // Convert string indices to integers as required by API
-                var indices = measurementIds.Select(id => int.Parse(id)).ToArray();
+                // Convert IDs: numeric (0-based) → 1-based int, UUIDs → string
+                var indices = ConvertMeasurementIdsForApi(measurementIds);
                 
                 var processData = new
                 {
@@ -1602,8 +1620,8 @@ namespace REWApi.Domain.Services
 
             await _commandGate.ExecuteCommand(async () =>
             {
-                // Convert string indices to integers as required by API
-                var indices = measurementIds.Select(id => int.Parse(id)).ToArray();
+                // Convert IDs: numeric (0-based) → 1-based int, UUIDs → string
+                var indices = ConvertMeasurementIdsForApi(measurementIds);
                 
                 var processData = new
                 {
@@ -1634,8 +1652,8 @@ namespace REWApi.Domain.Services
 
             await _commandGate.ExecuteCommand(async () =>
             {
-                // Convert string indices to integers as required by API
-                var indices = measurementIds.Select(id => int.Parse(id)).ToArray();
+                // Convert IDs: numeric (0-based) → 1-based int, UUIDs → string
+                var indices = ConvertMeasurementIdsForApi(measurementIds);
                 
                 var processData = new
                 {
@@ -1666,8 +1684,8 @@ namespace REWApi.Domain.Services
 
             await _commandGate.ExecuteCommand(async () =>
             {
-                // Convert string indices to integers as required by API
-                var indices = measurementIds.Select(id => int.Parse(id)).ToArray();
+                // Convert IDs: numeric (0-based) → 1-based int, UUIDs → string
+                var indices = ConvertMeasurementIdsForApi(measurementIds);
                 
                 var processData = new
                 {
@@ -1698,8 +1716,8 @@ namespace REWApi.Domain.Services
 
             await _commandGate.ExecuteCommand(async () =>
             {
-                // Convert string indices to integers as required by API
-                var indices = measurementIds.Select(id => int.Parse(id)).ToArray();
+                // Convert IDs: numeric (0-based) → 1-based int, UUIDs → string
+                var indices = ConvertMeasurementIdsForApi(measurementIds);
                 
                 var processData = new
                 {
@@ -1730,8 +1748,8 @@ namespace REWApi.Domain.Services
 
             await _commandGate.ExecuteCommand(async () =>
             {
-                // Convert string indices to integers as required by API
-                var indices = measurementIds.Select(id => int.Parse(id)).ToArray();
+                // Convert IDs: numeric (0-based) → 1-based int, UUIDs → string
+                var indices = ConvertMeasurementIdsForApi(measurementIds);
                 
                 var processData = new
                 {
@@ -1762,8 +1780,8 @@ namespace REWApi.Domain.Services
 
             await _commandGate.ExecuteCommand(async () =>
             {
-                // Convert string indices to integers as required by API
-                var indices = measurementIds.Select(id => int.Parse(id)).ToArray();
+                // Convert IDs: numeric (0-based) → 1-based int, UUIDs → string
+                var indices = ConvertMeasurementIdsForApi(measurementIds);
                 
                 var processData = new
                 {
@@ -1794,8 +1812,8 @@ namespace REWApi.Domain.Services
 
             await _commandGate.ExecuteCommand(async () =>
             {
-                // Convert string indices to integers as required by API
-                var indices = measurementIds.Select(id => int.Parse(id)).ToArray();
+                // Convert IDs: numeric (0-based) → 1-based int, UUIDs → string
+                var indices = ConvertMeasurementIdsForApi(measurementIds);
                 
                 var processData = new
                 {
