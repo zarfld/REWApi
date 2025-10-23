@@ -714,21 +714,26 @@ namespace REWApi.Domain.Services
         #region Individual Measurement Commands (Phase 2)
 
         /// <summary>
-        /// Save a single measurement to its current file location
+        /// Save a single measurement to a specified file
         /// Maps to POST /measurements/:id/command "Save"
+        /// Note: REW API requires filename parameter
         /// </summary>
         public async Task SaveMeasurement(
             string measurementId,
+            string filename,
             CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(measurementId))
                 throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+            if (string.IsNullOrEmpty(filename))
+                throw new ArgumentException("Filename cannot be null or empty", nameof(filename));
 
             await _commandGate.ExecuteCommand(async () =>
             {
                 var commandData = new
                 {
-                    command = "Save"
+                    command = "Save",
+                    parameters = new { filename }
                 };
 
                 var json = JsonSerializer.Serialize(commandData);
@@ -1083,6 +1088,303 @@ namespace REWApi.Domain.Services
                     throw new REWApiException($"Unexpected response structure for Estimate IR delay command: {responseJson}", "/measurements/:id/command");
                 }
             }, "Estimate IR Delay", cancellationToken);
+        }
+
+        /// <summary>
+        /// Generate microphone in-box correction for a measurement
+        /// Maps to POST /measurements/:id/command "Generate Mic in box correction"
+        /// </summary>
+        public async Task GenerateMicInBoxCorrection(
+            string measurementId,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var commandData = new
+                {
+                    command = "Generate Mic in box correction"
+                };
+
+                var json = JsonSerializer.Serialize(commandData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "Generate Mic In Box Correction", cancellationToken);
+        }
+
+        /// <summary>
+        /// Merge calibration data into the impulse response
+        /// Maps to POST /measurements/:id/command "Merge cal data to IR"
+        /// </summary>
+        public async Task MergeCalDataToIR(
+            string measurementId,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var commandData = new
+                {
+                    command = "Merge cal data to IR"
+                };
+
+                var json = JsonSerializer.Serialize(commandData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "Merge Cal Data To IR", cancellationToken);
+        }
+
+        /// <summary>
+        /// Generate equalised waterfall for a measurement
+        /// Maps to POST /measurements/:id/command "Generate equalised waterfall"
+        /// Note: This generates a waterfall with EQ applied
+        /// </summary>
+        public async Task GenerateEqualisedWaterfall(
+            string measurementId,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var commandData = new
+                {
+                    command = "Generate equalised waterfall"
+                };
+
+                var json = JsonSerializer.Serialize(commandData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "Generate Equalised Waterfall", cancellationToken);
+        }
+
+        /// <summary>
+        /// Generate equalised spectrogram for a measurement
+        /// Maps to POST /measurements/:id/command "Generate equalised spectrogram"
+        /// Note: This generates a spectrogram with EQ applied
+        /// </summary>
+        public async Task GenerateEqualisedSpectrogram(
+            string measurementId,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var commandData = new
+                {
+                    command = "Generate equalised spectrogram"
+                };
+
+                var json = JsonSerializer.Serialize(commandData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "Generate Equalised Spectrogram", cancellationToken);
+        }
+
+        #endregion
+
+        #region General Measurement Commands (Global Operations)
+
+        /// <summary>
+        /// Save all measurements to a single file
+        /// Maps to POST /measurements/command "Save all"
+        /// </summary>
+        /// <param name="filePath">Path to save the measurements file (supports .mdat format)</param>
+        /// <param name="note">Optional note to save with the measurements</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task SaveAllMeasurements(
+            string filePath,
+            string? note = null,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(filePath))
+                throw new ArgumentException("File path cannot be null or empty", nameof(filePath));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var parameters = note != null 
+                    ? new object[] { filePath, note }
+                    : new object[] { filePath };
+
+                var commandData = new
+                {
+                    command = "Save all",
+                    parameters
+                };
+
+                var json = JsonSerializer.Serialize(commandData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/command", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "Save All Measurements", cancellationToken);
+        }
+
+        /// <summary>
+        /// Load measurements from one or more files
+        /// Maps to POST /measurements/command "Load"
+        /// </summary>
+        /// <param name="filePaths">Array of file paths to load (supports .mdat format)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task LoadMeasurements(
+            string[] filePaths,
+            CancellationToken cancellationToken = default)
+        {
+            if (filePaths == null || filePaths.Length == 0)
+                throw new ArgumentException("At least one file path must be provided", nameof(filePaths));
+
+            foreach (var path in filePaths)
+            {
+                if (string.IsNullOrEmpty(path))
+                    throw new ArgumentException("File paths cannot be null or empty", nameof(filePaths));
+            }
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var commandData = new
+                {
+                    command = "Load",
+                    parameters = filePaths
+                };
+
+                var json = JsonSerializer.Serialize(commandData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/command", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "Load Measurements", cancellationToken);
+        }
+
+        /// <summary>
+        /// Generate a new measurement with a pure impulse (Dirac delta function)
+        /// Maps to POST /measurements/command "Dirac"
+        /// Creates a measurement containing a single impulse at the specified sample index
+        /// </summary>
+        /// <param name="sampleRate">Sample rate for the measurement (e.g., 48000 Hz)</param>
+        /// <param name="totalSamples">Total number of samples for the response (e.g., 131072)</param>
+        /// <param name="peakIndex">Zero-based index of the peak sample (e.g., 65536 for center)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task GenerateDiracMeasurement(
+            int sampleRate,
+            int totalSamples,
+            int peakIndex,
+            CancellationToken cancellationToken = default)
+        {
+            if (sampleRate <= 0)
+                throw new ArgumentException("Sample rate must be positive", nameof(sampleRate));
+            if (totalSamples <= 0)
+                throw new ArgumentException("Total samples must be positive", nameof(totalSamples));
+            if (peakIndex < 0 || peakIndex >= totalSamples)
+                throw new ArgumentException($"Peak index must be between 0 and {totalSamples - 1}", nameof(peakIndex));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var commandData = new
+                {
+                    command = "Dirac",
+                    parameters = new[] 
+                    { 
+                        sampleRate.ToString(), 
+                        totalSamples.ToString(), 
+                        peakIndex.ToString() 
+                    }
+                };
+
+                var json = JsonSerializer.Serialize(commandData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/command", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "Generate Dirac Measurement", cancellationToken);
+        }
+
+        /// <summary>
+        /// Sort all measurements alphabetically by name, then by date if names are the same
+        /// Maps to POST /measurements/command "Sort alphabetically"
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task SortMeasurementsAlphabetically(
+            CancellationToken cancellationToken = default)
+        {
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var commandData = new
+                {
+                    command = "Sort alphabetically"
+                };
+
+                var json = JsonSerializer.Serialize(commandData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/command", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "Sort Measurements Alphabetically", cancellationToken);
+        }
+
+        #endregion
+
+        #region Batch Processing Commands (Process Multiple Measurements)
+
+        /// <summary>
+        /// Align SPL of multiple measurements to a target level or average
+        /// Maps to POST /measurements/process-measurements with "Align SPL" process
+        /// </summary>
+        /// <param name="measurementIds">Array of measurement IDs (indices or UUIDs)</param>
+        /// <param name="targetDb">Target SPL in dB (e.g. "75.0") or "average" to align to average SPL</param>
+        /// <param name="frequencyHz">Center frequency for alignment in Hz (e.g. 1000)</param>
+        /// <param name="spanOctaves">Alignment span in octaves (e.g. 2)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task AlignSPL(
+            string[] measurementIds,
+            string targetDb,
+            double frequencyHz,
+            double spanOctaves,
+            CancellationToken cancellationToken = default)
+        {
+            if (measurementIds == null || measurementIds.Length == 0)
+                throw new ArgumentException("At least one measurement ID is required", nameof(measurementIds));
+            if (string.IsNullOrEmpty(targetDb))
+                throw new ArgumentException("Target dB cannot be null or empty", nameof(targetDb));
+            if (frequencyHz <= 0)
+                throw new ArgumentException("Frequency must be positive", nameof(frequencyHz));
+            if (spanOctaves <= 0)
+                throw new ArgumentException("Span octaves must be positive", nameof(spanOctaves));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var processData = new
+                {
+                    processName = "Align SPL",
+                    measurementIndices = measurementIds,
+                    parameters = new
+                    {
+                        targetdB = targetDb,
+                        frequencyHz = frequencyHz.ToString(),
+                        spanOctaves = spanOctaves.ToString()
+                    }
+                };
+
+                var json = JsonSerializer.Serialize(processData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/process-measurements", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "Align SPL", cancellationToken);
         }
 
         #endregion

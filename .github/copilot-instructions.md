@@ -219,6 +219,7 @@ build/                  # Root build directory
 ✅ Always check official documentation before making assumptions about API behavior
 ✅ Implement functionality that is provided by actual API endpoints and its features
 ✅ Implement full features provided by the API 
+✅ Always use descriptive names for variables, functions, classes, tests and modules - be specific and avoid generic names like "data", "info", "process", "phase", "fixed", ...
 
 ### Never Do
 ❌ Proceed with ambiguous requirements  
@@ -237,6 +238,7 @@ build/                  # Root build directory
 ❌ ignore existing code and architecture
 ❌ start an reimplementation if you can fix the existing code
 ❌ never implement speculatively
+❌ never use generic names for variables, functions, classes, tests and modules - be specific and avoid generic names like "data", "info", "process", "phase", "fixed", ...
 
 ## 🔍 When to Ask Questions
 

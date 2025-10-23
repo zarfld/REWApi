@@ -2301,7 +2301,7 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
     #region Phase 2 - Individual Measurement Commands
 
     /// <summary>
-    /// Test: SaveMeasurement saves a measurement
+    /// Test: SaveMeasurement saves a measurement to a file
     /// @test TEST-MEASUREMENTS-COMMANDS-001 - Save measurement
     /// @status ACTIVE - Phase 2 implementation
     /// </summary>
@@ -2313,12 +2313,18 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
         var measurements = await measurementsService.ListMeasurements();
         measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
         var measurementId = measurements[0].UUID;
+        var tempFilename = Path.Combine(Path.GetTempPath(), $"rew_test_{Guid.NewGuid()}.mdat");
 
         // Act
-        await measurementsService.SaveMeasurement(measurementId);
+        await measurementsService.SaveMeasurement(measurementId, tempFilename);
 
         // Assert - if no exception thrown, test passes
         // REW API returns 200 OK on success
+        // Clean up
+        if (File.Exists(tempFilename))
+        {
+            File.Delete(tempFilename);
+        }
     }
 
     /// <summary>
@@ -2355,14 +2361,14 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
         var measurementsBefore = await measurementsService.ListMeasurements();
         measurementsBefore.Should().NotBeNullOrEmpty("test requires at least one measurement");
         var measurementId = measurementsBefore[0].UUID;
-        var countBefore = measurementsBefore.Count;
+        var countBefore = measurementsBefore.Length;
 
         // Act
         await measurementsService.ResponseCopy(measurementId);
 
         // Assert - verify count increased
         var measurementsAfter = await measurementsService.ListMeasurements();
-        measurementsAfter.Count.Should().BeGreaterThan(countBefore, "response copy should create a new measurement");
+        measurementsAfter.Length.Should().BeGreaterThan(countBefore, "response copy should create a new measurement");
     }
 
     /// <summary>
@@ -2378,14 +2384,14 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
         var measurementsBefore = await measurementsService.ListMeasurements();
         measurementsBefore.Should().NotBeNullOrEmpty("test requires at least one measurement");
         var measurementId = measurementsBefore[0].UUID;
-        var countBefore = measurementsBefore.Count;
+        var countBefore = measurementsBefore.Length;
 
         // Act
         await measurementsService.ResponseMagnitudeCopy(measurementId);
 
         // Assert - verify count increased
         var measurementsAfter = await measurementsService.ListMeasurements();
-        measurementsAfter.Count.Should().BeGreaterThan(countBefore, "magnitude copy should create a new measurement");
+        measurementsAfter.Length.Should().BeGreaterThan(countBefore, "magnitude copy should create a new measurement");
     }
 
     /// <summary>
@@ -2441,14 +2447,14 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
         var measurementsBefore = await measurementsService.ListMeasurements();
         measurementsBefore.Should().NotBeNullOrEmpty("test requires at least one measurement");
         var measurementId = measurementsBefore[0].UUID;
-        var countBefore = measurementsBefore.Count;
+        var countBefore = measurementsBefore.Length;
 
         // Act
         await measurementsService.MinimumPhaseVersion(measurementId);
 
         // Assert - verify count increased
         var measurementsAfter = await measurementsService.ListMeasurements();
-        measurementsAfter.Count.Should().BeGreaterThan(countBefore, "minimum phase version should create a new measurement");
+        measurementsAfter.Length.Should().BeGreaterThan(countBefore, "minimum phase version should create a new measurement");
     }
 
     /// <summary>
@@ -2464,14 +2470,14 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
         var measurementsBefore = await measurementsService.ListMeasurements();
         measurementsBefore.Should().NotBeNullOrEmpty("test requires at least one measurement");
         var measurementId = measurementsBefore[0].UUID;
-        var countBefore = measurementsBefore.Count;
+        var countBefore = measurementsBefore.Length;
 
         // Act
         await measurementsService.ExcessPhaseVersion(measurementId);
 
         // Assert - verify count increased
         var measurementsAfter = await measurementsService.ListMeasurements();
-        measurementsAfter.Count.Should().BeGreaterThan(countBefore, "excess phase version should create a new measurement");
+        measurementsAfter.Length.Should().BeGreaterThan(countBefore, "excess phase version should create a new measurement");
     }
 
     /// <summary>
@@ -2576,6 +2582,195 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
         // Assert
         delay.Should().BeGreaterThanOrEqualTo(0, "delay should be a non-negative value in milliseconds");
     }
+
+    /// <summary>
+    /// Test: GenerateMicInBoxCorrection generates microphone in-box correction
+    /// @test TEST-MEASUREMENTS-COMMANDS-014 - Generate Mic in box correction
+    /// @status ACTIVE - Phase 2 remaining commands
+    /// </summary>
+    [Fact]
+    public async Task GenerateMicInBoxCorrection_ValidId_GeneratesCorrection()
+    {
+        // Arrange
+        var measurementsService = _client.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        var measurementId = measurements[0].UUID;
+
+        // Act
+        await measurementsService.GenerateMicInBoxCorrection(measurementId);
+
+        // Assert - if no exception thrown, test passes
+        // REW API returns 200 OK on success
+    }
+
+    /// <summary>
+    /// Test: MergeCalDataToIR merges calibration data into impulse response
+    /// @test TEST-MEASUREMENTS-COMMANDS-015 - Merge cal data to IR
+    /// @status ACTIVE - Phase 2 remaining commands
+    /// </summary>
+    [Fact]
+    public async Task MergeCalDataToIR_ValidId_MergesSuccessfully()
+    {
+        // Arrange
+        var measurementsService = _client.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        var measurementId = measurements[0].UUID;
+
+        // Act
+        await measurementsService.MergeCalDataToIR(measurementId);
+
+        // Assert - if no exception thrown, test passes
+        // REW API returns 200 OK on success
+    }
+
+    /// <summary>
+    /// Test: GenerateEqualisedWaterfall generates waterfall with EQ applied
+    /// @test TEST-MEASUREMENTS-COMMANDS-016 - Generate equalised waterfall
+    /// @status ACTIVE - Phase 2 remaining commands
+    /// </summary>
+    [Fact]
+    public async Task GenerateEqualisedWaterfall_ValidId_GeneratesSuccessfully()
+    {
+        // Arrange
+        var measurementsService = _client.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        var measurementId = measurements[0].UUID;
+
+        // Act
+        await measurementsService.GenerateEqualisedWaterfall(measurementId);
+
+        // Assert - if no exception thrown, test passes
+        // REW API returns 200 OK on success
+    }
+
+    /// <summary>
+    /// Test: GenerateEqualisedSpectrogram generates spectrogram with EQ applied
+    /// @test TEST-MEASUREMENTS-COMMANDS-017 - Generate equalised spectrogram
+    /// @status ACTIVE - Phase 2 remaining commands
+    /// </summary>
+    [Fact]
+    public async Task GenerateEqualisedSpectrogram_ValidId_GeneratesSuccessfully()
+    {
+        // Arrange
+        var measurementsService = _client.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        var measurementId = measurements[0].UUID;
+
+        // Act
+        await measurementsService.GenerateEqualisedSpectrogram(measurementId);
+
+        // Assert - if no exception thrown, test passes
+        // REW API returns 200 OK on success
+    }
+
+    #region General Measurement Commands
+
+    /// <summary>
+    /// Test: SaveAllMeasurements saves all measurements to a file
+    /// @test TEST-MEASUREMENTS-GENERAL-001 - Save all measurements
+    /// @status ACTIVE - General commands implementation
+    /// </summary>
+    [Fact]
+    public async Task SaveAllMeasurements_ValidPath_SavesSuccessfully()
+    {
+        // Arrange
+        var measurementsService = _client.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement to save");
+        
+        var tempFilePath = Path.Combine(Path.GetTempPath(), $"rew_all_test_{Guid.NewGuid()}.mdat");
+        var note = "Test save all measurements";
+
+        // Act
+        await measurementsService.SaveAllMeasurements(tempFilePath, note);
+
+        // Assert - if no exception thrown, test passes
+        // Verify file was created
+        File.Exists(tempFilePath).Should().BeTrue("file should be created after save all");
+        
+        // Clean up
+        if (File.Exists(tempFilePath))
+        {
+            File.Delete(tempFilePath);
+        }
+    }
+
+    /// <summary>
+    /// Test: LoadMeasurements loads measurements from files
+    /// @test TEST-MEASUREMENTS-GENERAL-002 - Load measurements
+    /// @status ACTIVE - General commands implementation
+    /// </summary>
+    [Fact]
+    public async Task LoadMeasurements_ValidPaths_LoadsSuccessfully()
+    {
+        // Arrange
+        var measurementsService = _client.Measurements;
+        
+        // First, save current measurements to a temp file
+        var tempFilePath = Path.Combine(Path.GetTempPath(), $"rew_load_test_{Guid.NewGuid()}.mdat");
+        await measurementsService.SaveAllMeasurements(tempFilePath, "Test data for load");
+        
+        File.Exists(tempFilePath).Should().BeTrue("temporary file should exist for loading");
+
+        var countBefore = (await measurementsService.ListMeasurements()).Length;
+
+        // Act
+        await measurementsService.LoadMeasurements(new[] { tempFilePath });
+
+        // Assert
+        var countAfter = (await measurementsService.ListMeasurements()).Length;
+        countAfter.Should().BeGreaterThanOrEqualTo(countBefore, "measurements should be loaded");
+        
+        // Clean up
+        if (File.Exists(tempFilePath))
+        {
+            File.Delete(tempFilePath);
+        }
+    }
+
+    /// <summary>
+    /// Test: GenerateDiracMeasurement creates a Dirac delta impulse measurement
+    /// @test TEST-MEASUREMENTS-GENERAL-003 - Generate Dirac measurement
+    /// @status ACTIVE - General commands implementation
+    /// </summary>
+    [Fact]
+    public async Task GenerateDiracMeasurement_ValidParameters_CreatesImpulse()
+    {
+        // Arrange
+        var measurementsService = _client.Measurements;
+        var countBefore = (await measurementsService.ListMeasurements()).Length;
+        
+        int sampleRate = 48000;
+        int totalSamples = 131072;
+        int peakIndex = 65536; // Center of the impulse response
+
+        // Act
+        await measurementsService.GenerateDiracMeasurement(sampleRate, totalSamples, peakIndex);
+
+        // Assert
+        var countAfter = (await measurementsService.ListMeasurements()).Length;
+        countAfter.Should().BeGreaterThan(countBefore, "Dirac command should create a new measurement");
+    }
+
+    [Fact]
+    public async Task SortMeasurementsAlphabetically_SortsSuccessfully()
+    {
+        // Arrange
+        var measurementsService = _client.Measurements;
+
+        // Act & Assert (should complete without errors)
+        await measurementsService.SortMeasurementsAlphabetically();
+        
+        // Verify measurements are still available after sorting
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeNull("measurements should still be accessible after sorting");
+    }
+
+    #endregion
 
     #endregion
 }
