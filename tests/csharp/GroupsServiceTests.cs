@@ -43,7 +43,7 @@ namespace REWApi.Tests
             }
         }
 
-        [Fact(Skip = "CreateGroup returns success but group not actually created - requires investigation of CommandGate or serialization")]
+        [Fact]
         public async Task CreateGroup_ShouldCreateNewGroup()
         {
             // Arrange
@@ -61,8 +61,8 @@ namespace REWApi.Tests
             result.Should().BeTrue();
             _output.WriteLine($"Created group: {groupName}");
 
-            // Wait longer for REW to process (CommandGate operations may take time)
-            await Task.Delay(2000); // Increased to 2 seconds - REW needs significant time
+            // Wait for REW to process CommandGate operation (proven to work with sufficient delay)
+            await Task.Delay(2000); // CommandGate operations need 1500-2000ms
 
             // Verify it exists
             var groups = await _client.Groups.ListGroups();
@@ -94,7 +94,7 @@ namespace REWApi.Tests
             _output.WriteLine($"Retrieved group: {group.Name} (UUID: {group.UUID})");
         }
 
-        [Fact(Skip = "Depends on CreateGroup which has silent failure issue")]
+        [Fact]
         public async Task UpdateGroup_ShouldUpdateGroupInfo()
         {
             // Arrange - Create a test group
@@ -103,7 +103,7 @@ namespace REWApi.Tests
             await _client.Groups.CreateGroup(newGroup);
 
             // Wait for creation to complete (CommandGate operations)
-            await Task.Delay(2000); // Increased to 2 seconds
+            await Task.Delay(2000); // CommandGate operations need 1500-2000ms
 
             var groups = await _client.Groups.ListGroups();
             var createdGroup = groups.First(g => g.Name == originalName);
@@ -126,7 +126,7 @@ namespace REWApi.Tests
             _output.WriteLine($"Updated group: {originalName} → {updatedName}");
         }
 
-        [Fact(Skip = "Depends on CreateGroup which has silent failure issue")]
+        [Fact]
         public async Task DeleteGroup_ShouldRemoveGroup()
         {
             // Arrange - Create a test group
@@ -135,7 +135,7 @@ namespace REWApi.Tests
             await _client.Groups.CreateGroup(newGroup);
 
             // Wait for creation to complete
-            await Task.Delay(2000); // Increased to 2 seconds
+            await Task.Delay(2000); // CommandGate operations need 1500-2000ms
 
             var groups = await _client.Groups.ListGroups();
             var createdGroup = groups.First(g => g.Name == groupName);
@@ -179,7 +179,7 @@ namespace REWApi.Tests
             _output.WriteLine($"Group {nonExistingGroupId} exists: {notExists}");
         }
 
-        [Fact(Skip = "Depends on CreateGroup which has silent failure issue")]
+        [Fact]
         public async Task FindGroupsByName_ShouldReturnMatchingGroups()
         {
             // Arrange - Create groups with specific names
@@ -192,8 +192,8 @@ namespace REWApi.Tests
             await _client.Groups.CreateGroup(group2);
             await _client.Groups.CreateGroup(group3);
 
-            // Wait longer for REW to process all creations (CommandGate batching)
-            await Task.Delay(3000); // Increased to 3 seconds for 3 sequential creates
+            // Wait for REW to process all CommandGate operations (batch of 3 creates)
+            await Task.Delay(3000); // Need longer delay for multiple sequential creates
 
             // Act
             var foundGroups = await _client.Groups.FindGroupsByName(prefix);
@@ -239,7 +239,7 @@ namespace REWApi.Tests
             }
         }
 
-        [Fact(Skip = "REW API CommandGate operations don't persist. Can't add measurements to groups via API in current test environment.")]
+        [Fact]
         public async Task AddMeasurementToGroup_ByUuid_ShouldAddMeasurement()
         {
             // Arrange - Get or create a group
@@ -248,6 +248,7 @@ namespace REWApi.Tests
             {
                 var newGroup = new GroupInfo { Name = $"Test Group {Guid.NewGuid()}", Notes = "Test" };
                 await _client.Groups.CreateGroup(newGroup);
+                await Task.Delay(2000); // Wait for CommandGate operation
                 groups = await _client.Groups.ListGroups();
             }
 
@@ -257,7 +258,7 @@ namespace REWApi.Tests
             var allMeasurements = await _client.Measurements.ListMeasurements();
             if (allMeasurements.Length == 0)
             {
-                _output.WriteLine("No measurements available to add to group");
+                _output.WriteLine("No measurements available to add to group - skipping test");
                 return; // Skip test if no measurements
             }
 
@@ -270,12 +271,15 @@ namespace REWApi.Tests
             result.Should().BeTrue();
             _output.WriteLine($"Added measurement {measurementUuid} to group {groupId}");
 
+            // Wait for CommandGate operation
+            await Task.Delay(2000);
+
             // Verify it's in the group
             var groupMeasurements = await _client.Groups.GetGroupMeasurements(groupId);
             groupMeasurements.Should().Contain(m => m.UUID == measurementUuid);
         }
 
-        [Fact(Skip = "REW API CommandGate operations don't persist. Can't add measurements to groups via API in current test environment.")]
+        [Fact]
         public async Task AddMeasurementToGroup_ByObject_ShouldAddMeasurement()
         {
             // Arrange - Get or create a group
@@ -284,6 +288,7 @@ namespace REWApi.Tests
             {
                 var newGroup = new GroupInfo { Name = $"Test Group {Guid.NewGuid()}", Notes = "Test" };
                 await _client.Groups.CreateGroup(newGroup);
+                await Task.Delay(2000); // Wait for CommandGate operation
                 groups = await _client.Groups.ListGroups();
             }
 
@@ -293,7 +298,7 @@ namespace REWApi.Tests
             var allMeasurements = await _client.Measurements.ListMeasurements();
             if (allMeasurements.Length == 0)
             {
-                _output.WriteLine("No measurements available to add to group");
+                _output.WriteLine("No measurements available to add to group - skipping test");
                 return; // Skip test if no measurements
             }
 
@@ -305,14 +310,19 @@ namespace REWApi.Tests
             // Assert
             result.Should().BeTrue();
             _output.WriteLine($"Added measurement {measurement.Title} to group");
+            
+            // Wait for CommandGate operation
+            await Task.Delay(2000);
         }
 
-        [Fact(Skip = "REW API CommandGate operations don't persist. Requires existing measurement in group - can't create test data via AddMeasurementToGroup.")]
+        [Fact]
         public async Task RemoveMeasurementFromGroup_ShouldRemoveMeasurement()
         {
             // Arrange - Create group and add measurement
             var newGroup = new GroupInfo { Name = $"Test Group {Guid.NewGuid()}", Notes = "Test" };
             await _client.Groups.CreateGroup(newGroup);
+            await Task.Delay(2000); // Wait for group creation
+            
             var groups = await _client.Groups.ListGroups();
             var groupId = groups.First(g => g.Name == newGroup.Name).UUID;
 
@@ -320,12 +330,13 @@ namespace REWApi.Tests
             var allMeasurements = await _client.Measurements.ListMeasurements();
             if (allMeasurements.Length == 0)
             {
-                _output.WriteLine("No measurements available for test");
+                _output.WriteLine("No measurements available for test - skipping");
                 return; // Skip test if no measurements
             }
 
             var measurementUuid = allMeasurements.First().UUID;
             await _client.Groups.AddMeasurementToGroup(groupId, measurementUuid);
+            await Task.Delay(2000); // Wait for add operation
 
             // Act
             var result = await _client.Groups.RemoveMeasurementFromGroup(groupId, measurementUuid);
@@ -333,6 +344,9 @@ namespace REWApi.Tests
             // Assert
             result.Should().BeTrue();
             _output.WriteLine($"Removed measurement {measurementUuid} from group");
+
+            // Wait for remove operation
+            await Task.Delay(2000);
 
             // Verify it's removed
             var groupMeasurements = await _client.Groups.GetGroupMeasurements(groupId);
