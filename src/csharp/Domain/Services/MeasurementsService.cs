@@ -361,16 +361,21 @@ namespace REWApi.Domain.Services
 
             return await _commandGate.ExecuteCommand(async () =>
             {
-                var commandData = new
+                var commandData = new Dictionary<string, object>
                 {
-                    command = "Generate waterfall",
-                    parameters = new
+                    ["command"] = "Generate waterfall",
+                    ["parameters"] = new Dictionary<string, string>
                     {
-                        mode = options.Mode.ToString(),
-                        slices = options.Slices,
-                        ppo = options.PPO,
-                        windowType = options.WindowType.ToString(),
-                        timeRangeMs = options.TimeRangeMs
+                        ["mode"] = options.Mode.ToString(),
+                        ["slices"] = options.Slices.ToString(),
+                        ["left window type"] = options.WindowType.ToString(),
+                        ["right window type"] = options.WindowType.ToString(),
+                        ["window width ms"] = "300",
+                        ["time range ms"] = options.TimeRangeMs.ToString(),
+                        ["rise time ms"] = "150",
+                        ["use csd mode"] = "false",
+                        ["ppo"] = options.PPO.ToString(),
+                        ["smoothing"] = "None"
                     }
                 };
 
@@ -385,22 +390,65 @@ namespace REWApi.Domain.Services
 
                 if (response.StatusCode == System.Net.HttpStatusCode.OK) // 200 - Immediate
                 {
-                    var result = ParseWaterfallResult(responseData, options);
-                    return LongRunningJob.Completed(result, "Generate Waterfall");
+                    // ProcessResult structure: {"processName": "...", "results": {"0": {...}}}
+                    // Check if this is a ProcessResult with nested "results" -> "0" structure
+                    if (responseData.TryGetProperty("results", out var results) && results.TryGetProperty("0", out var resultData))
+                    {
+                        var result = ParseWaterfallResult(resultData, options);
+                        return LongRunningJob.Completed(result, "Generate Waterfall");
+                    }
+                    else
+                    {
+                        // Direct result structure - responseData IS the result
+                        var result = ParseWaterfallResult(responseData, options);
+                        return LongRunningJob.Completed(result, "Generate Waterfall");
+                    }
                 }
                 else // 202 - Long running
                 {
-                    var jobId = responseData.GetProperty("jobId").GetString()!;
-                    return LongRunningJob.Create(
-                        jobId,
-                        "Generate Waterfall",
-                        async (ct) =>
+                    // AsyncStatus structure: {"jobId": "...", "status": "..."} OR {"message": "Generate waterfall ID 1234 in progress"}
+                    string? jobId = null;
+                    
+                    if (responseData.TryGetProperty("jobId", out var jobIdElement))
+                    {
+                        jobId = jobIdElement.GetString();
+                    }
+                    else if (responseData.TryGetProperty("message", out var messageElement))
+                    {
+                        // Extract ID from message like "Generate waterfall ID 1119 in progress"
+                        var message = messageElement.GetString() ?? "";
+                        var match = System.Text.RegularExpressions.Regex.Match(message, @"ID (\d+)");
+                        if (match.Success)
                         {
-                            var waterfallData = await PollJobResult<JsonElement>(jobId, ct);
-                            return ParseWaterfallResult(waterfallData, options);
-                        },
-                        () => CancelJob(jobId),
-                        _logger);
+                            jobId = match.Groups[1].Value;
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(jobId))
+                    {
+                        return LongRunningJob.Create(
+                            jobId,
+                            "Generate Waterfall",
+                            async (ct) =>
+                            {
+                                var waterfallData = await PollJobResult<JsonElement>(jobId, ct);
+                                // When polling completes, result will be in key "0"
+                                if (waterfallData.TryGetProperty("0", out var resultData))
+                                {
+                                    return ParseWaterfallResult(resultData, options);
+                                }
+                                else
+                                {
+                                    return ParseWaterfallResult(waterfallData, options);
+                                }
+                            },
+                            () => CancelJob(jobId),
+                            _logger);
+                    }
+                    else
+                    {
+                        throw new REWApiException($"Unexpected response structure for Generate Waterfall command: {responseJson}", "/measurements/:id/command");
+                    }
                 }
             }, "Generate Waterfall", cancellationToken);
         }
@@ -463,6 +511,146 @@ namespace REWApi.Domain.Services
                         _logger);
                 }
             }, "Generate RT60", cancellationToken);
+        }
+
+        /// <summary>
+        /// Generate Spectrogram analysis
+        /// Maps to POST /measurements/:id/command "Generate spectrogram"
+        /// </summary>
+        public async Task<LongRunningJob<SpectrogramResult>> GenerateSpectrogram(
+            string measurementId,
+            SpectrogramOptions options,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+            if (options == null)
+                throw new ArgumentNullException(nameof(options));
+
+            return await _commandGate.ExecuteCommand(async () =>
+            {
+                // Convert mode enum to API string format
+                string modeString = options.Mode switch
+                {
+                    SpectrogramMode.Fourier => "Fourier",
+                    SpectrogramMode.Wavelet => "Wavelet",
+                    SpectrogramMode.AiryCWT => "Airy CWT",
+                    SpectrogramMode.MorletCWT => "Morlet CWT",
+                    SpectrogramMode.BurstDecay => "Burst decay",
+                    _ => options.Mode.ToString()
+                };
+                
+                // Build parameters based on mode
+                var parameters = new Dictionary<string, string>
+                {
+                    ["mode"] = modeString,
+                    ["slices"] = options.Slices.ToString(),
+                    ["amplitude"] = options.Amplitude,
+                    ["ppo"] = options.PPO.ToString()
+                };
+
+                // Add mode-specific parameters
+                switch (options.Mode)
+                {
+                    case SpectrogramMode.Fourier:
+                        parameters["window type"] = options.WindowType.ToString();
+                        parameters["window width ms"] = options.WindowWidthMs.ToString();
+                        parameters["before ms"] = options.BeforeMs.ToString();
+                        parameters["after ms"] = options.AfterMs.ToString();
+                        break;
+                        
+                    case SpectrogramMode.BurstDecay:
+                        parameters["bandwidth"] = options.Bandwidth;
+                        parameters["periods"] = options.Periods.ToString();
+                        break;
+                        
+                    case SpectrogramMode.Wavelet:
+                    case SpectrogramMode.AiryCWT:
+                    case SpectrogramMode.MorletCWT:
+                        parameters["bandwidth"] = options.Bandwidth;
+                        parameters["before ms"] = options.BeforeMs.ToString();
+                        parameters["after ms"] = options.AfterMs.ToString();
+                        break;
+                }
+
+                var commandData = new Dictionary<string, object>
+                {
+                    ["command"] = "Generate spectrogram",
+                    ["parameters"] = parameters
+                };
+
+                var json = JsonSerializer.Serialize(commandData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+
+                var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
+                var responseData = JsonSerializer.Deserialize<JsonElement>(responseJson);
+
+                if (response.StatusCode == System.Net.HttpStatusCode.OK) // 200 - Immediate
+                {
+                    // ProcessResult structure: {"processName": "...", "results": {"0": {...}}}
+                    // Check if this is a ProcessResult with nested "results" -> "0" structure
+                    if (responseData.TryGetProperty("results", out var results) && results.TryGetProperty("0", out var resultData))
+                    {
+                        var result = ParseSpectrogramResult(resultData, options);
+                        return LongRunningJob.Completed(result, "Generate Spectrogram");
+                    }
+                    else
+                    {
+                        // Direct result structure - responseData IS the result
+                        var result = ParseSpectrogramResult(responseData, options);
+                        return LongRunningJob.Completed(result, "Generate Spectrogram");
+                    }
+                }
+                else // 202 - Long running
+                {
+                    // AsyncStatus structure: {"jobId": "...", "status": "..."} OR {"message": "Generate spectrogram ID 1234 in progress"}
+                    string? jobId = null;
+                    
+                    if (responseData.TryGetProperty("jobId", out var jobIdElement))
+                    {
+                        jobId = jobIdElement.GetString();
+                    }
+                    else if (responseData.TryGetProperty("message", out var messageElement))
+                    {
+                        // Extract ID from message like "Generate spectrogram ID 1121 in progress"
+                        var message = messageElement.GetString() ?? "";
+                        var match = System.Text.RegularExpressions.Regex.Match(message, @"ID (\d+)");
+                        if (match.Success)
+                        {
+                            jobId = match.Groups[1].Value;
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(jobId))
+                    {
+                        return LongRunningJob.Create(
+                            jobId,
+                            "Generate Spectrogram",
+                            async (ct) =>
+                            {
+                                var spectrogramData = await PollJobResult<JsonElement>(jobId, ct);
+                                // When polling completes, result will be in key "0"
+                                if (spectrogramData.TryGetProperty("0", out var resultData))
+                                {
+                                    return ParseSpectrogramResult(resultData, options);
+                                }
+                                else
+                                {
+                                    return ParseSpectrogramResult(spectrogramData, options);
+                                }
+                            },
+                            () => CancelJob(jobId),
+                            _logger);
+                    }
+                    else
+                    {
+                        throw new REWApiException($"Unexpected response structure for Generate Spectrogram command: {responseJson}", "/measurements/:id/command");
+                    }
+                }
+            }, "Generate Spectrogram", cancellationToken);
         }
 
         /// <summary>
@@ -1694,78 +1882,6 @@ namespace REWApi.Domain.Services
         /// </summary>
         /// <param name="measurementId">UUID of the measurement</param>
         /// <param name="cancellationToken">Cancellation token</param>
-        /// <returns>Waterfall plot data</returns>
-        /// <exception cref="ArgumentException">If measurementId is null or empty</exception>
-        /// <exception cref="InvalidOperationException">If waterfall not generated or deserialization fails</exception>
-        public async Task<WaterfallResult> GetWaterfall(
-            string measurementId,
-            CancellationToken cancellationToken = default)
-        {
-            if (string.IsNullOrEmpty(measurementId))
-                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
-
-            var url = $"{_baseUrl}/measurements/{measurementId}/waterfall";
-            var response = await _httpClient.GetAsync(url, cancellationToken);
-            response.EnsureSuccessStatusCode();
-
-            var json = await response.Content.ReadAsStringAsync(cancellationToken);
-            var data = JsonSerializer.Deserialize<JsonElement>(json);
-
-            // Waterfall data structure: frequencies, times, and 2D SPL data array
-            var frequencies = _arrayCodec.DecodeDoubleArray(data.GetProperty("frequencies").GetString()!);
-            var times = _arrayCodec.DecodeDoubleArray(data.GetProperty("times").GetString()!);
-            var splData = Decode2DFloatArray(data.GetProperty("data"), frequencies.Length, times.Length);
-
-            return new WaterfallResult
-            {
-                Frequencies = frequencies,
-                Times = times,
-                DecodedSPLData = splData,
-                Mode = WaterfallMode.Fourier, // Default, actual mode not always returned
-                Slices = times.Length,
-                PPO = 48 // Default
-            };
-        }
-
-        /// <summary>
-        /// Gets spectrogram data for a measurement
-        /// Maps to GET /measurements/{id}/spectrogram
-        /// Returns GZIP-compressed spectrogram data if available (requires prior generation)
-        /// </summary>
-        /// <param name="measurementId">UUID of the measurement</param>
-        /// <param name="cancellationToken">Cancellation token</param>
-        /// <returns>Spectrogram data</returns>
-        /// <exception cref="ArgumentException">If measurementId is null or empty</exception>
-        /// <exception cref="InvalidOperationException">If spectrogram not generated or deserialization fails</exception>
-        public async Task<SpectrogramResult> GetSpectrogram(
-            string measurementId,
-            CancellationToken cancellationToken = default)
-        {
-            if (string.IsNullOrEmpty(measurementId))
-                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
-
-            var url = $"{_baseUrl}/measurements/{measurementId}/spectrogram";
-            var response = await _httpClient.GetAsync(url, cancellationToken);
-            response.EnsureSuccessStatusCode();
-
-            var json = await response.Content.ReadAsStringAsync(cancellationToken);
-            var data = JsonSerializer.Deserialize<JsonElement>(json);
-
-            // Spectrogram data structure: frequencies, times, and 2D amplitude data array
-            var frequencies = _arrayCodec.DecodeDoubleArray(data.GetProperty("frequencies").GetString()!);
-            var times = _arrayCodec.DecodeDoubleArray(data.GetProperty("times").GetString()!);
-            var splData = Decode2DFloatArray(data.GetProperty("data"), frequencies.Length, times.Length);
-
-            return new SpectrogramResult
-            {
-                Frequencies = frequencies,
-                Times = times,
-                SPLData = splData,
-                FFTSize = 8192, // Default
-                WindowType = data.TryGetProperty("windowType", out var wt) ? wt.GetString() ?? "Unknown" : "Unknown"
-            };
-        }
-
         /// <summary>
         /// Gets the list of available commands for a measurement
         /// Maps to GET /measurements/{id}/commands
@@ -1991,30 +2107,55 @@ namespace REWApi.Domain.Services
             throw new OperationCanceledException();
         }
 
-        private async Task<T> PollJobResult<T>(string jobId, CancellationToken cancellationToken)
+        private async Task<T> PollJobResult<T>(string processId, CancellationToken cancellationToken)
         {
+            // According to REW API docs, process results are polled via /measurements/process-result?processId={id}
+            // The ProcessResult structure has: processName, message, results (map of result names to values)
+            // For Generate Waterfall/Spectrogram, the data is in results["0"]
+            
             while (!cancellationToken.IsCancellationRequested)
             {
-                var response = await _httpClient.GetAsync($"{_baseUrl}/jobs/{jobId}", cancellationToken);
-                response.EnsureSuccessStatusCode();
-
-                var json = await response.Content.ReadAsStringAsync(cancellationToken);
-                var data = JsonSerializer.Deserialize<JsonElement>(json);
-
-                var status = data.GetProperty("status").GetString();
-                
-                if (status == "completed")
+                try
                 {
-                    var result = data.GetProperty("result");
-                    return JsonSerializer.Deserialize<T>(result.GetRawText())!;
-                }
-                else if (status == "failed")
-                {
-                    var error = data.TryGetProperty("error", out var err) ? err.GetString() : "Unknown error";
-                    throw new REWJobException(jobId, "Job", error!);
-                }
+                    var response = await _httpClient.GetAsync($"{_baseUrl}/measurements/process-result?processId={processId}", cancellationToken);
+                    
+                    // 404 means result not ready yet, continue polling
+                    if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                    {
+                        await Task.Delay(1000, cancellationToken);
+                        continue;
+                    }
 
-                await Task.Delay(1000, cancellationToken);
+                    response.EnsureSuccessStatusCode();
+
+                    var json = await response.Content.ReadAsStringAsync(cancellationToken);
+                    var processResult = JsonSerializer.Deserialize<JsonElement>(json);
+
+                    // Check if we have results
+                    if (processResult.TryGetProperty("results", out var results))
+                    {
+                        // Return the entire results object as a JsonElement for custom parsing
+                        return JsonSerializer.Deserialize<T>(results.GetRawText())!;
+                    }
+
+                    // Check for error message
+                    if (processResult.TryGetProperty("message", out var message))
+                    {
+                        var msg = message.GetString();
+                        if (!string.IsNullOrEmpty(msg) && (msg.Contains("failed") || msg.Contains("error")))
+                        {
+                            throw new REWJobException(processId, "Process", msg);
+                        }
+                    }
+
+                    // Result not ready, continue polling
+                    await Task.Delay(1000, cancellationToken);
+                }
+                catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    // 404 means result not ready yet
+                    await Task.Delay(1000, cancellationToken);
+                }
             }
 
             throw new OperationCanceledException();
@@ -2234,24 +2375,52 @@ namespace REWApi.Domain.Services
 
         private WaterfallResult ParseWaterfallResult(JsonElement data, WaterfallOptions options)
         {
-            var frequenciesData = data.TryGetProperty("frequencies", out var freqs) ? freqs.GetString() : null;
-            var timesData = data.TryGetProperty("times", out var times) ? times.GetString() : null;
-            var splData = data.TryGetProperty("splData", out var spl) ? spl.GetString() : null;
+            // REW API returns property names with capital letters
+            var frequenciesData = data.TryGetProperty("Frequencies", out var freqs) ? freqs.GetString() : null;
+            var timesData = data.TryGetProperty("Times", out var times) ? times.GetString() : null;
 
-            var frequencies = !string.IsNullOrEmpty(frequenciesData) ? _arrayCodec.DecodeDoubleArray(frequenciesData) : Array.Empty<double>();
-            var timeArray = !string.IsNullOrEmpty(timesData) ? _arrayCodec.DecodeDoubleArray(timesData) : Array.Empty<double>();
+            // Try double first, fallback to float if necessary
+            double[] frequencies;
+            double[] timeArray;
             
-            // For 2D SPL data, we'd need a more complex decoding scheme
-            var splArray = new float[timeArray.Length, frequencies.Length];
-            if (!string.IsNullOrEmpty(splData))
+            try
             {
-                var flatSpl = _arrayCodec.DecodeFloatArray(splData);
-                int idx = 0;
-                for (int t = 0; t < timeArray.Length && idx < flatSpl.Length; t++)
+                frequencies = !string.IsNullOrEmpty(frequenciesData) ? _arrayCodec.DecodeDoubleArray(frequenciesData) : Array.Empty<double>();
+            }
+            catch (ArgumentException)
+            {
+                // Fallback to float decoding and convert to double
+                var floatFreqs = !string.IsNullOrEmpty(frequenciesData) ? _arrayCodec.DecodeFloatArray(frequenciesData) : Array.Empty<float>();
+                frequencies = floatFreqs.Select(f => (double)f).ToArray();
+            }
+            
+            try
+            {
+                timeArray = !string.IsNullOrEmpty(timesData) ? _arrayCodec.DecodeDoubleArray(timesData) : Array.Empty<double>();
+            }
+            catch (ArgumentException)
+            {
+                // Fallback to float decoding and convert to double
+                var floatTimes = !string.IsNullOrEmpty(timesData) ? _arrayCodec.DecodeFloatArray(timesData) : Array.Empty<float>();
+                timeArray = floatTimes.Select(f => (double)f).ToArray();
+            }
+            
+            // REW API returns SPL data as numbered properties "0", "1", "2", etc.
+            // Each property contains Base64-encoded float array for that time slice
+            var splArray = new float[timeArray.Length, frequencies.Length];
+            for (int t = 0; t < timeArray.Length; t++)
+            {
+                var key = t.ToString();
+                if (data.TryGetProperty(key, out var splSlice))
                 {
-                    for (int f = 0; f < frequencies.Length && idx < flatSpl.Length; f++)
+                    var sliceData = splSlice.GetString();
+                    if (!string.IsNullOrEmpty(sliceData))
                     {
-                        splArray[t, f] = flatSpl[idx++];
+                        var decodedSlice = _arrayCodec.DecodeFloatArray(sliceData);
+                        for (int f = 0; f < Math.Min(frequencies.Length, decodedSlice.Length); f++)
+                        {
+                            splArray[t, f] = decodedSlice[f];
+                        }
                     }
                 }
             }
@@ -2264,6 +2433,95 @@ namespace REWApi.Domain.Services
                 Mode = options.Mode,
                 Slices = options.Slices,
                 PPO = options.PPO
+            };
+        }
+
+        private SpectrogramResult ParseSpectrogramResult(JsonElement data, SpectrogramOptions options)
+        {
+            // REW API returns property names with capital letters
+            var frequenciesData = data.TryGetProperty("Frequencies", out var freqs) ? freqs.GetString() : null;
+            var timesData = data.TryGetProperty("Times", out var times) ? times.GetString() : null;
+
+            // Try double first, fallback to float if necessary
+            double[] frequencies;
+            double[] timeArray;
+            
+            try
+            {
+                frequencies = !string.IsNullOrEmpty(frequenciesData) ? _arrayCodec.DecodeDoubleArray(frequenciesData) : Array.Empty<double>();
+            }
+            catch (ArgumentException)
+            {
+                // Fallback to float decoding and convert to double
+                var floatFreqs = !string.IsNullOrEmpty(frequenciesData) ? _arrayCodec.DecodeFloatArray(frequenciesData) : Array.Empty<float>();
+                frequencies = floatFreqs.Select(f => (double)f).ToArray();
+            }
+            
+            try
+            {
+                timeArray = !string.IsNullOrEmpty(timesData) ? _arrayCodec.DecodeDoubleArray(timesData) : Array.Empty<double>();
+            }
+            catch (ArgumentException)
+            {
+                // Fallback to float decoding and convert to double
+                var floatTimes = !string.IsNullOrEmpty(timesData) ? _arrayCodec.DecodeFloatArray(timesData) : Array.Empty<float>();
+                timeArray = floatTimes.Select(f => (double)f).ToArray();
+            }
+            
+            // REW API returns SPL data as numbered properties "0", "1", "2", etc.
+            // Each property contains Base64-encoded float array for that time slice
+            var splArray = new float[timeArray.Length, frequencies.Length];
+            for (int t = 0; t < timeArray.Length; t++)
+            {
+                var key = t.ToString();
+                if (data.TryGetProperty(key, out var splSlice))
+                {
+                    var sliceData = splSlice.GetString();
+                    if (!string.IsNullOrEmpty(sliceData))
+                    {
+                        var decodedSlice = _arrayCodec.DecodeFloatArray(sliceData);
+                        for (int f = 0; f < Math.Min(frequencies.Length, decodedSlice.Length); f++)
+                        {
+                            splArray[t, f] = decodedSlice[f];
+                        }
+                    }
+                }
+            }
+
+            // Extract FFTSize and WindowType from JSON if available
+            var fftSize = 0;
+            var windowType = string.Empty;
+            
+            if (data.TryGetProperty("FFTSize", out var fftElement))
+            {
+                fftSize = fftElement.GetInt32();
+            }
+            else if (data.TryGetProperty("fftSize", out var fftElement2))
+            {
+                fftSize = fftElement2.GetInt32();
+            }
+            
+            if (data.TryGetProperty("WindowType", out var windowElement))
+            {
+                windowType = windowElement.GetString() ?? string.Empty;
+            }
+            else if (data.TryGetProperty("windowType", out var windowElement2))
+            {
+                windowType = windowElement2.GetString() ?? string.Empty;
+            }
+            else
+            {
+                // Fallback to requested WindowType enum value as string
+                windowType = options.WindowType.ToString();
+            }
+
+            return new SpectrogramResult
+            {
+                Frequencies = frequencies,
+                Times = timeArray,
+                SPLData = splArray,
+                FFTSize = fftSize,
+                WindowType = windowType
             };
         }
 

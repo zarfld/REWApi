@@ -33,6 +33,29 @@ namespace REWApi.Domain
     }
 
     /// <summary>
+    /// Options for Spectrogram generation
+    /// </summary>
+    public class SpectrogramOptions
+    {
+        public SpectrogramMode Mode { get; set; } = SpectrogramMode.Fourier;
+        public int Slices { get; set; } = 101;
+        public int PPO { get; set; } = 48; // Points per octave
+        public string Amplitude { get; set; } = "Log (dB SPL)"; // "Log (dB SPL)" or "Linear (% peak)"
+        
+        // Fourier mode parameters
+        public WindowType WindowType { get; set; } = WindowType.Hann;
+        public double WindowWidthMs { get; set; } = 300;
+        public double BeforeMs { get; set; } = 50;
+        public double AfterMs { get; set; } = 500;
+        
+        // Wavelet mode parameters (Wavelet, Airy CWT, Morlet CWT)
+        public string Bandwidth { get; set; } = "1/3"; // e.g., "1/3", "1/6", "1/12"
+        
+        // Burst decay mode parameters  
+        public double Periods { get; set; } = 3;
+    }
+
+    /// <summary>
     /// Options for RT60 analysis
     /// </summary>
     public class RT60Options
@@ -71,6 +94,18 @@ namespace REWApi.Domain
         Fourier,
         ConstantQ,
         Wavelet
+    }
+
+    /// <summary>
+    /// Spectrogram generation modes
+    /// </summary>
+    public enum SpectrogramMode
+    {
+        Fourier,
+        Wavelet,
+        AiryCWT,
+        MorletCWT,
+        BurstDecay
     }
 
     /// <summary>

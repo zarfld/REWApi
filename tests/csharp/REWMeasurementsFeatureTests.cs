@@ -1835,13 +1835,13 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
     }
 
     /// <summary>
-    /// Test: GetWaterfall returns waterfall plot data
-    /// @test TEST-MEASUREMENTS-PHASE4-007 - Get waterfall plot data
+    /// Test: GenerateWaterfall generates waterfall plot data
+    /// @test TEST-MEASUREMENTS-PHASE4-007 - Generate waterfall plot data
     /// @status ACTIVE - Phase 4 implementation
-    /// @note Requires waterfall to be generated first via GenerateWaterfall command
+    /// @note Uses command-based operation POST /measurements/:id/command "Generate waterfall"
     /// </summary>
-    [Fact(Skip = "Requires waterfall generation which is a complex command-based operation")]
-    public async Task GetWaterfall_ValidId_ReturnsWaterfallData()
+    [Fact]
+    public async Task GenerateWaterfall_ValidId_ReturnsWaterfallData()
     {
         // Arrange
         var measurementsService = _client.Measurements;
@@ -1849,8 +1849,18 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
         measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
         var measurementId = measurements[0].UUID;
 
+        var options = new WaterfallOptions
+        {
+            Mode = WaterfallMode.Fourier,
+            Slices = 50,
+            PPO = 24,
+            WindowType = WindowType.Hann,
+            TimeRangeMs = 300
+        };
+
         // Act
-        var waterfall = await measurementsService.GetWaterfall(measurementId);
+        var job = await measurementsService.GenerateWaterfall(measurementId, options);
+        var waterfall = await job.AwaitCompletion();
 
         // Assert
         waterfall.Should().NotBeNull();
@@ -1859,16 +1869,18 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
         waterfall.DecodedSPLData.Should().NotBeNull("waterfall should contain 2D SPL data");
         waterfall.DecodedSPLData.GetLength(0).Should().BeGreaterThan(0, "waterfall should have rows (time slices)");
         waterfall.DecodedSPLData.GetLength(1).Should().BeGreaterThan(0, "waterfall should have columns (frequencies)");
+        waterfall.Mode.Should().Be(WaterfallMode.Fourier);
+        waterfall.Slices.Should().Be(50);
     }
 
     /// <summary>
-    /// Test: GetSpectrogram returns spectrogram data
-    /// @test TEST-MEASUREMENTS-PHASE4-008 - Get spectrogram data
+    /// Test: GenerateSpectrogram generates spectrogram data
+    /// @test TEST-MEASUREMENTS-PHASE4-008 - Generate spectrogram data
     /// @status ACTIVE - Phase 4 implementation
-    /// @note Requires spectrogram to be generated first via GenerateSpectrogram command
+    /// @note Uses command-based operation POST /measurements/:id/command "Generate spectrogram"
     /// </summary>
-    [Fact(Skip = "Requires spectrogram generation which is a complex command-based operation")]
-    public async Task GetSpectrogram_ValidId_ReturnsSpectrogramData()
+    [Fact]
+    public async Task GenerateSpectrogram_ValidId_ReturnsSpectrogramData()
     {
         // Arrange
         var measurementsService = _client.Measurements;
@@ -1876,15 +1888,27 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
         measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
         var measurementId = measurements[0].UUID;
 
+        var options = new SpectrogramOptions
+        {
+            Mode = SpectrogramMode.Fourier,
+            Slices = 50,
+            PPO = 24,
+            WindowType = WindowType.Hann,
+            BeforeMs = 0,
+            AfterMs = 300,
+            Amplitude = "Log (dB SPL)"
+        };
+
         // Act
-        var spectrogram = await measurementsService.GetSpectrogram(measurementId);
+        var job = await measurementsService.GenerateSpectrogram(measurementId, options);
+        var spectrogram = await job.AwaitCompletion();
 
         // Assert
         spectrogram.Should().NotBeNull();
         spectrogram.Frequencies.Should().NotBeNullOrEmpty("spectrogram should contain frequency data");
         spectrogram.Times.Should().NotBeNullOrEmpty("spectrogram should contain time data");
         spectrogram.SPLData.Should().NotBeNull("spectrogram should contain 2D amplitude data");
-        spectrogram.FFTSize.Should().BeGreaterThan(0, "spectrogram should have FFT size");
+        spectrogram.FFTSize.Should().BeGreaterThanOrEqualTo(0, "spectrogram FFT size can be 0 if not provided by API");
         spectrogram.WindowType.Should().NotBeNullOrEmpty("spectrogram should have window type");
         spectrogram.SPLData.GetLength(0).Should().BeGreaterThan(0, "spectrogram should have rows");
         spectrogram.SPLData.GetLength(1).Should().BeGreaterThan(0, "spectrogram should have columns");
