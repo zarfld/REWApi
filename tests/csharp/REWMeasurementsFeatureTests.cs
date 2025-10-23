@@ -2772,6 +2772,343 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
 
     #endregion
 
+    #region Batch Processing Commands Tests
+
+    [Fact]
+    public async Task AlignSPL_MultipleIds_AlignsSuccessfully()
+    {
+        // Arrange
+        var measurementsService = _client.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        
+        // Skip if less than 2 measurements available
+        if (measurements.Length < 2)
+        {
+            return; // Test requires at least 2 measurements
+        }
+
+        var measurementIds = measurements.Take(2).Select(m => m.Id).ToArray();
+
+        // Act & Assert (should complete without errors)
+        await measurementsService.AlignSPL(
+            measurementIds,
+            targetDb: "average",
+            frequencyHz: 1000,
+            spanOctaves: 2.0
+        );
+        
+        // Verify measurements still exist after alignment
+        var measurementsAfter = await measurementsService.ListMeasurements();
+        measurementsAfter.Length.Should().BeGreaterThanOrEqualTo(measurements.Length,
+            "measurements should not be deleted by alignment");
+    }
+
+    [Fact]
+    public async Task VectorAverage_MultipleIds_AveragesSuccessfully()
+    {
+        // Arrange
+        var measurementsService = _client.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        
+        // Skip if less than 2 measurements available
+        if (measurements.Length < 2)
+        {
+            return; // Test requires at least 2 measurements
+        }
+
+        var measurementIds = measurements.Take(2).Select(m => m.Id).ToArray();
+
+        // Act & Assert (should complete without errors)
+        await measurementsService.VectorAverage(measurementIds);
+        
+        // Verify operation completed
+        var measurementsAfter = await measurementsService.ListMeasurements();
+        measurementsAfter.Should().NotBeNull("measurements should be available after vector average");
+    }
+
+    [Fact]
+    public async Task TraceArithmetic_TwoIds_PerformsArithmetic()
+    {
+        // Arrange
+        var measurementsService = _client.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        
+        // Skip if less than 2 measurements available
+        if (measurements.Length < 2)
+        {
+            return; // Test requires at least 2 measurements
+        }
+
+        var idA = measurements[0].Id;
+        var idB = measurements[1].Id;
+
+        // Act & Assert (should complete without errors)
+        await measurementsService.TraceArithmetic(
+            idA,
+            idB,
+            function: "A + B"
+        );
+        
+        // Verify operation completed
+        var measurementsAfter = await measurementsService.ListMeasurements();
+        measurementsAfter.Should().NotBeNull("measurements should be available after arithmetic");
+    }
+
+    [Fact]
+    public async Task SmoothBatch_MultipleIds_SmoothsSuccessfully()
+    {
+        // Arrange
+        var measurementsService = _client.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        
+        // Skip if no measurements available
+        if (measurements.Length == 0)
+        {
+            return; // Test requires at least 1 measurement
+        }
+
+        var measurementIds = measurements.Take(1).Select(m => m.Id).ToArray();
+
+        // Act & Assert (should complete without errors)
+        await measurementsService.SmoothBatch(measurementIds, smoothing: "1/6");
+        
+        // Verify operation completed
+        var measurementsAfter = await measurementsService.ListMeasurements();
+        measurementsAfter.Should().NotBeNull("measurements should be available after smoothing");
+    }
+
+    [Fact]
+    public async Task TimeAlign_MultipleIds_AlignsSuccessfully()
+    {
+        // Arrange
+        var measurementsService = _client.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        
+        if (measurements.Length < 2) return;
+
+        var measurementIds = measurements.Take(2).Select(m => m.Id).ToArray();
+
+        // Act & Assert
+        await measurementsService.TimeAlign(measurementIds);
+        
+        var measurementsAfter = await measurementsService.ListMeasurements();
+        measurementsAfter.Should().NotBeNull("measurements should be available after time align");
+    }
+
+    [Fact]
+    public async Task RMSAverage_MultipleIds_AveragesSuccessfully()
+    {
+        // Arrange
+        var measurementsService = _client.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        
+        if (measurements.Length < 2) return;
+
+        var measurementIds = measurements.Take(2).Select(m => m.Id).ToArray();
+
+        // Act & Assert
+        await measurementsService.RMSAverage(measurementIds);
+        
+        var measurementsAfter = await measurementsService.ListMeasurements();
+        measurementsAfter.Should().NotBeNull("measurements should be available after RMS average");
+    }
+
+    [Fact]
+    public async Task DbAverage_MultipleIds_AveragesSuccessfully()
+    {
+        // Arrange
+        var measurementsService = _client.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        
+        if (measurements.Length < 2) return;
+
+        var measurementIds = measurements.Take(2).Select(m => m.Id).ToArray();
+
+        // Act & Assert
+        await measurementsService.DbAverage(measurementIds);
+        
+        var measurementsAfter = await measurementsService.ListMeasurements();
+        measurementsAfter.Should().NotBeNull("measurements should be available after dB average");
+    }
+
+    [Fact]
+    public async Task VectorSum_MultipleIds_SumsSuccessfully()
+    {
+        // Arrange
+        var measurementsService = _client.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        
+        if (measurements.Length < 2) return;
+
+        var measurementIds = measurements.Take(2).Select(m => m.Id).ToArray();
+
+        // Act & Assert
+        await measurementsService.VectorSum(measurementIds);
+        
+        var measurementsAfter = await measurementsService.ListMeasurements();
+        measurementsAfter.Should().NotBeNull("measurements should be available after vector sum");
+    }
+
+    [Fact]
+    public async Task RemoveIRDelays_MultipleIds_RemovesDelays()
+    {
+        // Arrange
+        var measurementsService = _client.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        
+        if (measurements.Length == 0) return;
+
+        var measurementIds = measurements.Take(1).Select(m => m.Id).ToArray();
+
+        // Act & Assert
+        await measurementsService.RemoveIRDelays(measurementIds);
+        
+        var measurementsAfter = await measurementsService.ListMeasurements();
+        measurementsAfter.Should().NotBeNull("measurements should be available after removing IR delays");
+    }
+
+    #endregion
+
+    #region EQ Commands Tests
+
+    [Fact]
+    public async Task CalculateTargetLevel_ValidId_CalculatesSuccessfully()
+    {
+        // Arrange
+        var measurementsService = _client.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        
+        if (measurements.Length == 0) return;
+
+        var measurementId = measurements[0].Id;
+
+        // Act & Assert
+        await measurementsService.CalculateTargetLevel(measurementId);
+        
+        // Verify measurement still exists
+        var measurementsAfter = await measurementsService.ListMeasurements();
+        measurementsAfter.Should().Contain(m => m.Id == measurementId, "measurement should still exist after calculating target level");
+    }
+
+    [Fact]
+    public async Task MatchTarget_ValidId_MatchesSuccessfully()
+    {
+        // Arrange
+        var measurementsService = _client.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        
+        if (measurements.Length == 0) return;
+
+        var measurementId = measurements[0].Id;
+
+        // Act & Assert
+        await measurementsService.MatchTarget(measurementId);
+        
+        // Verify measurement still exists
+        var measurementsAfter = await measurementsService.ListMeasurements();
+        measurementsAfter.Should().Contain(m => m.Id == measurementId, "measurement should still exist after matching target");
+    }
+
+    [Fact]
+    public async Task OptimiseGains_ValidId_OptimisesSuccessfully()
+    {
+        // Arrange
+        var measurementsService = _client.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        
+        if (measurements.Length == 0) return;
+
+        var measurementId = measurements[0].Id;
+
+        // Act & Assert
+        await measurementsService.OptimiseGains(measurementId);
+        
+        // Verify measurement still exists
+        var measurementsAfter = await measurementsService.ListMeasurements();
+        measurementsAfter.Should().Contain(m => m.Id == measurementId, "measurement should still exist after optimising gains");
+    }
+
+    [Fact]
+    public async Task OptimiseGainsAndQs_ValidId_OptimisesSuccessfully()
+    {
+        // Arrange
+        var measurementsService = _client.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        
+        if (measurements.Length == 0) return;
+
+        var measurementId = measurements[0].Id;
+
+        // Act & Assert
+        await measurementsService.OptimiseGainsAndQs(measurementId);
+        
+        // Verify measurement still exists
+        var measurementsAfter = await measurementsService.ListMeasurements();
+        measurementsAfter.Should().Contain(m => m.Id == measurementId, "measurement should still exist after optimising gains and Qs");
+    }
+
+    [Fact]
+    public async Task GeneratePredictedMeasurement_ValidId_GeneratesSuccessfully()
+    {
+        // Arrange
+        var measurementsService = _client.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        
+        if (measurements.Length == 0) return;
+
+        var measurementId = measurements[0].Id;
+        var countBefore = measurements.Length;
+
+        // Act & Assert
+        await measurementsService.GeneratePredictedMeasurement(measurementId);
+        
+        // Verify new measurement may be created
+        var measurementsAfter = await measurementsService.ListMeasurements();
+        measurementsAfter.Length.Should().BeGreaterThanOrEqualTo(countBefore, "predicted measurement may create a new measurement");
+    }
+
+    [Fact]
+    public async Task GenerateFiltersMeasurement_ValidId_GeneratesSuccessfully()
+    {
+        // Arrange
+        var measurementsService = _client.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        
+        if (measurements.Length == 0) return;
+
+        var measurementId = measurements[0].Id;
+        var countBefore = measurements.Length;
+
+        // Act & Assert
+        await measurementsService.GenerateFiltersMeasurement(measurementId);
+        
+        // Verify new measurement may be created
+        var measurementsAfter = await measurementsService.ListMeasurements();
+        measurementsAfter.Length.Should().BeGreaterThanOrEqualTo(countBefore, "filters measurement may create a new measurement");
+    }
+
+    [Fact]
+    public async Task GenerateTargetMeasurement_ValidId_GeneratesSuccessfully()
+    {
+        // Arrange
+        var measurementsService = _client.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        
+        if (measurements.Length == 0) return;
+
+        var measurementId = measurements[0].Id;
+        var countBefore = measurements.Length;
+
+        // Act & Assert
+        await measurementsService.GenerateTargetMeasurement(measurementId);
+        
+        // Verify new measurement may be created
+        var measurementsAfter = await measurementsService.ListMeasurements();
+        measurementsAfter.Length.Should().BeGreaterThanOrEqualTo(countBefore, "target measurement may create a new measurement");
+    }
+
+    #endregion
+
     #endregion
 }
 

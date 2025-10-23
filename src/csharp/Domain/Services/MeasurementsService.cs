@@ -1387,6 +1387,618 @@ namespace REWApi.Domain.Services
             }, "Align SPL", cancellationToken);
         }
 
+        /// <summary>
+        /// Perform vector average of multiple measurements
+        /// Maps to POST /measurements/process-measurements with "Vector average" process
+        /// </summary>
+        /// <param name="measurementIds">Array of measurement IDs (indices or UUIDs)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task VectorAverage(
+            string[] measurementIds,
+            CancellationToken cancellationToken = default)
+        {
+            if (measurementIds == null || measurementIds.Length == 0)
+                throw new ArgumentException("At least one measurement ID is required", nameof(measurementIds));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var processData = new
+                {
+                    processName = "Vector average",
+                    measurementIndices = measurementIds
+                };
+
+                var json = JsonSerializer.Serialize(processData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/process-measurements", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "Vector Average", cancellationToken);
+        }
+
+        /// <summary>
+        /// Perform trace arithmetic on two measurements
+        /// Maps to POST /measurements/process-measurements with "Arithmetic" process
+        /// Common functions: "A + B", "A - B", "A * B", "A / B", "1 / A", etc.
+        /// </summary>
+        /// <param name="measurementIdA">First measurement ID (A)</param>
+        /// <param name="measurementIdB">Second measurement ID (B)</param>
+        /// <param name="function">Arithmetic function (e.g. "A + B", "A * B", "1 / A")</param>
+        /// <param name="maxGain">Optional gain limit in dB for division/inversion (null = no limit)</param>
+        /// <param name="lowerLimit">Optional lower frequency limit in Hz for band-limited operations</param>
+        /// <param name="upperLimit">Optional upper frequency limit in Hz for band-limited operations</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task TraceArithmetic(
+            string measurementIdA,
+            string measurementIdB,
+            string function,
+            double? maxGain = null,
+            double? lowerLimit = null,
+            double? upperLimit = null,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementIdA))
+                throw new ArgumentException("Measurement ID A cannot be null or empty", nameof(measurementIdA));
+            if (string.IsNullOrEmpty(measurementIdB))
+                throw new ArgumentException("Measurement ID B cannot be null or empty", nameof(measurementIdB));
+            if (string.IsNullOrEmpty(function))
+                throw new ArgumentException("Function cannot be null or empty", nameof(function));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var parameters = new Dictionary<string, object>
+                {
+                    ["function"] = function
+                };
+
+                if (maxGain.HasValue)
+                    parameters["maxGain"] = maxGain.Value.ToString();
+                if (lowerLimit.HasValue)
+                    parameters["lowerLimit"] = lowerLimit.Value.ToString();
+                if (upperLimit.HasValue)
+                    parameters["upperLimit"] = upperLimit.Value.ToString();
+
+                var processData = new
+                {
+                    processName = "Arithmetic",
+                    measurementIndices = new[] { measurementIdA, measurementIdB },
+                    parameters
+                };
+
+                var json = JsonSerializer.Serialize(processData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/process-measurements", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "Trace Arithmetic", cancellationToken);
+        }
+
+        /// <summary>
+        /// Apply smoothing to multiple measurements
+        /// Maps to POST /measurements/process-measurements with "Smooth" process
+        /// </summary>
+        /// <param name="measurementIds">Array of measurement IDs (indices or UUIDs)</param>
+        /// <param name="smoothing">Smoothing value (e.g. "1/3", "1/6", "1/12")</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task SmoothBatch(
+            string[] measurementIds,
+            string smoothing = "1/3",
+            CancellationToken cancellationToken = default)
+        {
+            if (measurementIds == null || measurementIds.Length == 0)
+                throw new ArgumentException("At least one measurement ID is required", nameof(measurementIds));
+            if (string.IsNullOrEmpty(smoothing))
+                throw new ArgumentException("Smoothing cannot be null or empty", nameof(smoothing));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var processData = new
+                {
+                    processName = "Smooth",
+                    measurementIndices = measurementIds,
+                    parameters = new
+                    {
+                        smoothing
+                    }
+                };
+
+                var json = JsonSerializer.Serialize(processData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/process-measurements", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "Smooth Batch", cancellationToken);
+        }
+
+        /// <summary>
+        /// Time align multiple measurements
+        /// Maps to POST /measurements/process-measurements with "Time align" process
+        /// </summary>
+        /// <param name="measurementIds">Array of measurement IDs (indices or UUIDs)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task TimeAlign(
+            string[] measurementIds,
+            CancellationToken cancellationToken = default)
+        {
+            if (measurementIds == null || measurementIds.Length == 0)
+                throw new ArgumentException("At least one measurement ID is required", nameof(measurementIds));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var processData = new
+                {
+                    processName = "Time align",
+                    measurementIndices = measurementIds
+                };
+
+                var json = JsonSerializer.Serialize(processData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/process-measurements", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "Time Align", cancellationToken);
+        }
+
+        /// <summary>
+        /// Align impulse response start of multiple measurements
+        /// Maps to POST /measurements/process-measurements with "Align IR start" process
+        /// </summary>
+        /// <param name="measurementIds">Array of measurement IDs (indices or UUIDs)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task AlignIRStart(
+            string[] measurementIds,
+            CancellationToken cancellationToken = default)
+        {
+            if (measurementIds == null || measurementIds.Length == 0)
+                throw new ArgumentException("At least one measurement ID is required", nameof(measurementIds));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var processData = new
+                {
+                    processName = "Align IR start",
+                    measurementIndices = measurementIds
+                };
+
+                var json = JsonSerializer.Serialize(processData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/process-measurements", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "Align IR Start", cancellationToken);
+        }
+
+        /// <summary>
+        /// Cross-correlation align multiple measurements
+        /// Maps to POST /measurements/process-measurements with "Cross corr align" process
+        /// </summary>
+        /// <param name="measurementIds">Array of measurement IDs (indices or UUIDs)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task CrossCorrAlign(
+            string[] measurementIds,
+            CancellationToken cancellationToken = default)
+        {
+            if (measurementIds == null || measurementIds.Length == 0)
+                throw new ArgumentException("At least one measurement ID is required", nameof(measurementIds));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var processData = new
+                {
+                    processName = "Cross corr align",
+                    measurementIndices = measurementIds
+                };
+
+                var json = JsonSerializer.Serialize(processData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/process-measurements", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "Cross Correlation Align", cancellationToken);
+        }
+
+        /// <summary>
+        /// RMS average multiple measurements
+        /// Maps to POST /measurements/process-measurements with "RMS average" process
+        /// </summary>
+        /// <param name="measurementIds">Array of measurement IDs (indices or UUIDs)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task RMSAverage(
+            string[] measurementIds,
+            CancellationToken cancellationToken = default)
+        {
+            if (measurementIds == null || measurementIds.Length == 0)
+                throw new ArgumentException("At least one measurement ID is required", nameof(measurementIds));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var processData = new
+                {
+                    processName = "RMS average",
+                    measurementIndices = measurementIds
+                };
+
+                var json = JsonSerializer.Serialize(processData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/process-measurements", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "RMS Average", cancellationToken);
+        }
+
+        /// <summary>
+        /// dB average multiple measurements
+        /// Maps to POST /measurements/process-measurements with "dB average" process
+        /// </summary>
+        /// <param name="measurementIds">Array of measurement IDs (indices or UUIDs)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task DbAverage(
+            string[] measurementIds,
+            CancellationToken cancellationToken = default)
+        {
+            if (measurementIds == null || measurementIds.Length == 0)
+                throw new ArgumentException("At least one measurement ID is required", nameof(measurementIds));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var processData = new
+                {
+                    processName = "dB average",
+                    measurementIndices = measurementIds
+                };
+
+                var json = JsonSerializer.Serialize(processData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/process-measurements", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "dB Average", cancellationToken);
+        }
+
+        /// <summary>
+        /// Magnitude plus phase average multiple measurements
+        /// Maps to POST /measurements/process-measurements with "Magn plus phase average" process
+        /// </summary>
+        /// <param name="measurementIds">Array of measurement IDs (indices or UUIDs)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task MagnPlusPhaseAverage(
+            string[] measurementIds,
+            CancellationToken cancellationToken = default)
+        {
+            if (measurementIds == null || measurementIds.Length == 0)
+                throw new ArgumentException("At least one measurement ID is required", nameof(measurementIds));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var processData = new
+                {
+                    processName = "Magn plus phase average",
+                    measurementIndices = measurementIds
+                };
+
+                var json = JsonSerializer.Serialize(processData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/process-measurements", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "Magnitude Plus Phase Average", cancellationToken);
+        }
+
+        /// <summary>
+        /// dB plus phase average multiple measurements
+        /// Maps to POST /measurements/process-measurements with "dB plus phase average" process
+        /// </summary>
+        /// <param name="measurementIds">Array of measurement IDs (indices or UUIDs)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task DbPlusPhaseAverage(
+            string[] measurementIds,
+            CancellationToken cancellationToken = default)
+        {
+            if (measurementIds == null || measurementIds.Length == 0)
+                throw new ArgumentException("At least one measurement ID is required", nameof(measurementIds));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var processData = new
+                {
+                    processName = "dB plus phase average",
+                    measurementIndices = measurementIds
+                };
+
+                var json = JsonSerializer.Serialize(processData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/process-measurements", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "dB Plus Phase Average", cancellationToken);
+        }
+
+        /// <summary>
+        /// Vector sum multiple measurements
+        /// Maps to POST /measurements/process-measurements with "Vector sum" process
+        /// </summary>
+        /// <param name="measurementIds">Array of measurement IDs (indices or UUIDs)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task VectorSum(
+            string[] measurementIds,
+            CancellationToken cancellationToken = default)
+        {
+            if (measurementIds == null || measurementIds.Length == 0)
+                throw new ArgumentException("At least one measurement ID is required", nameof(measurementIds));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var processData = new
+                {
+                    processName = "Vector sum",
+                    measurementIndices = measurementIds
+                };
+
+                var json = JsonSerializer.Serialize(processData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/process-measurements", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "Vector Sum", cancellationToken);
+        }
+
+        /// <summary>
+        /// Remove impulse response delays from multiple measurements
+        /// Maps to POST /measurements/process-measurements with "Remove IR delays" process
+        /// </summary>
+        /// <param name="measurementIds">Array of measurement IDs (indices or UUIDs)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task RemoveIRDelays(
+            string[] measurementIds,
+            CancellationToken cancellationToken = default)
+        {
+            if (measurementIds == null || measurementIds.Length == 0)
+                throw new ArgumentException("At least one measurement ID is required", nameof(measurementIds));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var processData = new
+                {
+                    processName = "Remove IR delays",
+                    measurementIndices = measurementIds
+                };
+
+                var json = JsonSerializer.Serialize(processData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/process-measurements", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "Remove IR Delays", cancellationToken);
+        }
+
+        #endregion
+
+        #region EQ Commands (Equalizer Operations)
+
+        /// <summary>
+        /// Calculate the target level for EQ matching
+        /// Maps to POST /measurements/:id/eq/command with "Calculate target level"
+        /// </summary>
+        /// <param name="measurementId">Measurement ID (index or UUID)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task CalculateTargetLevel(
+            string measurementId,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var commandData = new
+                {
+                    command = "Calculate target level"
+                };
+
+                var json = JsonSerializer.Serialize(commandData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/eq/command", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "Calculate Target Level", cancellationToken);
+        }
+
+        /// <summary>
+        /// Match the measurement to the target curve
+        /// Maps to POST /measurements/:id/eq/command with "Match target"
+        /// </summary>
+        /// <param name="measurementId">Measurement ID (index or UUID)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task MatchTarget(
+            string measurementId,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var commandData = new
+                {
+                    command = "Match target"
+                };
+
+                var json = JsonSerializer.Serialize(commandData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/eq/command", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "Match Target", cancellationToken);
+        }
+
+        /// <summary>
+        /// Optimize filter gains for the selected equalizer
+        /// Maps to POST /measurements/:id/eq/command with "Optimise gains"
+        /// </summary>
+        /// <param name="measurementId">Measurement ID (index or UUID)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task OptimiseGains(
+            string measurementId,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var commandData = new
+                {
+                    command = "Optimise gains"
+                };
+
+                var json = JsonSerializer.Serialize(commandData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/eq/command", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "Optimise Gains", cancellationToken);
+        }
+
+        /// <summary>
+        /// Optimize filter gains and Q values for the selected equalizer
+        /// Maps to POST /measurements/:id/eq/command with "Optimise gains and Qs"
+        /// </summary>
+        /// <param name="measurementId">Measurement ID (index or UUID)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task OptimiseGainsAndQs(
+            string measurementId,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var commandData = new
+                {
+                    command = "Optimise gains and Qs"
+                };
+
+                var json = JsonSerializer.Serialize(commandData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/eq/command", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "Optimise Gains and Qs", cancellationToken);
+        }
+
+        /// <summary>
+        /// Optimize filter gains, Q values and center frequencies for the selected equalizer
+        /// Maps to POST /measurements/:id/eq/command with "Optimise gains, Qs and Fcs"
+        /// </summary>
+        /// <param name="measurementId">Measurement ID (index or UUID)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task OptimiseGainsQsAndFcs(
+            string measurementId,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var commandData = new
+                {
+                    command = "Optimise gains, Qs and Fcs"
+                };
+
+                var json = JsonSerializer.Serialize(commandData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/eq/command", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "Optimise Gains, Qs and Fcs", cancellationToken);
+        }
+
+        /// <summary>
+        /// Generate a new measurement showing the predicted response with current EQ filters applied
+        /// Maps to POST /measurements/:id/eq/command with "Generate predicted measurement"
+        /// </summary>
+        /// <param name="measurementId">Measurement ID (index or UUID)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task GeneratePredictedMeasurement(
+            string measurementId,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var commandData = new
+                {
+                    command = "Generate predicted measurement"
+                };
+
+                var json = JsonSerializer.Serialize(commandData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/eq/command", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "Generate Predicted Measurement", cancellationToken);
+        }
+
+        /// <summary>
+        /// Generate a new measurement showing the filter response
+        /// Maps to POST /measurements/:id/eq/command with "Generate filters measurement"
+        /// </summary>
+        /// <param name="measurementId">Measurement ID (index or UUID)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task GenerateFiltersMeasurement(
+            string measurementId,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var commandData = new
+                {
+                    command = "Generate filters measurement"
+                };
+
+                var json = JsonSerializer.Serialize(commandData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/eq/command", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "Generate Filters Measurement", cancellationToken);
+        }
+
+        /// <summary>
+        /// Generate a new measurement showing the target curve
+        /// Maps to POST /measurements/:id/eq/command with "Generate target measurement"
+        /// </summary>
+        /// <param name="measurementId">Measurement ID (index or UUID)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task GenerateTargetMeasurement(
+            string measurementId,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var commandData = new
+                {
+                    command = "Generate target measurement"
+                };
+
+                var json = JsonSerializer.Serialize(commandData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/eq/command", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "Generate Target Measurement", cancellationToken);
+        }
+
         #endregion
 
         /// <summary>
