@@ -217,6 +217,8 @@ build/                  # Root build directory
 ✅ always check proactively what code is already existing to avoid duplications
 ✅ always proactively check API documentation for existing endpoints and data models before creating new ones
 ✅ Always check official documentation before making assumptions about API behavior
+✅ Implement functionality that is provided by actual API endpoints and its features
+✅ Implement full features provided by the API 
 
 ### Never Do
 ❌ Proceed with ambiguous requirements  
@@ -234,6 +236,7 @@ build/                  # Root build directory
 ❌ start implementation without full understanding of actual implementation state
 ❌ ignore existing code and architecture
 ❌ start an reimplementation if you can fix the existing code
+❌ never implement speculatively
 
 ## 🔍 When to Ask Questions
 

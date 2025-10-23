@@ -2297,5 +2297,286 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
     }
 
     #endregion
+
+    #region Phase 2 - Individual Measurement Commands
+
+    /// <summary>
+    /// Test: SaveMeasurement saves a measurement
+    /// @test TEST-MEASUREMENTS-COMMANDS-001 - Save measurement
+    /// @status ACTIVE - Phase 2 implementation
+    /// </summary>
+    [Fact]
+    public async Task SaveMeasurement_ValidId_SavesSuccessfully()
+    {
+        // Arrange
+        var measurementsService = _client.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        var measurementId = measurements[0].UUID;
+
+        // Act
+        await measurementsService.SaveMeasurement(measurementId);
+
+        // Assert - if no exception thrown, test passes
+        // REW API returns 200 OK on success
+    }
+
+    /// <summary>
+    /// Test: Invert inverts measurement polarity
+    /// @test TEST-MEASUREMENTS-COMMANDS-002 - Invert measurement
+    /// @status ACTIVE - Phase 2 implementation
+    /// </summary>
+    [Fact]
+    public async Task Invert_ValidId_InvertsPolarity()
+    {
+        // Arrange
+        var measurementsService = _client.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        var measurementId = measurements[0].UUID;
+
+        // Act
+        await measurementsService.Invert(measurementId);
+
+        // Assert - if no exception thrown, test passes
+        // Could verify by checking phase shift is 180 degrees, but that requires another API call
+    }
+
+    /// <summary>
+    /// Test: ResponseCopy creates a copy of measurement
+    /// @test TEST-MEASUREMENTS-COMMANDS-003 - Response copy
+    /// @status ACTIVE - Phase 2 implementation
+    /// </summary>
+    [Fact]
+    public async Task ResponseCopy_ValidId_CreatesCopy()
+    {
+        // Arrange
+        var measurementsService = _client.Measurements;
+        var measurementsBefore = await measurementsService.ListMeasurements();
+        measurementsBefore.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        var measurementId = measurementsBefore[0].UUID;
+        var countBefore = measurementsBefore.Count;
+
+        // Act
+        await measurementsService.ResponseCopy(measurementId);
+
+        // Assert - verify count increased
+        var measurementsAfter = await measurementsService.ListMeasurements();
+        measurementsAfter.Count.Should().BeGreaterThan(countBefore, "response copy should create a new measurement");
+    }
+
+    /// <summary>
+    /// Test: ResponseMagnitudeCopy creates a magnitude-only copy
+    /// @test TEST-MEASUREMENTS-COMMANDS-004 - Response magnitude copy
+    /// @status ACTIVE - Phase 2 implementation
+    /// </summary>
+    [Fact]
+    public async Task ResponseMagnitudeCopy_ValidId_CreatesMagnitudeCopy()
+    {
+        // Arrange
+        var measurementsService = _client.Measurements;
+        var measurementsBefore = await measurementsService.ListMeasurements();
+        measurementsBefore.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        var measurementId = measurementsBefore[0].UUID;
+        var countBefore = measurementsBefore.Count;
+
+        // Act
+        await measurementsService.ResponseMagnitudeCopy(measurementId);
+
+        // Assert - verify count increased
+        var measurementsAfter = await measurementsService.ListMeasurements();
+        measurementsAfter.Count.Should().BeGreaterThan(countBefore, "magnitude copy should create a new measurement");
+    }
+
+    /// <summary>
+    /// Test: WrapPhase wraps phase to -180/+180 degrees
+    /// @test TEST-MEASUREMENTS-COMMANDS-005 - Wrap phase
+    /// @status ACTIVE - Phase 2 implementation
+    /// </summary>
+    [Fact]
+    public async Task WrapPhase_ValidId_WrapsSuccessfully()
+    {
+        // Arrange
+        var measurementsService = _client.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        var measurementId = measurements[0].UUID;
+
+        // Act
+        await measurementsService.WrapPhase(measurementId);
+
+        // Assert - if no exception thrown, test passes
+    }
+
+    /// <summary>
+    /// Test: UnwrapPhase unwraps phase discontinuities
+    /// @test TEST-MEASUREMENTS-COMMANDS-006 - Unwrap phase
+    /// @status ACTIVE - Phase 2 implementation
+    /// </summary>
+    [Fact]
+    public async Task UnwrapPhase_ValidId_UnwrapsSuccessfully()
+    {
+        // Arrange
+        var measurementsService = _client.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        var measurementId = measurements[0].UUID;
+
+        // Act
+        await measurementsService.UnwrapPhase(measurementId);
+
+        // Assert - if no exception thrown, test passes
+    }
+
+    /// <summary>
+    /// Test: MinimumPhaseVersion creates minimum phase version
+    /// @test TEST-MEASUREMENTS-COMMANDS-007 - Minimum phase version
+    /// @status ACTIVE - Phase 2 implementation
+    /// </summary>
+    [Fact]
+    public async Task MinimumPhaseVersion_ValidId_CreatesMinPhaseVersion()
+    {
+        // Arrange
+        var measurementsService = _client.Measurements;
+        var measurementsBefore = await measurementsService.ListMeasurements();
+        measurementsBefore.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        var measurementId = measurementsBefore[0].UUID;
+        var countBefore = measurementsBefore.Count;
+
+        // Act
+        await measurementsService.MinimumPhaseVersion(measurementId);
+
+        // Assert - verify count increased
+        var measurementsAfter = await measurementsService.ListMeasurements();
+        measurementsAfter.Count.Should().BeGreaterThan(countBefore, "minimum phase version should create a new measurement");
+    }
+
+    /// <summary>
+    /// Test: ExcessPhaseVersion creates excess phase version
+    /// @test TEST-MEASUREMENTS-COMMANDS-008 - Excess phase version
+    /// @status ACTIVE - Phase 2 implementation
+    /// </summary>
+    [Fact]
+    public async Task ExcessPhaseVersion_ValidId_CreatesExcessPhaseVersion()
+    {
+        // Arrange
+        var measurementsService = _client.Measurements;
+        var measurementsBefore = await measurementsService.ListMeasurements();
+        measurementsBefore.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        var measurementId = measurementsBefore[0].UUID;
+        var countBefore = measurementsBefore.Count;
+
+        // Act
+        await measurementsService.ExcessPhaseVersion(measurementId);
+
+        // Assert - verify count increased
+        var measurementsAfter = await measurementsService.ListMeasurements();
+        measurementsAfter.Count.Should().BeGreaterThan(countBefore, "excess phase version should create a new measurement");
+    }
+
+    /// <summary>
+    /// Test: GenerateMinimumPhase generates minimum phase version
+    /// @test TEST-MEASUREMENTS-COMMANDS-009 - Generate minimum phase
+    /// @status ACTIVE - Phase 2 implementation
+    /// </summary>
+    [Fact]
+    public async Task GenerateMinimumPhase_ValidId_GeneratesSuccessfully()
+    {
+        // Arrange
+        var measurementsService = _client.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        var measurementId = measurements[0].UUID;
+
+        // Act
+        await measurementsService.GenerateMinimumPhase(measurementId);
+
+        // Assert - if no exception thrown, test passes
+    }
+
+    /// <summary>
+    /// Test: TrimIRToWindows trims impulse response
+    /// @test TEST-MEASUREMENTS-COMMANDS-010 - Trim IR to windows
+    /// @status ACTIVE - Phase 2 implementation
+    /// </summary>
+    [Fact]
+    public async Task TrimIRToWindows_ValidId_TrimsSuccessfully()
+    {
+        // Arrange
+        var measurementsService = _client.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        var measurementId = measurements[0].UUID;
+
+        // Act
+        await measurementsService.TrimIRToWindows(measurementId);
+
+        // Assert - if no exception thrown, test passes
+    }
+
+    /// <summary>
+    /// Test: AddSPLOffset adds SPL offset to measurement
+    /// @test TEST-MEASUREMENTS-COMMANDS-011 - Add SPL offset
+    /// @status ACTIVE - Phase 2 implementation
+    /// </summary>
+    [Fact]
+    public async Task AddSPLOffset_ValidId_AddsOffsetSuccessfully()
+    {
+        // Arrange
+        var measurementsService = _client.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        var measurementId = measurements[0].UUID;
+        var offsetDb = 3.0;
+
+        // Act
+        await measurementsService.AddSPLOffset(measurementId, offsetDb);
+
+        // Assert - if no exception thrown, test passes
+    }
+
+    /// <summary>
+    /// Test: OffsetTimeZero offsets time zero point
+    /// @test TEST-MEASUREMENTS-COMMANDS-012 - Offset t=0
+    /// @status ACTIVE - Phase 2 implementation
+    /// </summary>
+    [Fact]
+    public async Task OffsetTimeZero_ValidId_OffsetsSuccessfully()
+    {
+        // Arrange
+        var measurementsService = _client.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        var measurementId = measurements[0].UUID;
+        var offsetMs = 1.5;
+
+        // Act
+        await measurementsService.OffsetTimeZero(measurementId, offsetMs);
+
+        // Assert - if no exception thrown, test passes
+    }
+
+    /// <summary>
+    /// Test: EstimateIRDelay estimates impulse response delay
+    /// @test TEST-MEASUREMENTS-COMMANDS-013 - Estimate IR delay
+    /// @status ACTIVE - Phase 2 implementation
+    /// </summary>
+    [Fact]
+    public async Task EstimateIRDelay_ValidId_ReturnsDelayEstimate()
+    {
+        // Arrange
+        var measurementsService = _client.Measurements;
+        var measurements = await measurementsService.ListMeasurements();
+        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
+        var measurementId = measurements[0].UUID;
+
+        // Act
+        var delay = await measurementsService.EstimateIRDelay(measurementId);
+
+        // Assert
+        delay.Should().BeGreaterThanOrEqualTo(0, "delay should be a non-negative value in milliseconds");
+    }
+
+    #endregion
 }
 

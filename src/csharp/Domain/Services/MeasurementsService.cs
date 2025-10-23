@@ -711,6 +711,382 @@ namespace REWApi.Domain.Services
             }, "Smooth Measurement", cancellationToken);
         }
 
+        #region Individual Measurement Commands (Phase 2)
+
+        /// <summary>
+        /// Save a single measurement to its current file location
+        /// Maps to POST /measurements/:id/command "Save"
+        /// </summary>
+        public async Task SaveMeasurement(
+            string measurementId,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var commandData = new
+                {
+                    command = "Save"
+                };
+
+                var json = JsonSerializer.Serialize(commandData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "Save Measurement", cancellationToken);
+        }
+
+        /// <summary>
+        /// Invert the polarity of a measurement (180 degree phase shift)
+        /// Maps to POST /measurements/:id/command "Invert"
+        /// </summary>
+        public async Task Invert(
+            string measurementId,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var commandData = new
+                {
+                    command = "Invert"
+                };
+
+                var json = JsonSerializer.Serialize(commandData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "Invert Measurement", cancellationToken);
+        }
+
+        /// <summary>
+        /// Create a copy of the measurement response
+        /// Maps to POST /measurements/:id/command "Response copy"
+        /// </summary>
+        public async Task ResponseCopy(
+            string measurementId,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var commandData = new
+                {
+                    command = "Response copy"
+                };
+
+                var json = JsonSerializer.Serialize(commandData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "Response Copy", cancellationToken);
+        }
+
+        /// <summary>
+        /// Create a copy of the measurement magnitude response only (without phase)
+        /// Maps to POST /measurements/:id/command "Response magnitude copy"
+        /// </summary>
+        public async Task ResponseMagnitudeCopy(
+            string measurementId,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var commandData = new
+                {
+                    command = "Response magnitude copy"
+                };
+
+                var json = JsonSerializer.Serialize(commandData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "Response Magnitude Copy", cancellationToken);
+        }
+
+        /// <summary>
+        /// Wrap the phase response to -180/+180 degrees
+        /// Maps to POST /measurements/:id/command "Wrap phase"
+        /// </summary>
+        public async Task WrapPhase(
+            string measurementId,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var commandData = new
+                {
+                    command = "Wrap phase"
+                };
+
+                var json = JsonSerializer.Serialize(commandData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "Wrap Phase", cancellationToken);
+        }
+
+        /// <summary>
+        /// Unwrap the phase response (remove discontinuities)
+        /// Maps to POST /measurements/:id/command "Unwrap phase"
+        /// </summary>
+        public async Task UnwrapPhase(
+            string measurementId,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var commandData = new
+                {
+                    command = "Unwrap phase"
+                };
+
+                var json = JsonSerializer.Serialize(commandData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "Unwrap Phase", cancellationToken);
+        }
+
+        /// <summary>
+        /// Create a minimum phase version of the measurement
+        /// Maps to POST /measurements/:id/command "Minimum phase version"
+        /// </summary>
+        public async Task MinimumPhaseVersion(
+            string measurementId,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var commandData = new
+                {
+                    command = "Minimum phase version"
+                };
+
+                var json = JsonSerializer.Serialize(commandData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "Minimum Phase Version", cancellationToken);
+        }
+
+        /// <summary>
+        /// Create an excess phase version of the measurement
+        /// Maps to POST /measurements/:id/command "Excess phase version"
+        /// </summary>
+        public async Task ExcessPhaseVersion(
+            string measurementId,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var commandData = new
+                {
+                    command = "Excess phase version"
+                };
+
+                var json = JsonSerializer.Serialize(commandData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "Excess Phase Version", cancellationToken);
+        }
+
+        /// <summary>
+        /// Generate a minimum phase version of the measurement
+        /// Maps to POST /measurements/:id/command "Generate minimum phase"
+        /// </summary>
+        public async Task GenerateMinimumPhase(
+            string measurementId,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var commandData = new
+                {
+                    command = "Generate minimum phase"
+                };
+
+                var json = JsonSerializer.Serialize(commandData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "Generate Minimum Phase", cancellationToken);
+        }
+
+        /// <summary>
+        /// Trim the impulse response to the current window settings
+        /// Maps to POST /measurements/:id/command "Trim IR to windows"
+        /// </summary>
+        public async Task TrimIRToWindows(
+            string measurementId,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var commandData = new
+                {
+                    command = "Trim IR to windows"
+                };
+
+                var json = JsonSerializer.Serialize(commandData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "Trim IR to Windows", cancellationToken);
+        }
+
+        /// <summary>
+        /// Add an SPL offset to the measurement
+        /// Maps to POST /measurements/:id/command "Add SPL offset"
+        /// </summary>
+        /// <param name="measurementId">The measurement ID</param>
+        /// <param name="offsetDb">The SPL offset value in dB</param>
+        public async Task AddSPLOffset(
+            string measurementId,
+            double offsetDb,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var commandData = new
+                {
+                    command = "Add SPL offset",
+                    parameters = new
+                    {
+                        offset = offsetDb
+                    }
+                };
+
+                var json = JsonSerializer.Serialize(commandData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "Add SPL Offset", cancellationToken);
+        }
+
+        /// <summary>
+        /// Offset the time zero point of the measurement
+        /// Maps to POST /measurements/:id/command "Offset t=0"
+        /// </summary>
+        /// <param name="measurementId">The measurement ID</param>
+        /// <param name="offsetMs">The time offset value in milliseconds</param>
+        public async Task OffsetTimeZero(
+            string measurementId,
+            double offsetMs,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            await _commandGate.ExecuteCommand(async () =>
+            {
+                var commandData = new
+                {
+                    command = "Offset t=0",
+                    parameters = new
+                    {
+                        offset = offsetMs
+                    }
+                };
+
+                var json = JsonSerializer.Serialize(commandData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }, "Offset Time Zero", cancellationToken);
+        }
+
+        /// <summary>
+        /// Estimate the impulse response delay
+        /// Maps to POST /measurements/:id/command "Estimate IR delay"
+        /// </summary>
+        /// <param name="measurementId">The measurement ID</param>
+        /// <returns>The estimated delay value in milliseconds</returns>
+        public async Task<double> EstimateIRDelay(
+            string measurementId,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(measurementId))
+                throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
+
+            return await _commandGate.ExecuteCommand(async () =>
+            {
+                var commandData = new
+                {
+                    command = "Estimate IR delay"
+                };
+
+                var json = JsonSerializer.Serialize(commandData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+
+                var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
+                var responseData = JsonSerializer.Deserialize<JsonElement>(responseJson);
+
+                // Extract delay value from response
+                if (responseData.TryGetProperty("delay", out var delayElement))
+                {
+                    return delayElement.GetDouble();
+                }
+                else if (responseData.TryGetProperty("result", out var resultElement) && 
+                         resultElement.TryGetProperty("delay", out var nestedDelayElement))
+                {
+                    return nestedDelayElement.GetDouble();
+                }
+                else
+                {
+                    throw new REWApiException($"Unexpected response structure for Estimate IR delay command: {responseJson}", "/measurements/:id/command");
+                }
+            }, "Estimate IR Delay", cancellationToken);
+        }
+
+        #endregion
+
         /// <summary>
         /// Get frequency response with decoded float arrays
         /// Maps to GET /measurements/:id/frequency-response
