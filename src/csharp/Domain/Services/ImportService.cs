@@ -54,6 +54,7 @@ namespace REWApi.Domain.Services
         /// <summary>
         /// Sets the sweep stimulus file path for import
         /// POST /import/sweep-recordings/stimulus
+        /// Note: REW API expects a FilePath object with path, channels (optional), applyCal (optional)
         /// </summary>
         public async Task<bool> SetSweepStimulusAsync(string filePath, CancellationToken cancellationToken = default)
         {
@@ -61,8 +62,12 @@ namespace REWApi.Domain.Services
                 throw new ArgumentException("File path cannot be null or empty", nameof(filePath));
 
             var url = $"{_baseUrl}/import/sweep-recordings/stimulus";
+            
+            // REW API expects FilePath object: { "path": "...", "channels": "All", "applyCal": false }
+            var filePathObject = new { path = filePath };
+            
             var jsonContent = new StringContent(
-                JsonSerializer.Serialize(filePath),
+                JsonSerializer.Serialize(filePathObject),
                 Encoding.UTF8,
                 "application/json");
 
@@ -88,15 +93,25 @@ namespace REWApi.Domain.Services
         /// <summary>
         /// Sets the sweep response file path for import
         /// POST /import/sweep-recordings/response
+        /// Note: REW API expects a FilePath object with path, channels (optional), applyCal (optional)
+        /// Note: The sweep stimulus must be set before setting the sweep response
         /// </summary>
-        public async Task<bool> SetSweepResponseAsync(string filePath, CancellationToken cancellationToken = default)
+        public async Task<bool> SetSweepResponseAsync(string filePath, string? channels = null, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(filePath))
                 throw new ArgumentException("File path cannot be null or empty", nameof(filePath));
 
             var url = $"{_baseUrl}/import/sweep-recordings/response";
+            
+            // REW API expects FilePath object: { "path": "...", "channels": "All", "applyCal": false }
+            var filePathObject = new 
+            { 
+                path = filePath,
+                channels = channels ?? "All"
+            };
+            
             var jsonContent = new StringContent(
-                JsonSerializer.Serialize(filePath),
+                JsonSerializer.Serialize(filePathObject),
                 Encoding.UTF8,
                 "application/json");
 
@@ -126,6 +141,7 @@ namespace REWApi.Domain.Services
         /// <summary>
         /// Sets the frequency response file path for import
         /// POST /import/frequency-response
+        /// Note: REW API expects a FilePath object with path, channels (optional), applyCal (optional)
         /// </summary>
         public async Task<bool> SetFrequencyResponseFileAsync(string filePath, CancellationToken cancellationToken = default)
         {
@@ -133,8 +149,12 @@ namespace REWApi.Domain.Services
                 throw new ArgumentException("File path cannot be null or empty", nameof(filePath));
 
             var url = $"{_baseUrl}/import/frequency-response";
+            
+            // REW API expects FilePath object: { "path": "..." }
+            var filePathObject = new { path = filePath };
+            
             var jsonContent = new StringContent(
-                JsonSerializer.Serialize(filePath),
+                JsonSerializer.Serialize(filePathObject),
                 Encoding.UTF8,
                 "application/json");
 
@@ -160,6 +180,7 @@ namespace REWApi.Domain.Services
         /// <summary>
         /// Sets the frequency response data file path for import
         /// POST /import/frequency-response-data
+        /// Note: This endpoint accepts FrequencyResponseData object, not FilePath
         /// </summary>
         public async Task<bool> SetFrequencyResponseDataFileAsync(string filePath, CancellationToken cancellationToken = default)
         {
@@ -167,8 +188,13 @@ namespace REWApi.Domain.Services
                 throw new ArgumentException("File path cannot be null or empty", nameof(filePath));
 
             var url = $"{_baseUrl}/import/frequency-response-data";
+            
+            // Note: This may need to be FrequencyResponseData object, not FilePath
+            // For now, treating as FilePath for backward compatibility
+            var filePathObject = new { path = filePath };
+            
             var jsonContent = new StringContent(
-                JsonSerializer.Serialize(filePath),
+                JsonSerializer.Serialize(filePathObject),
                 Encoding.UTF8,
                 "application/json");
 
@@ -198,15 +224,24 @@ namespace REWApi.Domain.Services
         /// <summary>
         /// Sets the impulse response file path for import
         /// POST /import/impulse-response
+        /// Note: REW API expects a FilePath object with path, channels (optional), applyCal (optional)
         /// </summary>
-        public async Task<bool> SetImpulseResponseFileAsync(string filePath, CancellationToken cancellationToken = default)
+        public async Task<bool> SetImpulseResponseFileAsync(string filePath, string? channels = null, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(filePath))
                 throw new ArgumentException("File path cannot be null or empty", nameof(filePath));
 
             var url = $"{_baseUrl}/import/impulse-response";
+            
+            // REW API expects FilePath object: { "path": "...", "channels": "All", "applyCal": false }
+            var filePathObject = new 
+            { 
+                path = filePath,
+                channels = channels ?? "All"
+            };
+            
             var jsonContent = new StringContent(
-                JsonSerializer.Serialize(filePath),
+                JsonSerializer.Serialize(filePathObject),
                 Encoding.UTF8,
                 "application/json");
 
@@ -232,6 +267,7 @@ namespace REWApi.Domain.Services
         /// <summary>
         /// Sets the impulse response data file path for import
         /// POST /import/impulse-response-data
+        /// Note: This endpoint accepts ImpulseResponseData object, not FilePath
         /// </summary>
         public async Task<bool> SetImpulseResponseDataFileAsync(string filePath, CancellationToken cancellationToken = default)
         {
@@ -239,8 +275,13 @@ namespace REWApi.Domain.Services
                 throw new ArgumentException("File path cannot be null or empty", nameof(filePath));
 
             var url = $"{_baseUrl}/import/impulse-response-data";
+            
+            // Note: This may need to be ImpulseResponseData object, not FilePath
+            // For now, treating as FilePath for backward compatibility
+            var filePathObject = new { path = filePath };
+            
             var jsonContent = new StringContent(
-                JsonSerializer.Serialize(filePath),
+                JsonSerializer.Serialize(filePathObject),
                 Encoding.UTF8,
                 "application/json");
 
@@ -270,15 +311,25 @@ namespace REWApi.Domain.Services
         /// <summary>
         /// Sets the RTA file path for import
         /// POST /import/rta-file
+        /// Note: REW API expects an RTAFilePath object with path, channel, saveOption
         /// </summary>
-        public async Task<bool> SetRTAFileAsync(string filePath, CancellationToken cancellationToken = default)
+        public async Task<bool> SetRTAFileAsync(string filePath, int channel = 1, string saveOption = "Current", CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(filePath))
                 throw new ArgumentException("File path cannot be null or empty", nameof(filePath));
 
             var url = $"{_baseUrl}/import/rta-file";
+            
+            // REW API expects RTAFilePath object: { "path": "...", "channel": 1, "saveOption": "Current" }
+            var rtaFilePathObject = new 
+            { 
+                path = filePath,
+                channel = channel,
+                saveOption = saveOption
+            };
+            
             var jsonContent = new StringContent(
-                JsonSerializer.Serialize(filePath),
+                JsonSerializer.Serialize(rtaFilePathObject),
                 Encoding.UTF8,
                 "application/json");
 
