@@ -2839,8 +2839,8 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
             return; // Test requires at least 2 measurements
         }
 
-        var idA = measurements[0].UUID;
-        var idB = measurements[1].UUID;
+        var idA = measurements[0].Index.ToString();
+        var idB = measurements[1].Index.ToString();
 
         // Act & Assert (should complete without errors)
         await measurementsService.TraceArithmetic(
