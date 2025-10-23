@@ -61,14 +61,19 @@ namespace REWApi.Domain.Services
 
         /// <summary>
         /// Start monitoring input levels
+        /// POST /input-levels/command
+        /// REW API expects: {"command": "Start"}
         /// </summary>
         public async Task<bool> StartMonitoringAsync(CancellationToken cancellationToken = default)
         {
             return await _commandGate.ExecuteCommand(async () =>
             {
                 var url = $"{_baseUrl}/input-levels/command";
+                
+                // REW API expects command object: {"command": "Start"}
+                var commandObject = new { command = "Start" };
                 var jsonContent = new StringContent(
-                    JsonSerializer.Serialize("Start"),
+                    JsonSerializer.Serialize(commandObject),
                     Encoding.UTF8,
                     "application/json");
 
@@ -80,14 +85,19 @@ namespace REWApi.Domain.Services
 
         /// <summary>
         /// Stop monitoring input levels
+        /// POST /input-levels/command
+        /// REW API expects: {"command": "Stop"}
         /// </summary>
         public async Task<bool> StopMonitoringAsync(CancellationToken cancellationToken = default)
         {
             return await _commandGate.ExecuteCommand(async () =>
             {
                 var url = $"{_baseUrl}/input-levels/command";
+                
+                // REW API expects command object: {"command": "Stop"}
+                var commandObject = new { command = "Stop" };
                 var jsonContent = new StringContent(
-                    JsonSerializer.Serialize("Stop"),
+                    JsonSerializer.Serialize(commandObject),
                     Encoding.UTF8,
                     "application/json");
 
