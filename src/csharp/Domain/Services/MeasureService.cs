@@ -894,6 +894,215 @@ namespace REWApi.Domain.Services
             return response.IsSuccessStatusCode;
         }
 
+        #endregion
+
+        #region Timing Reference Sub-Options
+
+        /// <summary>
+        /// Get available timing reference choices
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>List of available timing reference options</returns>
+        public async Task<List<string>> GetTimingReferenceChoices(CancellationToken cancellationToken = default)
+        {
+            var url = $"{_baseUrl}/measure/timing/reference/choices";
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<List<string>>(content) ?? new List<string>();
+        }
+
+        /// <summary>
+        /// Get t=0 option when no timing reference is used
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>t=0 option setting</returns>
+        public async Task<string> GetTimingReferenceNoneTZero(CancellationToken cancellationToken = default)
+        {
+            var url = $"{_baseUrl}/measure/timing/reference/none/tzero";
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<string>(content) ?? string.Empty;
+        }
+
+        /// <summary>
+        /// Set t=0 option when no timing reference is used
+        /// </summary>
+        /// <param name="tzeroOption">The t=0 option to set</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>True if setting was updated successfully</returns>
+        public async Task<bool> SetTimingReferenceNoneTZero(string tzeroOption, CancellationToken cancellationToken = default)
+        {
+            var url = $"{_baseUrl}/measure/timing/reference/none/tzero";
+            var json = JsonSerializer.Serialize(tzeroOption);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync(url, content, cancellationToken);
+            return response.IsSuccessStatusCode;
+        }
+
+        /// <summary>
+        /// Get available t=0 option choices when no timing reference is used
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>List of available t=0 options</returns>
+        public async Task<List<string>> GetTimingReferenceNoneTZeroChoices(CancellationToken cancellationToken = default)
+        {
+            var url = $"{_baseUrl}/measure/timing/reference/none/tzero/choices";
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<List<string>>(content) ?? new List<string>();
+        }
+
+        /// <summary>
+        /// Get whether to merge loopback calibration with timing reference
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>True if merge is enabled</returns>
+        public async Task<bool> GetTimingReferenceLoopbackCalMerge(CancellationToken cancellationToken = default)
+        {
+            var url = $"{_baseUrl}/measure/timing/reference/loopback-cal/merge";
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<bool>(content);
+        }
+
+        /// <summary>
+        /// Set whether to merge loopback calibration with timing reference
+        /// </summary>
+        /// <param name="merge">True to enable merge</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>True if setting was updated successfully</returns>
+        public async Task<bool> SetTimingReferenceLoopbackCalMerge(bool merge, CancellationToken cancellationToken = default)
+        {
+            var url = $"{_baseUrl}/measure/timing/reference/loopback-cal/merge";
+            var json = JsonSerializer.Serialize(merge);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync(url, content, cancellationToken);
+            return response.IsSuccessStatusCode;
+        }
+
+        /// <summary>
+        /// Get acoustic timing reference trim value (milliseconds)
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Trim value in milliseconds</returns>
+        public async Task<double> GetTimingReferenceAcousticTrim(CancellationToken cancellationToken = default)
+        {
+            var url = $"{_baseUrl}/measure/timing/reference/acoustic/trim";
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<double>(content);
+        }
+
+        /// <summary>
+        /// Set acoustic timing reference trim value (milliseconds)
+        /// </summary>
+        /// <param name="trimMs">Trim value in milliseconds</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>True if setting was updated successfully</returns>
+        public async Task<bool> SetTimingReferenceAcousticTrim(double trimMs, CancellationToken cancellationToken = default)
+        {
+            var url = $"{_baseUrl}/measure/timing/reference/acoustic/trim";
+            var json = JsonSerializer.Serialize(trimMs);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync(url, content, cancellationToken);
+            return response.IsSuccessStatusCode;
+        }
+
+        /// <summary>
+        /// Get wired timing reference trim value (milliseconds)
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Trim value in milliseconds</returns>
+        public async Task<double> GetTimingReferenceWiredTrim(CancellationToken cancellationToken = default)
+        {
+            var url = $"{_baseUrl}/measure/timing/reference/wired/trim";
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<double>(content);
+        }
+
+        /// <summary>
+        /// Set wired timing reference trim value (milliseconds)
+        /// </summary>
+        /// <param name="trimMs">Trim value in milliseconds</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>True if setting was updated successfully</returns>
+        public async Task<bool> SetTimingReferenceWiredTrim(double trimMs, CancellationToken cancellationToken = default)
+        {
+            var url = $"{_baseUrl}/measure/timing/reference/wired/trim";
+            var json = JsonSerializer.Serialize(trimMs);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync(url, content, cancellationToken);
+            return response.IsSuccessStatusCode;
+        }
+
+        #endregion
+
+        #region Subscription Support
+
+        /// <summary>
+        /// Subscribe to measurement progress updates
+        /// </summary>
+        /// <param name="callbackUrl">URL to receive progress updates via POST</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>True if subscription was successful</returns>
+        public async Task<bool> SubscribeToMeasurementProgress(string callbackUrl, CancellationToken cancellationToken = default)
+        {
+            var url = $"{_baseUrl}/measure/subscribe";
+            var json = JsonSerializer.Serialize(new { url = callbackUrl });
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync(url, content, cancellationToken);
+            return response.IsSuccessStatusCode;
+        }
+
+        /// <summary>
+        /// Unsubscribe from measurement progress updates
+        /// </summary>
+        /// <param name="callbackUrl">URL to unsubscribe</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>True if unsubscription was successful</returns>
+        public async Task<bool> UnsubscribeFromMeasurementProgress(string callbackUrl, CancellationToken cancellationToken = default)
+        {
+            var url = $"{_baseUrl}/measure/unsubscribe";
+            var json = JsonSerializer.Serialize(new { url = callbackUrl });
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync(url, content, cancellationToken);
+            return response.IsSuccessStatusCode;
+        }
+
+        /// <summary>
+        /// Get list of current measurement progress subscribers
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>List of subscriber callback URLs</returns>
+        public async Task<List<string>> GetMeasurementProgressSubscribers(CancellationToken cancellationToken = default)
+        {
+            var url = $"{_baseUrl}/measure/subscribers";
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<List<string>>(content) ?? new List<string>();
+        }
+
         /// <summary>
         /// Get whether to capture noise floor before measurement
         /// </summary>

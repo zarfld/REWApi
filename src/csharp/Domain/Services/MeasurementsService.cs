@@ -3009,6 +3009,172 @@ namespace REWApi.Domain.Services
             response.EnsureSuccessStatusCode();
         }
 
+        /// <summary>
+        /// Gets the list of available target shapes for EQ configuration.
+        /// Target shapes include options like "Full range", "Subwoofer only", "LF only", etc.
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Array of target shape names</returns>
+        public async Task<string[]> GetTargetShapes(CancellationToken cancellationToken = default)
+        {
+            var url = $"{_baseUrl}/eq/target-shapes";
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            return JsonSerializer.Deserialize<string[]>(json) ?? Array.Empty<string>();
+        }
+
+        /// <summary>
+        /// Gets the list of available crossover types for target curve configuration.
+        /// Crossover types define how the target curve transitions between frequency ranges.
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Array of crossover type names</returns>
+        public async Task<string[]> GetCrossoverTypes(CancellationToken cancellationToken = default)
+        {
+            var url = $"{_baseUrl}/eq/crossover-types";
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            return JsonSerializer.Deserialize<string[]>(json) ?? Array.Empty<string>();
+        }
+
+        /// <summary>
+        /// Gets the list of available slopes (in dB per octave) for target curve configuration.
+        /// Common values include 6, 12, 18, 24, 36, 48 dB/octave.
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Array of slope values in dB/octave</returns>
+        public async Task<int[]> GetSlopes(CancellationToken cancellationToken = default)
+        {
+            var url = $"{_baseUrl}/eq/slopes";
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            return JsonSerializer.Deserialize<int[]>(json) ?? Array.Empty<int>();
+        }
+
+        /// <summary>
+        /// Gets the house curve logarithmic interpolation flag.
+        /// When true, house curve data is interpolated logarithmically; when false, linearly.
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>True if logarithmic interpolation is enabled, false otherwise</returns>
+        public async Task<bool> GetHouseCurveLogInterpolation(CancellationToken cancellationToken = default)
+        {
+            var url = $"{_baseUrl}/eq/house-curve-log-interpolation";
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            return JsonSerializer.Deserialize<bool>(json);
+        }
+
+        /// <summary>
+        /// Sets the house curve logarithmic interpolation flag.
+        /// </summary>
+        /// <param name="useLogInterpolation">True to enable logarithmic interpolation, false for linear</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task SetHouseCurveLogInterpolation(
+            bool useLogInterpolation,
+            CancellationToken cancellationToken = default)
+        {
+            var url = $"{_baseUrl}/eq/house-curve-log-interpolation";
+            var content = new StringContent(
+                JsonSerializer.Serialize(useLogInterpolation),
+                Encoding.UTF8,
+                "application/json");
+
+            var response = await _httpClient.PostAsync(url, content, cancellationToken);
+            response.EnsureSuccessStatusCode();
+        }
+
+        /// <summary>
+        /// Subscribes to EQ progress updates for monitoring EQ matching operations.
+        /// The subscriber will receive notifications about EQ processing progress.
+        /// </summary>
+        /// <param name="subscriberUrl">URL where progress updates should be sent</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task SubscribeToEQProgress(
+            string subscriberUrl,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(subscriberUrl))
+                throw new ArgumentException("Subscriber URL cannot be null or empty", nameof(subscriberUrl));
+
+            var url = $"{_baseUrl}/eq/subscribe";
+            var subscriber = new { url = subscriberUrl };
+            var content = new StringContent(
+                JsonSerializer.Serialize(subscriber),
+                Encoding.UTF8,
+                "application/json");
+
+            var response = await _httpClient.PostAsync(url, content, cancellationToken);
+            response.EnsureSuccessStatusCode();
+        }
+
+        /// <summary>
+        /// Unsubscribes from EQ progress updates.
+        /// </summary>
+        /// <param name="subscriberUrl">URL of the subscriber to remove</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task UnsubscribeFromEQProgress(
+            string subscriberUrl,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(subscriberUrl))
+                throw new ArgumentException("Subscriber URL cannot be null or empty", nameof(subscriberUrl));
+
+            var url = $"{_baseUrl}/eq/unsubscribe";
+            var subscriber = new { url = subscriberUrl };
+            var content = new StringContent(
+                JsonSerializer.Serialize(subscriber),
+                Encoding.UTF8,
+                "application/json");
+
+            var response = await _httpClient.PostAsync(url, content, cancellationToken);
+            response.EnsureSuccessStatusCode();
+        }
+
+        /// <summary>
+        /// Gets the list of current EQ progress subscribers.
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Array of subscriber URLs</returns>
+        public async Task<string[]> GetEQProgressSubscribers(CancellationToken cancellationToken = default)
+        {
+            var url = $"{_baseUrl}/eq/subscribers";
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            using var doc = JsonDocument.Parse(json);
+            var root = doc.RootElement;
+
+            // Handle array of subscriber objects with "url" property
+            if (root.ValueKind == JsonValueKind.Array)
+            {
+                var subscribers = new List<string>();
+                foreach (var element in root.EnumerateArray())
+                {
+                    if (element.TryGetProperty("url", out var urlProp))
+                    {
+                        var urlValue = urlProp.GetString();
+                        if (!string.IsNullOrEmpty(urlValue))
+                        {
+                            subscribers.Add(urlValue);
+                        }
+                    }
+                }
+                return subscribers.ToArray();
+            }
+
+            return Array.Empty<string>();
+        }
+
         #endregion
 
         #region Phase 3f: EQ Response Data (GZIP-compressed endpoints)

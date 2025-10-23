@@ -263,6 +263,804 @@ namespace REWApi.Domain.Services
             };
         }
 
+        #region Java Audio Device Configuration
+
+        /// <summary>
+        /// Get current Java input device
+        /// Maps to GET /audio/java/input-device
+        /// </summary>
+        public async Task<string> GetJavaInputDevice(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/audio/java/input-device", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            var data = JsonSerializer.Deserialize<JsonElement>(json);
+            return data.TryGetProperty("device", out var device) ? device.GetString() ?? string.Empty : string.Empty;
+        }
+
+        /// <summary>
+        /// Set Java input device
+        /// Maps to POST /audio/java/input-device
+        /// </summary>
+        public async Task<bool> SetJavaInputDevice(string device, CancellationToken cancellationToken = default)
+        {
+            var requestData = new { device };
+            var json = JsonSerializer.Serialize(requestData);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync($"{_baseUrl}/audio/java/input-device", content, cancellationToken);
+            return response.IsSuccessStatusCode;
+        }
+
+        /// <summary>
+        /// Get available Java input device choices
+        /// Maps to GET /audio/java/input-devices
+        /// </summary>
+        public async Task<List<string>> GetJavaInputDevices(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/audio/java/input-devices", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            return JsonSerializer.Deserialize<List<string>>(json) ?? new List<string>();
+        }
+
+        /// <summary>
+        /// Get number of hardware channels the input device has
+        /// Maps to GET /audio/java/num-input-device-channels
+        /// </summary>
+        public async Task<int> GetJavaNumInputDeviceChannels(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/audio/java/num-input-device-channels", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            return JsonSerializer.Deserialize<int>(json);
+        }
+
+        /// <summary>
+        /// Get current Java output device
+        /// Maps to GET /audio/java/output-device
+        /// </summary>
+        public async Task<string> GetJavaOutputDevice(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/audio/java/output-device", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            var data = JsonSerializer.Deserialize<JsonElement>(json);
+            return data.TryGetProperty("device", out var device) ? device.GetString() ?? string.Empty : string.Empty;
+        }
+
+        /// <summary>
+        /// Set Java output device
+        /// Maps to POST /audio/java/output-device
+        /// </summary>
+        public async Task<bool> SetJavaOutputDevice(string device, CancellationToken cancellationToken = default)
+        {
+            var requestData = new { device };
+            var json = JsonSerializer.Serialize(requestData);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync($"{_baseUrl}/audio/java/output-device", content, cancellationToken);
+            return response.IsSuccessStatusCode;
+        }
+
+        /// <summary>
+        /// Get available Java output device choices
+        /// Maps to GET /audio/java/output-devices
+        /// </summary>
+        public async Task<List<string>> GetJavaOutputDevices(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/audio/java/output-devices", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            return JsonSerializer.Deserialize<List<string>>(json) ?? new List<string>();
+        }
+
+        /// <summary>
+        /// Get number of hardware channels the output device has
+        /// Maps to GET /audio/java/num-output-device-channels
+        /// </summary>
+        public async Task<int> GetJavaNumOutputDeviceChannels(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/audio/java/num-output-device-channels", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            return JsonSerializer.Deserialize<int>(json);
+        }
+
+        /// <summary>
+        /// Get current Java input
+        /// Maps to GET /audio/java/input
+        /// </summary>
+        public async Task<string> GetJavaInput(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/audio/java/input", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            var data = JsonSerializer.Deserialize<JsonElement>(json);
+            return data.TryGetProperty("input", out var input) ? input.GetString() ?? string.Empty : string.Empty;
+        }
+
+        /// <summary>
+        /// Set Java input
+        /// Maps to POST /audio/java/input
+        /// </summary>
+        public async Task<bool> SetJavaInput(string input, CancellationToken cancellationToken = default)
+        {
+            var requestData = new { input };
+            var json = JsonSerializer.Serialize(requestData);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync($"{_baseUrl}/audio/java/input", content, cancellationToken);
+            return response.IsSuccessStatusCode;
+        }
+
+        /// <summary>
+        /// Get available Java input choices
+        /// Maps to GET /audio/java/inputs
+        /// </summary>
+        public async Task<List<string>> GetJavaInputs(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/audio/java/inputs", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            return JsonSerializer.Deserialize<List<string>>(json) ?? new List<string>();
+        }
+
+        /// <summary>
+        /// Get current Java output
+        /// Maps to GET /audio/java/output
+        /// </summary>
+        public async Task<string> GetJavaOutput(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/audio/java/output", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            var data = JsonSerializer.Deserialize<JsonElement>(json);
+            return data.TryGetProperty("output", out var output) ? output.GetString() ?? string.Empty : string.Empty;
+        }
+
+        /// <summary>
+        /// Set Java output
+        /// Maps to POST /audio/java/output
+        /// </summary>
+        public async Task<bool> SetJavaOutput(string output, CancellationToken cancellationToken = default)
+        {
+            var requestData = new { output };
+            var json = JsonSerializer.Serialize(requestData);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync($"{_baseUrl}/audio/java/output", content, cancellationToken);
+            return response.IsSuccessStatusCode;
+        }
+
+        /// <summary>
+        /// Get available Java output choices
+        /// Maps to GET /audio/java/outputs
+        /// </summary>
+        public async Task<List<string>> GetJavaOutputs(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/audio/java/outputs", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            return JsonSerializer.Deserialize<List<string>>(json) ?? new List<string>();
+        }
+
+        #endregion
+
+        #region Java Audio Channel Configuration
+
+        /// <summary>
+        /// Get current Java input channel
+        /// Maps to GET /audio/java/input-channel
+        /// </summary>
+        public async Task<int> GetJavaInputChannel(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/audio/java/input-channel", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            var data = JsonSerializer.Deserialize<JsonElement>(json);
+            return data.TryGetProperty("channel", out var channel) ? channel.GetInt32() : 0;
+        }
+
+        /// <summary>
+        /// Set Java input channel
+        /// Maps to POST /audio/java/input-channel
+        /// </summary>
+        public async Task<bool> SetJavaInputChannel(int channel, CancellationToken cancellationToken = default)
+        {
+            var requestData = new { channel };
+            var json = JsonSerializer.Serialize(requestData);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync($"{_baseUrl}/audio/java/input-channel", content, cancellationToken);
+            return response.IsSuccessStatusCode;
+        }
+
+        /// <summary>
+        /// Get number of Java input channels
+        /// Maps to GET /audio/java/num-input-channels
+        /// </summary>
+        public async Task<int> GetJavaNumInputChannels(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/audio/java/num-input-channels", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            return JsonSerializer.Deserialize<int>(json);
+        }
+
+        /// <summary>
+        /// Get current Java reference input channel
+        /// Maps to GET /audio/java/ref-input-channel
+        /// </summary>
+        public async Task<int> GetJavaRefInputChannel(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/audio/java/ref-input-channel", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            var data = JsonSerializer.Deserialize<JsonElement>(json);
+            return data.TryGetProperty("channel", out var channel) ? channel.GetInt32() : 0;
+        }
+
+        /// <summary>
+        /// Set Java reference input channel
+        /// Maps to POST /audio/java/ref-input-channel
+        /// </summary>
+        public async Task<bool> SetJavaRefInputChannel(int channel, CancellationToken cancellationToken = default)
+        {
+            var requestData = new { channel };
+            var json = JsonSerializer.Serialize(requestData);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync($"{_baseUrl}/audio/java/ref-input-channel", content, cancellationToken);
+            return response.IsSuccessStatusCode;
+        }
+
+        /// <summary>
+        /// Get last Java input channel of the multi-input set
+        /// Maps to GET /audio/java/last-input-channel
+        /// </summary>
+        public async Task<int> GetJavaLastInputChannel(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/audio/java/last-input-channel", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            var data = JsonSerializer.Deserialize<JsonElement>(json);
+            return data.TryGetProperty("channel", out var channel) ? channel.GetInt32() : 0;
+        }
+
+        /// <summary>
+        /// Set last Java input channel of the multi-input set
+        /// Maps to POST /audio/java/last-input-channel
+        /// </summary>
+        public async Task<bool> SetJavaLastInputChannel(int channel, CancellationToken cancellationToken = default)
+        {
+            var requestData = new { channel };
+            var json = JsonSerializer.Serialize(requestData);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync($"{_baseUrl}/audio/java/last-input-channel", content, cancellationToken);
+            return response.IsSuccessStatusCode;
+        }
+
+        /// <summary>
+        /// Get current Java output channel
+        /// Maps to GET /audio/java/output-channel
+        /// </summary>
+        public async Task<string> GetJavaOutputChannel(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/audio/java/output-channel", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            var data = JsonSerializer.Deserialize<JsonElement>(json);
+            return data.TryGetProperty("channel", out var channel) ? channel.GetString() ?? string.Empty : string.Empty;
+        }
+
+        /// <summary>
+        /// Set Java output channel
+        /// Maps to POST /audio/java/output-channel
+        /// </summary>
+        public async Task<bool> SetJavaOutputChannel(string channel, CancellationToken cancellationToken = default)
+        {
+            var requestData = new { channel };
+            var json = JsonSerializer.Serialize(requestData);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync($"{_baseUrl}/audio/java/output-channel", content, cancellationToken);
+            return response.IsSuccessStatusCode;
+        }
+
+        /// <summary>
+        /// Get current Java reference output channel
+        /// Maps to GET /audio/java/ref-output-channel
+        /// </summary>
+        public async Task<string> GetJavaRefOutputChannel(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/audio/java/ref-output-channel", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            var data = JsonSerializer.Deserialize<JsonElement>(json);
+            return data.TryGetProperty("channel", out var channel) ? channel.GetString() ?? string.Empty : string.Empty;
+        }
+
+        /// <summary>
+        /// Set Java reference output channel
+        /// Maps to POST /audio/java/ref-output-channel
+        /// </summary>
+        public async Task<bool> SetJavaRefOutputChannel(string channel, CancellationToken cancellationToken = default)
+        {
+            var requestData = new { channel };
+            var json = JsonSerializer.Serialize(requestData);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync($"{_baseUrl}/audio/java/ref-output-channel", content, cancellationToken);
+            return response.IsSuccessStatusCode;
+        }
+
+        /// <summary>
+        /// Get Java output channel mapping
+        /// Maps to GET /audio/java/output-channel-mapping
+        /// </summary>
+        public async Task<List<string>> GetJavaOutputChannelMapping(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/audio/java/output-channel-mapping", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            var data = JsonSerializer.Deserialize<JsonElement>(json);
+            return data.TryGetProperty("mapping", out var mapping) 
+                ? JsonSerializer.Deserialize<List<string>>(mapping.GetRawText()) ?? new List<string>()
+                : new List<string>();
+        }
+
+        /// <summary>
+        /// Set Java output channel mapping
+        /// Maps to POST /audio/java/output-channel-mapping
+        /// </summary>
+        public async Task<bool> SetJavaOutputChannelMapping(List<string> mapping, CancellationToken cancellationToken = default)
+        {
+            var requestData = new { mapping };
+            var json = JsonSerializer.Serialize(requestData);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync($"{_baseUrl}/audio/java/output-channel-mapping", content, cancellationToken);
+            return response.IsSuccessStatusCode;
+        }
+
+        #endregion
+
+        #region ASIO Audio Device Configuration
+
+        /// <summary>
+        /// Get available ASIO commands
+        /// Maps to GET /audio/asio/commands
+        /// </summary>
+        public async Task<List<string>> GetASIOCommands(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/audio/asio/commands", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            return JsonSerializer.Deserialize<List<string>>(json) ?? new List<string>();
+        }
+
+        /// <summary>
+        /// Send an ASIO command
+        /// Maps to POST /audio/asio/command
+        /// </summary>
+        public async Task<bool> SendASIOCommand(string command, CancellationToken cancellationToken = default)
+        {
+            var request = new { command };
+            var content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync($"{_baseUrl}/audio/asio/command", content, cancellationToken);
+            return response.IsSuccessStatusCode;
+        }
+
+        /// <summary>
+        /// Get current ASIO device
+        /// Maps to GET /audio/asio/device
+        /// </summary>
+        public async Task<string> GetASIODevice(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/audio/asio/device", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            var data = JsonSerializer.Deserialize<JsonElement>(json);
+            return data.TryGetProperty("device", out var device) ? device.GetString() ?? string.Empty : string.Empty;
+        }
+
+        /// <summary>
+        /// Set ASIO device
+        /// Maps to POST /audio/asio/device
+        /// </summary>
+        public async Task<bool> SetASIODevice(string device, CancellationToken cancellationToken = default)
+        {
+            var request = new { device };
+            var content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync($"{_baseUrl}/audio/asio/device", content, cancellationToken);
+            return response.IsSuccessStatusCode;
+        }
+
+        /// <summary>
+        /// Get available ASIO devices
+        /// Maps to GET /audio/asio/devices
+        /// </summary>
+        public async Task<List<string>> GetASIODevices(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/audio/asio/devices", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            return JsonSerializer.Deserialize<List<string>>(json) ?? new List<string>();
+        }
+
+        /// <summary>
+        /// Get current ASIO input
+        /// Maps to GET /audio/asio/input
+        /// </summary>
+        public async Task<string> GetASIOInput(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/audio/asio/input", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            var data = JsonSerializer.Deserialize<JsonElement>(json);
+            return data.TryGetProperty("input", out var input) ? input.GetString() ?? string.Empty : string.Empty;
+        }
+
+        /// <summary>
+        /// Set ASIO input
+        /// Maps to POST /audio/asio/input
+        /// </summary>
+        public async Task<bool> SetASIOInput(string input, CancellationToken cancellationToken = default)
+        {
+            var request = new { input };
+            var content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync($"{_baseUrl}/audio/asio/input", content, cancellationToken);
+            return response.IsSuccessStatusCode;
+        }
+
+        /// <summary>
+        /// Get available ASIO inputs
+        /// Maps to GET /audio/asio/inputs
+        /// </summary>
+        public async Task<List<string>> GetASIOInputs(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/audio/asio/inputs", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            return JsonSerializer.Deserialize<List<string>>(json) ?? new List<string>();
+        }
+
+        /// <summary>
+        /// Get current ASIO output
+        /// Maps to GET /audio/asio/output
+        /// </summary>
+        public async Task<string> GetASIOOutput(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/audio/asio/output", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            var data = JsonSerializer.Deserialize<JsonElement>(json);
+            return data.TryGetProperty("output", out var output) ? output.GetString() ?? string.Empty : string.Empty;
+        }
+
+        /// <summary>
+        /// Set ASIO output
+        /// Maps to POST /audio/asio/output
+        /// </summary>
+        public async Task<bool> SetASIOOutput(string output, CancellationToken cancellationToken = default)
+        {
+            var request = new { output };
+            var content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync($"{_baseUrl}/audio/asio/output", content, cancellationToken);
+            return response.IsSuccessStatusCode;
+        }
+
+        /// <summary>
+        /// Get available ASIO outputs
+        /// Maps to GET /audio/asio/outputs
+        /// </summary>
+        public async Task<List<string>> GetASIOOutputs(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/audio/asio/outputs", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            return JsonSerializer.Deserialize<List<string>>(json) ?? new List<string>();
+        }
+
+        #endregion
+
+        #region ASIO Audio Advanced Configuration
+
+        /// <summary>
+        /// Get ASIO reference input
+        /// Maps to GET /audio/asio/ref-input
+        /// </summary>
+        public async Task<string> GetASIORefInput(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/audio/asio/ref-input", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            var data = JsonSerializer.Deserialize<JsonElement>(json);
+            return data.TryGetProperty("input", out var input) ? input.GetString() ?? string.Empty : string.Empty;
+        }
+
+        /// <summary>
+        /// Set ASIO reference input
+        /// Maps to POST /audio/asio/ref-input
+        /// </summary>
+        public async Task<bool> SetASIORefInput(string input, CancellationToken cancellationToken = default)
+        {
+            var request = new { input };
+            var content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync($"{_baseUrl}/audio/asio/ref-input", content, cancellationToken);
+            return response.IsSuccessStatusCode;
+        }
+
+        /// <summary>
+        /// Get ASIO last input for multi-input set
+        /// Maps to GET /audio/asio/last-input
+        /// </summary>
+        public async Task<string> GetASIOLastInput(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/audio/asio/last-input", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            var data = JsonSerializer.Deserialize<JsonElement>(json);
+            return data.TryGetProperty("input", out var input) ? input.GetString() ?? string.Empty : string.Empty;
+        }
+
+        /// <summary>
+        /// Set ASIO last input for multi-input set
+        /// Maps to POST /audio/asio/last-input
+        /// </summary>
+        public async Task<bool> SetASIOLastInput(string input, CancellationToken cancellationToken = default)
+        {
+            var request = new { input };
+            var content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync($"{_baseUrl}/audio/asio/last-input", content, cancellationToken);
+            return response.IsSuccessStatusCode;
+        }
+
+        /// <summary>
+        /// Get ASIO reference output
+        /// Maps to GET /audio/asio/ref-output
+        /// </summary>
+        public async Task<string> GetASIORefOutput(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/audio/asio/ref-output", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            var data = JsonSerializer.Deserialize<JsonElement>(json);
+            return data.TryGetProperty("output", out var output) ? output.GetString() ?? string.Empty : string.Empty;
+        }
+
+        /// <summary>
+        /// Set ASIO reference output
+        /// Maps to POST /audio/asio/ref-output
+        /// </summary>
+        public async Task<bool> SetASIORefOutput(string output, CancellationToken cancellationToken = default)
+        {
+            var request = new { output };
+            var content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync($"{_baseUrl}/audio/asio/ref-output", content, cancellationToken);
+            return response.IsSuccessStatusCode;
+        }
+
+        /// <summary>
+        /// Get ASIO secondary output
+        /// Maps to GET /audio/asio/secondary-output
+        /// </summary>
+        public async Task<string> GetASIOSecondaryOutput(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/audio/asio/secondary-output", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            var data = JsonSerializer.Deserialize<JsonElement>(json);
+            return data.TryGetProperty("output", out var output) ? output.GetString() ?? string.Empty : string.Empty;
+        }
+
+        /// <summary>
+        /// Set ASIO secondary output
+        /// Maps to POST /audio/asio/secondary-output
+        /// </summary>
+        public async Task<bool> SetASIOSecondaryOutput(string output, CancellationToken cancellationToken = default)
+        {
+            var request = new { output };
+            var content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync($"{_baseUrl}/audio/asio/secondary-output", content, cancellationToken);
+            return response.IsSuccessStatusCode;
+        }
+
+        /// <summary>
+        /// Get ASIO secondary output enable status
+        /// Maps to GET /audio/asio/secondary-output-enable
+        /// </summary>
+        public async Task<bool> GetASIOSecondaryOutputEnable(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/audio/asio/secondary-output-enable", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            var data = JsonSerializer.Deserialize<JsonElement>(json);
+            return data.TryGetProperty("enable", out var enable) && enable.GetBoolean();
+        }
+
+        /// <summary>
+        /// Set ASIO secondary output enable status
+        /// Maps to POST /audio/asio/secondary-output-enable
+        /// </summary>
+        public async Task<bool> SetASIOSecondaryOutputEnable(bool enable, CancellationToken cancellationToken = default)
+        {
+            var request = new { enable };
+            var content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync($"{_baseUrl}/audio/asio/secondary-output-enable", content, cancellationToken);
+            return response.IsSuccessStatusCode;
+        }
+
+        #endregion
+
+        #region Audio Calibration Configuration
+
+        /// <summary>
+        /// Get input calibration configuration
+        /// Maps to GET /audio/input-cal
+        /// </summary>
+        public async Task<JsonElement> GetInputCalibrationConfiguration(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/audio/input-cal", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            return JsonSerializer.Deserialize<JsonElement>(json);
+        }
+
+        /// <summary>
+        /// Set input calibration configuration settings
+        /// Maps to PUT /audio/input-cal
+        /// </summary>
+        public async Task<bool> SetInputCalibrationConfiguration(object configuration, CancellationToken cancellationToken = default)
+        {
+            var content = new StringContent(JsonSerializer.Serialize(configuration), Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PutAsync($"{_baseUrl}/audio/input-cal", content, cancellationToken);
+            return response.IsSuccessStatusCode;
+        }
+
+        /// <summary>
+        /// Get output calibration configuration
+        /// Maps to GET /audio/output-cal
+        /// </summary>
+        public async Task<JsonElement> GetOutputCalibrationConfiguration(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/audio/output-cal", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            return JsonSerializer.Deserialize<JsonElement>(json);
+        }
+
+        /// <summary>
+        /// Set output calibration configuration settings
+        /// Maps to PUT /audio/output-cal
+        /// </summary>
+        public async Task<bool> SetOutputCalibrationConfiguration(object configuration, CancellationToken cancellationToken = default)
+        {
+            var content = new StringContent(JsonSerializer.Serialize(configuration), Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PutAsync($"{_baseUrl}/audio/output-cal", content, cancellationToken);
+            return response.IsSuccessStatusCode;
+        }
+
+        /// <summary>
+        /// Get audio input options
+        /// Maps to GET /audio/input-options
+        /// </summary>
+        public async Task<JsonElement> GetAudioInputOptions(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/audio/input-options", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            return JsonSerializer.Deserialize<JsonElement>(json);
+        }
+
+        /// <summary>
+        /// Set audio input options (complete replacement)
+        /// Maps to POST /audio/input-options
+        /// </summary>
+        public async Task<bool> SetAudioInputOptions(object options, CancellationToken cancellationToken = default)
+        {
+            var content = new StringContent(JsonSerializer.Serialize(options), Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync($"{_baseUrl}/audio/input-options", content, cancellationToken);
+            return response.IsSuccessStatusCode;
+        }
+
+        /// <summary>
+        /// Update audio input options (partial update)
+        /// Maps to PUT /audio/input-options
+        /// </summary>
+        public async Task<bool> UpdateAudioInputOptions(object options, CancellationToken cancellationToken = default)
+        {
+            var content = new StringContent(JsonSerializer.Serialize(options), Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PutAsync($"{_baseUrl}/audio/input-options", content, cancellationToken);
+            return response.IsSuccessStatusCode;
+        }
+
+        /// <summary>
+        /// Get audio output options
+        /// Maps to GET /audio/output-options
+        /// </summary>
+        public async Task<JsonElement> GetAudioOutputOptions(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/audio/output-options", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            return JsonSerializer.Deserialize<JsonElement>(json);
+        }
+
+        /// <summary>
+        /// Set audio output options (complete replacement)
+        /// Maps to POST /audio/output-options
+        /// </summary>
+        public async Task<bool> SetAudioOutputOptions(object options, CancellationToken cancellationToken = default)
+        {
+            var content = new StringContent(JsonSerializer.Serialize(options), Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync($"{_baseUrl}/audio/output-options", content, cancellationToken);
+            return response.IsSuccessStatusCode;
+        }
+
+        /// <summary>
+        /// Update audio output options (partial update)
+        /// Maps to PUT /audio/output-options
+        /// </summary>
+        public async Task<bool> UpdateAudioOutputOptions(object options, CancellationToken cancellationToken = default)
+        {
+            var content = new StringContent(JsonSerializer.Serialize(options), Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PutAsync($"{_baseUrl}/audio/output-options", content, cancellationToken);
+            return response.IsSuccessStatusCode;
+        }
+
+        #endregion
+
         /// <summary>
         /// Get ASIO audio configuration
         /// Maps to GET /audio/asio
