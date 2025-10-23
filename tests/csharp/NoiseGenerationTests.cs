@@ -301,15 +301,15 @@ namespace REWApi.Tests.CSharp
         {
             _output.WriteLine("Testing rapid noise type switching...");
             
-            // Switch through all noise types
+            // Switch through all noise types - REW returns what you set
             await _generator.SetSignal("pinknoise");
             var signal1 = await _generator.GetSignal();
-            Assert.Equal("pinknoise", signal1);
+            Assert.Equal("pinknoise", signal1); // REW returns exactly what was set
             _output.WriteLine($"✅ Switched to: {signal1}");
             
             await _generator.SetSignal("whitenoise");
             var signal2 = await _generator.GetSignal();
-            Assert.Equal("whitenoise", signal2);
+            Assert.Equal("whitenoise", signal2); // REW returns exactly what was set
             _output.WriteLine($"✅ Switched to: {signal2}");
             
             await _generator.SetSignal("pinkpn");

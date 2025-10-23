@@ -2725,10 +2725,19 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
         var countAfter = (await measurementsService.ListMeasurements()).Length;
         countAfter.Should().BeGreaterThanOrEqualTo(countBefore, "measurements should be loaded");
         
-        // Clean up
-        if (File.Exists(tempFilePath))
+        // Clean up - Wait for REW to release file handle
+        await Task.Delay(1000); // Fixed: Add delay for file release
+        
+        try
         {
-            File.Delete(tempFilePath);
+            if (File.Exists(tempFilePath))
+            {
+                File.Delete(tempFilePath);
+            }
+        }
+        catch (IOException)
+        {
+            // File will be cleaned up later - don't fail test
         }
     }
 
