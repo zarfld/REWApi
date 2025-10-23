@@ -4216,6 +4216,98 @@ namespace REWApi.Domain.Services
 
             return result;
         }
+
+        #region Subscription Methods
+
+        /// <summary>
+        /// Subscribe to measurement change notifications
+        /// Maps to POST /measurements/subscribe
+        /// Notifications are sent when measurements are added, removed, or modified
+        /// </summary>
+        /// <param name="subscriberUrl">URL where notifications should be sent</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task SubscribeToMeasurementChanges(
+            string subscriberUrl,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(subscriberUrl))
+                throw new ArgumentException("Subscriber URL cannot be null or empty", nameof(subscriberUrl));
+
+            var url = $"{_baseUrl}/measurements/subscribe";
+            var subscriber = new { url = subscriberUrl };
+            var content = new StringContent(
+                JsonSerializer.Serialize(subscriber),
+                Encoding.UTF8,
+                "application/json");
+
+            var response = await _httpClient.PostAsync(url, content, cancellationToken);
+            response.EnsureSuccessStatusCode();
+            
+            _logger?.LogInformation("Subscribed to measurement changes: {Url}", subscriberUrl);
+        }
+
+        /// <summary>
+        /// Unsubscribe from measurement change notifications
+        /// Maps to POST /measurements/unsubscribe
+        /// </summary>
+        /// <param name="subscriberUrl">URL of the subscriber to remove</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task UnsubscribeFromMeasurementChanges(
+            string subscriberUrl,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(subscriberUrl))
+                throw new ArgumentException("Subscriber URL cannot be null or empty", nameof(subscriberUrl));
+
+            var url = $"{_baseUrl}/measurements/unsubscribe";
+            var subscriber = new { url = subscriberUrl };
+            var content = new StringContent(
+                JsonSerializer.Serialize(subscriber),
+                Encoding.UTF8,
+                "application/json");
+
+            var response = await _httpClient.PostAsync(url, content, cancellationToken);
+            response.EnsureSuccessStatusCode();
+            
+            _logger?.LogInformation("Unsubscribed from measurement changes: {Url}", subscriberUrl);
+        }
+
+        /// <summary>
+        /// Get list of all current measurement subscribers
+        /// Maps to GET /measurements/subscribers
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Array of subscriber URLs</returns>
+        public async Task<string[]> GetMeasurementSubscribers(
+            CancellationToken cancellationToken = default)
+        {
+            var url = $"{_baseUrl}/measurements/subscribers";
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            var subscribers = JsonSerializer.Deserialize<JsonElement>(json);
+
+            var urls = new List<string>();
+            if (subscribers.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var subscriber in subscribers.EnumerateArray())
+                {
+                    if (subscriber.TryGetProperty("url", out var urlElement))
+                    {
+                        var subscriberUrl = urlElement.GetString();
+                        if (!string.IsNullOrEmpty(subscriberUrl))
+                        {
+                            urls.Add(subscriberUrl);
+                        }
+                    }
+                }
+            }
+
+            return urls.ToArray();
+        }
+
+        #endregion
     }
 
     /// <summary>

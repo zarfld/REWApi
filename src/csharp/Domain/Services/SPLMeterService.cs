@@ -189,6 +189,77 @@ namespace REWApi.Domain.Services
 
         #endregion
 
+        #region Subscription Methods
+
+        /// <summary>
+        /// Subscribe to SPL meter level change notifications
+        /// POST /spl-meter/{id}/subscribe
+        /// Subscriber receives updates when meter levels change
+        /// </summary>
+        /// <param name="meterNumber">Meter ID (1-4)</param>
+        /// <param name="subscriberUrl">Callback URL for notifications</param>
+        public async Task SubscribeToSPLMeter(int meterNumber, string subscriberUrl)
+        {
+            ValidateMeterNumber(meterNumber);
+            if (string.IsNullOrWhiteSpace(subscriberUrl))
+                throw new ArgumentException("Subscriber URL cannot be null or empty", nameof(subscriberUrl));
+
+            var json = JsonSerializer.Serialize(new { url = subscriberUrl });
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            
+            var response = await _httpClient.PostAsync($"{_baseUrl}/spl-meter/{meterNumber}/subscribe", content);
+            response.EnsureSuccessStatusCode();
+            
+            Console.WriteLine($"Subscribed to SPL meter {meterNumber}: {subscriberUrl}");
+        }
+
+        /// <summary>
+        /// Unsubscribe from SPL meter level change notifications
+        /// POST /spl-meter/{id}/unsubscribe
+        /// </summary>
+        /// <param name="meterNumber">Meter ID (1-4)</param>
+        /// <param name="subscriberUrl">Callback URL to remove</param>
+        public async Task UnsubscribeFromSPLMeter(int meterNumber, string subscriberUrl)
+        {
+            ValidateMeterNumber(meterNumber);
+            if (string.IsNullOrWhiteSpace(subscriberUrl))
+                throw new ArgumentException("Subscriber URL cannot be null or empty", nameof(subscriberUrl));
+
+            var json = JsonSerializer.Serialize(new { url = subscriberUrl });
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            
+            var response = await _httpClient.PostAsync($"{_baseUrl}/spl-meter/{meterNumber}/unsubscribe", content);
+            response.EnsureSuccessStatusCode();
+            
+            Console.WriteLine($"Unsubscribed from SPL meter {meterNumber}: {subscriberUrl}");
+        }
+
+        /// <summary>
+        /// Get list of current SPL meter subscribers
+        /// GET /spl-meter/{id}/subscribers
+        /// </summary>
+        /// <param name="meterNumber">Meter ID (1-4)</param>
+        /// <returns>Array of subscriber URLs</returns>
+        public async Task<string[]> GetSPLMeterSubscribers(int meterNumber)
+        {
+            ValidateMeterNumber(meterNumber);
+            
+            var response = await _httpClient.GetAsync($"{_baseUrl}/spl-meter/{meterNumber}/subscribers");
+            response.EnsureSuccessStatusCode();
+            
+            var content = await response.Content.ReadAsStringAsync();
+            var subscribers = JsonSerializer.Deserialize<List<Dictionary<string, string>>>(content) 
+                ?? new List<Dictionary<string, string>>();
+            
+            // Extract url property from each Subscriber object
+            return subscribers
+                .Where(s => s.ContainsKey("url"))
+                .Select(s => s["url"])
+                .ToArray();
+        }
+
+        #endregion
+
         #region Validation
 
         private void ValidateMeterNumber(int meterNumber)
