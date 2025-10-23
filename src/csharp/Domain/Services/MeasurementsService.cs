@@ -1367,15 +1367,19 @@ namespace REWApi.Domain.Services
 
             await _commandGate.ExecuteCommand(async () =>
             {
+                // Convert string indices to integers as required by API
+                // REW uses 1-based indexing, so add 1 to each 0-based index
+                var indices = measurementIds.Select(id => int.Parse(id) + 1).ToArray();
+                
                 var processData = new
                 {
                     processName = "Align SPL",
-                    measurementIndices = measurementIds,
+                    measurementIndices = indices,
                     parameters = new
                     {
                         targetdB = targetDb,
                         frequencyHz = frequencyHz.ToString(),
-                        spanOctaves = spanOctaves.ToString()
+                        spanOctaves = spanOctaves  // API expects number, not string
                     }
                 };
 
@@ -1402,10 +1406,13 @@ namespace REWApi.Domain.Services
 
             await _commandGate.ExecuteCommand(async () =>
             {
+                // Convert string indices to integers as required by API
+                var indices = measurementIds.Select(id => int.Parse(id)).ToArray();
+                
                 var processData = new
                 {
                     processName = "Vector average",
-                    measurementIndices = measurementIds
+                    measurementIndices = indices
                 };
 
                 var json = JsonSerializer.Serialize(processData);
@@ -1458,10 +1465,13 @@ namespace REWApi.Domain.Services
                 if (upperLimit.HasValue)
                     parameters["upperLimit"] = upperLimit.Value.ToString();
 
+                // Convert string indices to integers as required by API
+                var indices = new[] { int.Parse(measurementIdA), int.Parse(measurementIdB) };
+                
                 var processData = new
                 {
                     processName = "Arithmetic",
-                    measurementIndices = new[] { measurementIdA, measurementIdB },
+                    measurementIndices = indices,
                     parameters
                 };
 
@@ -1492,10 +1502,13 @@ namespace REWApi.Domain.Services
 
             await _commandGate.ExecuteCommand(async () =>
             {
+                // Convert string indices to integers as required by API
+                var indices = measurementIds.Select(id => int.Parse(id)).ToArray();
+                
                 var processData = new
                 {
                     processName = "Smooth",
-                    measurementIndices = measurementIds,
+                    measurementIndices = indices,
                     parameters = new
                     {
                         smoothing
@@ -1525,10 +1538,13 @@ namespace REWApi.Domain.Services
 
             await _commandGate.ExecuteCommand(async () =>
             {
+                // Convert string indices to integers as required by API
+                var indices = measurementIds.Select(id => int.Parse(id)).ToArray();
+                
                 var processData = new
                 {
                     processName = "Time align",
-                    measurementIndices = measurementIds
+                    measurementIndices = indices
                 };
 
                 var json = JsonSerializer.Serialize(processData);
@@ -1554,10 +1570,13 @@ namespace REWApi.Domain.Services
 
             await _commandGate.ExecuteCommand(async () =>
             {
+                // Convert string indices to integers as required by API
+                var indices = measurementIds.Select(id => int.Parse(id)).ToArray();
+                
                 var processData = new
                 {
                     processName = "Align IR start",
-                    measurementIndices = measurementIds
+                    measurementIndices = indices
                 };
 
                 var json = JsonSerializer.Serialize(processData);
@@ -1583,10 +1602,13 @@ namespace REWApi.Domain.Services
 
             await _commandGate.ExecuteCommand(async () =>
             {
+                // Convert string indices to integers as required by API
+                var indices = measurementIds.Select(id => int.Parse(id)).ToArray();
+                
                 var processData = new
                 {
                     processName = "Cross corr align",
-                    measurementIndices = measurementIds
+                    measurementIndices = indices
                 };
 
                 var json = JsonSerializer.Serialize(processData);
@@ -1612,10 +1634,13 @@ namespace REWApi.Domain.Services
 
             await _commandGate.ExecuteCommand(async () =>
             {
+                // Convert string indices to integers as required by API
+                var indices = measurementIds.Select(id => int.Parse(id)).ToArray();
+                
                 var processData = new
                 {
                     processName = "RMS average",
-                    measurementIndices = measurementIds
+                    measurementIndices = indices
                 };
 
                 var json = JsonSerializer.Serialize(processData);
@@ -1641,10 +1666,13 @@ namespace REWApi.Domain.Services
 
             await _commandGate.ExecuteCommand(async () =>
             {
+                // Convert string indices to integers as required by API
+                var indices = measurementIds.Select(id => int.Parse(id)).ToArray();
+                
                 var processData = new
                 {
                     processName = "dB average",
-                    measurementIndices = measurementIds
+                    measurementIndices = indices
                 };
 
                 var json = JsonSerializer.Serialize(processData);
@@ -1670,10 +1698,13 @@ namespace REWApi.Domain.Services
 
             await _commandGate.ExecuteCommand(async () =>
             {
+                // Convert string indices to integers as required by API
+                var indices = measurementIds.Select(id => int.Parse(id)).ToArray();
+                
                 var processData = new
                 {
                     processName = "Magn plus phase average",
-                    measurementIndices = measurementIds
+                    measurementIndices = indices
                 };
 
                 var json = JsonSerializer.Serialize(processData);
@@ -1699,10 +1730,13 @@ namespace REWApi.Domain.Services
 
             await _commandGate.ExecuteCommand(async () =>
             {
+                // Convert string indices to integers as required by API
+                var indices = measurementIds.Select(id => int.Parse(id)).ToArray();
+                
                 var processData = new
                 {
                     processName = "dB plus phase average",
-                    measurementIndices = measurementIds
+                    measurementIndices = indices
                 };
 
                 var json = JsonSerializer.Serialize(processData);
@@ -1728,10 +1762,13 @@ namespace REWApi.Domain.Services
 
             await _commandGate.ExecuteCommand(async () =>
             {
+                // Convert string indices to integers as required by API
+                var indices = measurementIds.Select(id => int.Parse(id)).ToArray();
+                
                 var processData = new
                 {
                     processName = "Vector sum",
-                    measurementIndices = measurementIds
+                    measurementIndices = indices
                 };
 
                 var json = JsonSerializer.Serialize(processData);
@@ -1757,10 +1794,13 @@ namespace REWApi.Domain.Services
 
             await _commandGate.ExecuteCommand(async () =>
             {
+                // Convert string indices to integers as required by API
+                var indices = measurementIds.Select(id => int.Parse(id)).ToArray();
+                
                 var processData = new
                 {
                     processName = "Remove IR delays",
-                    measurementIndices = measurementIds
+                    measurementIndices = indices
                 };
 
                 var json = JsonSerializer.Serialize(processData);

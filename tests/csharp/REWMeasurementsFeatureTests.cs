@@ -2787,7 +2787,7 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
             return; // Test requires at least 2 measurements
         }
 
-        var measurementIds = measurements.Take(2).Select(m => m.Id).ToArray();
+        var measurementIds = measurements.Take(2).Select(m => m.Index.ToString()).ToArray();
 
         // Act & Assert (should complete without errors)
         await measurementsService.AlignSPL(
@@ -2816,7 +2816,7 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
             return; // Test requires at least 2 measurements
         }
 
-        var measurementIds = measurements.Take(2).Select(m => m.Id).ToArray();
+        var measurementIds = measurements.Take(2).Select(m => m.UUID).ToArray();
 
         // Act & Assert (should complete without errors)
         await measurementsService.VectorAverage(measurementIds);
@@ -2839,8 +2839,8 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
             return; // Test requires at least 2 measurements
         }
 
-        var idA = measurements[0].Id;
-        var idB = measurements[1].Id;
+        var idA = measurements[0].UUID;
+        var idB = measurements[1].UUID;
 
         // Act & Assert (should complete without errors)
         await measurementsService.TraceArithmetic(
@@ -2867,7 +2867,7 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
             return; // Test requires at least 1 measurement
         }
 
-        var measurementIds = measurements.Take(1).Select(m => m.Id).ToArray();
+        var measurementIds = measurements.Take(1).Select(m => m.UUID).ToArray();
 
         // Act & Assert (should complete without errors)
         await measurementsService.SmoothBatch(measurementIds, smoothing: "1/6");
@@ -2886,7 +2886,7 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
         
         if (measurements.Length < 2) return;
 
-        var measurementIds = measurements.Take(2).Select(m => m.Id).ToArray();
+        var measurementIds = measurements.Take(2).Select(m => m.UUID).ToArray();
 
         // Act & Assert
         await measurementsService.TimeAlign(measurementIds);
@@ -2904,7 +2904,7 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
         
         if (measurements.Length < 2) return;
 
-        var measurementIds = measurements.Take(2).Select(m => m.Id).ToArray();
+        var measurementIds = measurements.Take(2).Select(m => m.UUID).ToArray();
 
         // Act & Assert
         await measurementsService.RMSAverage(measurementIds);
@@ -2922,7 +2922,7 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
         
         if (measurements.Length < 2) return;
 
-        var measurementIds = measurements.Take(2).Select(m => m.Id).ToArray();
+        var measurementIds = measurements.Take(2).Select(m => m.UUID).ToArray();
 
         // Act & Assert
         await measurementsService.DbAverage(measurementIds);
@@ -2940,7 +2940,7 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
         
         if (measurements.Length < 2) return;
 
-        var measurementIds = measurements.Take(2).Select(m => m.Id).ToArray();
+        var measurementIds = measurements.Take(2).Select(m => m.UUID).ToArray();
 
         // Act & Assert
         await measurementsService.VectorSum(measurementIds);
@@ -2958,7 +2958,7 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
         
         if (measurements.Length == 0) return;
 
-        var measurementIds = measurements.Take(1).Select(m => m.Id).ToArray();
+        var measurementIds = measurements.Take(1).Select(m => m.UUID).ToArray();
 
         // Act & Assert
         await measurementsService.RemoveIRDelays(measurementIds);
@@ -2980,14 +2980,14 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
         
         if (measurements.Length == 0) return;
 
-        var measurementId = measurements[0].Id;
+        var measurementId = measurements[0].UUID;
 
         // Act & Assert
         await measurementsService.CalculateTargetLevel(measurementId);
         
         // Verify measurement still exists
         var measurementsAfter = await measurementsService.ListMeasurements();
-        measurementsAfter.Should().Contain(m => m.Id == measurementId, "measurement should still exist after calculating target level");
+        measurementsAfter.Should().Contain(m => m.UUID == measurementId, "measurement should still exist after calculating target level");
     }
 
     [Fact]
@@ -2999,14 +2999,14 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
         
         if (measurements.Length == 0) return;
 
-        var measurementId = measurements[0].Id;
+        var measurementId = measurements[0].UUID;
 
         // Act & Assert
         await measurementsService.MatchTarget(measurementId);
         
         // Verify measurement still exists
         var measurementsAfter = await measurementsService.ListMeasurements();
-        measurementsAfter.Should().Contain(m => m.Id == measurementId, "measurement should still exist after matching target");
+        measurementsAfter.Should().Contain(m => m.UUID == measurementId, "measurement should still exist after matching target");
     }
 
     [Fact]
@@ -3018,14 +3018,14 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
         
         if (measurements.Length == 0) return;
 
-        var measurementId = measurements[0].Id;
+        var measurementId = measurements[0].UUID;
 
         // Act & Assert
         await measurementsService.OptimiseGains(measurementId);
         
         // Verify measurement still exists
         var measurementsAfter = await measurementsService.ListMeasurements();
-        measurementsAfter.Should().Contain(m => m.Id == measurementId, "measurement should still exist after optimising gains");
+        measurementsAfter.Should().Contain(m => m.UUID == measurementId, "measurement should still exist after optimising gains");
     }
 
     [Fact]
@@ -3037,14 +3037,14 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
         
         if (measurements.Length == 0) return;
 
-        var measurementId = measurements[0].Id;
+        var measurementId = measurements[0].UUID;
 
         // Act & Assert
         await measurementsService.OptimiseGainsAndQs(measurementId);
         
         // Verify measurement still exists
         var measurementsAfter = await measurementsService.ListMeasurements();
-        measurementsAfter.Should().Contain(m => m.Id == measurementId, "measurement should still exist after optimising gains and Qs");
+        measurementsAfter.Should().Contain(m => m.UUID == measurementId, "measurement should still exist after optimising gains and Qs");
     }
 
     [Fact]
@@ -3056,7 +3056,7 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
         
         if (measurements.Length == 0) return;
 
-        var measurementId = measurements[0].Id;
+        var measurementId = measurements[0].UUID;
         var countBefore = measurements.Length;
 
         // Act & Assert
@@ -3076,7 +3076,7 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
         
         if (measurements.Length == 0) return;
 
-        var measurementId = measurements[0].Id;
+        var measurementId = measurements[0].UUID;
         var countBefore = measurements.Length;
 
         // Act & Assert
@@ -3096,7 +3096,7 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
         
         if (measurements.Length == 0) return;
 
-        var measurementId = measurements[0].Id;
+        var measurementId = measurements[0].UUID;
         var countBefore = measurements.Length;
 
         // Act & Assert
