@@ -177,15 +177,16 @@ namespace REWApi.Tests
         [Fact]
         public async Task SetFrequencyResponseFile_ShouldSetFilePath()
         {
-            // Arrange - Use valid file created by preconditions
-            var testPath = _setupResult!.StimulusFilePath!; // Can use stimulus file for freq response
-            testPath.Should().NotBeNullOrEmpty("preconditions should create valid file");
+            // Arrange - Use valid .frd file created by preconditions
+            var testPath = _setupResult!.FrequencyResponseFilePath!;
+            testPath.Should().NotBeNullOrEmpty("preconditions should create valid .frd file");
+            testPath.Should().EndWith(".frd", "frequency response file should be .frd format");
 
             // Act
             var result = await _client.Import.SetFrequencyResponseFileAsync(testPath);
             
             // Assert
-            result.Should().BeTrue("valid file should be accepted");
+            result.Should().BeTrue("valid .frd file should be accepted");
             _output.WriteLine($"✅ Set frequency response file to: {testPath}");
             
             await Task.Delay(100); // Command delay
@@ -307,15 +308,19 @@ namespace REWApi.Tests
         [Fact]
         public async Task SetRTAFile_ShouldSetFilePath()
         {
-            // Arrange
-            var testPath = "C:\\test\\rta_data.txt";
+            // Arrange - Use valid RTA audio file created by preconditions
+            var testPath = _setupResult!.RTAFilePath!;
+            testPath.Should().NotBeNullOrEmpty("preconditions should create valid RTA file");
+            // RTA files must be audio files: .wav, .aiff, .mp3, .flac
+            var extension = Path.GetExtension(testPath).ToLowerInvariant();
+            extension.Should().BeOneOf(".wav", ".aiff", ".mp3", ".flac", "RTA file must be an audio file");
 
             // Act
-            var result = await _client.Import.SetRTAFileAsync(testPath);
+            var result = await _client.Import.SetRTAFileAsync(testPath, channel: 1, saveOption: "Current");
             
             // Assert
-            result.Should().BeTrue("API should accept file path");
-            _output.WriteLine($"Set RTA file to: {testPath}");
+            result.Should().BeTrue("valid RTA audio file should be accepted");
+            _output.WriteLine($"✅ Set RTA file to: {testPath}");
             
             // Wait for CommandGate operation
             await Task.Delay(1500);
