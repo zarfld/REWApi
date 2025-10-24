@@ -25,17 +25,33 @@ namespace REWApi.Tests
     /// - GET /rta/levels, /rta/captured-data, /rta/captured-peak-data, /rta/distortion
     /// - GET /rta/image-capture-settings
     /// </summary>
-    public class RTAServiceTests : IClassFixture<RewClientFixture>
+    public class RTAServiceTests : IClassFixture<RewClientFixture>, IAsyncLifetime
     {
         private readonly RewClientFixture _fixture;
         private readonly ITestOutputHelper _output;
         private readonly RTAService _rtaService;
+        private readonly RewClient _client;
+        private TestPreconditions? _preconditions;
+        private PreconditionResult? _setupResult;
 
         public RTAServiceTests(RewClientFixture fixture, ITestOutputHelper output)
         {
             _fixture = fixture;
             _output = output;
             _rtaService = new RTAService(_fixture.HttpClient, _fixture.BaseUrl);
+            _client = _fixture.Client!;
+        }
+
+        public async Task InitializeAsync()
+        {
+            // Setup test preconditions once for all tests
+            _preconditions = new TestPreconditions(_client, _output);
+            _setupResult = await _preconditions.SetupAllPreconditions();
+        }
+
+        public Task DisposeAsync()
+        {
+            return Task.CompletedTask;
         }
 
         #region Domain Object Tests
@@ -209,6 +225,10 @@ namespace REWApi.Tests
         [Fact]
         public async Task Reset_ShouldExecuteSuccessfully()
         {
+            // Arrange - Ensure RTA is started before issuing Reset command
+            var rtaStarted = await _preconditions!.EnsureRTAStarted();
+            rtaStarted.Should().BeTrue("RTA must be running for Reset command");
+
             // Act & Assert (should not throw)
             await _rtaService.Reset();
             _output.WriteLine($"✅ RTA Reset command executed successfully");
@@ -217,7 +237,10 @@ namespace REWApi.Tests
         [Fact]
         public async Task SetSPLOffset_ValidOffset_ShouldExecuteSuccessfully()
         {
-            // Arrange
+            // Arrange - Ensure RTA is started before setting SPL offset
+            var rtaStarted = await _preconditions!.EnsureRTAStarted();
+            rtaStarted.Should().BeTrue("RTA must be running for SetSPLOffset command");
+
             double offsetDb = -3.5;
 
             // Act & Assert (should not throw)
@@ -228,6 +251,12 @@ namespace REWApi.Tests
         [Fact]
         public async Task SaveGraphImage_ShouldExecuteSuccessfully()
         {
+            // Arrange - Ensure RTA is started and has data before saving graph
+            var rtaStarted = await _preconditions!.EnsureRTAStarted();
+            rtaStarted.Should().BeTrue("RTA must be running to save graph");
+
+            await Task.Delay(2000); // Wait for RTA to capture data (StateChange timing)
+
             // Act & Assert (should not throw)
             await _rtaService.SaveGraphImage();
             _output.WriteLine($"✅ RTA Save Graph Image command executed successfully");

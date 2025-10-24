@@ -31,15 +31,29 @@ namespace REWApi.Tests
     /// - POST /import/unsubscribe
     /// - GET /import/subscribers
     /// </summary>
-    public class ImportServiceTests : IClassFixture<RewClientFixture>
+    public class ImportServiceTests : IClassFixture<RewClientFixture>, IAsyncLifetime
     {
         private readonly RewClient _client;
         private readonly ITestOutputHelper _output;
+        private TestPreconditions? _preconditions;
+        private PreconditionResult? _setupResult;
 
         public ImportServiceTests(RewClientFixture fixture, ITestOutputHelper output)
         {
             _client = fixture.Client;
             _output = output;
+        }
+
+        public async Task InitializeAsync()
+        {
+            // Setup test preconditions once for all tests
+            _preconditions = new TestPreconditions(_client, _output);
+            _setupResult = await _preconditions.SetupAllPreconditions();
+        }
+
+        public Task DisposeAsync()
+        {
+            return Task.CompletedTask;
         }
 
         #region Sweep Recordings Tests
@@ -55,23 +69,24 @@ namespace REWApi.Tests
             _output.WriteLine($"Sweep stimulus file: {filePath}");
         }
 
-        [Fact(Skip = "REW API requires valid audio files and validates content. Test would need actual WAV files.")]
+        [Fact]
         public async Task SetSweepStimulus_ShouldSetFilePath()
         {
-            // Arrange
-            var testPath = Path.GetFullPath(Path.Combine("test-data", "test-stimulus.wav"));
-            
-            // Would require actual valid WAV file
-            // REW validates file content, not just existence
+            // Arrange - Use valid WAV file created by preconditions
+            var testPath = _setupResult!.StimulusFilePath!;
+            testPath.Should().NotBeNullOrEmpty("preconditions should create valid stimulus file");
 
             // Act
             var result = await _client.Import.SetSweepStimulusAsync(testPath);
-            var retrievedPath = await _client.Import.GetSweepStimulusAsync();
+            await Task.Delay(100); // Command delay
 
             // Assert
-            result.Should().BeTrue();
-            retrievedPath.Should().Contain(testPath);
-            _output.WriteLine($"Set sweep stimulus to: {testPath}");
+            result.Should().BeTrue("valid WAV file should be accepted");
+            
+            var retrievedPath = await _client.Import.GetSweepStimulusAsync();
+            retrievedPath.Should().Contain(Path.GetFileName(testPath), "file path should persist");
+            
+            _output.WriteLine($"✅ Set sweep stimulus to: {testPath}");
         }
 
         [Fact]
@@ -88,28 +103,33 @@ namespace REWApi.Tests
         [Fact]
         public async Task SetSweepResponse_ShouldSetFilePath()
         {
-            // Arrange
-            var testPath = "C:\\test\\response.wav";
+            // Arrange - CRITICAL: Ensure stimulus is set BEFORE response (per REW API requirement)
+            var stimulusSet = await _preconditions!.EnsureSweepStimulusSet();
+            stimulusSet.Should().BeTrue("stimulus must be set before response");
+            
+            await Task.Delay(100); // Command delay
+
+            // Use valid response WAV file created by preconditions
+            var testPath = _setupResult!.ResponseFilePath!;
+            testPath.Should().NotBeNullOrEmpty("preconditions should create valid response file");
 
             // Act
-            var result = await _client.Import.SetSweepResponseAsync(testPath);
+            var result = await _client.Import.SetSweepResponseAsync(testPath, channels: "All");
             
             // Assert
-            result.Should().BeTrue("API should accept file path");
-            _output.WriteLine($"Set sweep response to: {testPath}");
+            result.Should().BeTrue("response should be accepted after stimulus is set");
+            _output.WriteLine($"✅ Set sweep response to: {testPath}");
             
-            // Wait for CommandGate operation
-            await Task.Delay(1500);
+            await Task.Delay(100); // Command delay
             
-            // Try to verify (may not persist if file doesn't exist)
             var retrievedPath = await _client.Import.GetSweepResponseAsync();
-            if (retrievedPath == testPath)
+            if (retrievedPath == testPath || retrievedPath.Contains(Path.GetFileName(testPath)))
             {
-                _output.WriteLine("File path persisted successfully");
+                _output.WriteLine("✅ File path persisted successfully");
             }
             else
             {
-                _output.WriteLine($"File path not persisted (returned: {retrievedPath}) - this is expected if file doesn't exist");
+                _output.WriteLine($"⚠️ File path not persisted (returned: {retrievedPath})");
             }
         }
 
@@ -131,28 +151,27 @@ namespace REWApi.Tests
         [Fact]
         public async Task SetFrequencyResponseFile_ShouldSetFilePath()
         {
-            // Arrange
-            var testPath = "C:\\test\\freq_response.txt";
+            // Arrange - Use valid file created by preconditions
+            var testPath = _setupResult!.StimulusFilePath!; // Can use stimulus file for freq response
+            testPath.Should().NotBeNullOrEmpty("preconditions should create valid file");
 
             // Act
             var result = await _client.Import.SetFrequencyResponseFileAsync(testPath);
             
             // Assert
-            result.Should().BeTrue("API should accept file path");
-            _output.WriteLine($"Set frequency response file to: {testPath}");
+            result.Should().BeTrue("valid file should be accepted");
+            _output.WriteLine($"✅ Set frequency response file to: {testPath}");
             
-            // Wait for CommandGate operation
-            await Task.Delay(1500);
+            await Task.Delay(100); // Command delay
             
-            // Try to verify (may not persist if file doesn't exist)
             var retrievedPath = await _client.Import.GetFrequencyResponseFileAsync();
-            if (retrievedPath == testPath)
+            if (retrievedPath == testPath || retrievedPath.Contains(Path.GetFileName(testPath)))
             {
-                _output.WriteLine("File path persisted successfully");
+                _output.WriteLine("✅ File path persisted successfully");
             }
             else
             {
-                _output.WriteLine($"File path not persisted (returned: {retrievedPath}) - this is expected if file doesn't exist");
+                _output.WriteLine($"⚠️ File path not persisted (returned: {retrievedPath})");
             }
         }
 
@@ -170,18 +189,18 @@ namespace REWApi.Tests
         [Fact]
         public async Task SetFrequencyResponseDataFile_ShouldSetFilePath()
         {
-            // Arrange
-            var testPath = "C:\\test\\freq_response_data.txt";
+            // Arrange - Use valid file created by preconditions
+            var testPath = _setupResult!.StimulusFilePath!;
+            testPath.Should().NotBeNullOrEmpty("preconditions should create valid file");
 
             // Act
             var result = await _client.Import.SetFrequencyResponseDataFileAsync(testPath);
             
             // Assert
-            result.Should().BeTrue("API should accept file path");
-            _output.WriteLine($"Set frequency response data file to: {testPath}");
+            result.Should().BeTrue("valid file should be accepted");
+            _output.WriteLine($"✅ Set frequency response data file to: {testPath}");
             
-            // Wait for CommandGate operation
-            await Task.Delay(1500);
+            await Task.Delay(100); // Command delay
         }
 
         #endregion
@@ -202,18 +221,18 @@ namespace REWApi.Tests
         [Fact]
         public async Task SetImpulseResponseFile_ShouldSetFilePath()
         {
-            // Arrange
-            var testPath = "C:\\test\\impulse.wav";
+            // Arrange - Use valid WAV file created by preconditions
+            var testPath = _setupResult!.StimulusFilePath!;
+            testPath.Should().NotBeNullOrEmpty("preconditions should create valid WAV file");
 
             // Act
             var result = await _client.Import.SetImpulseResponseFileAsync(testPath);
             
             // Assert
-            result.Should().BeTrue("API should accept file path");
-            _output.WriteLine($"Set impulse response file to: {testPath}");
+            result.Should().BeTrue("valid WAV file should be accepted");
+            _output.WriteLine($"✅ Set impulse response file to: {testPath}");
             
-            // Wait for CommandGate operation
-            await Task.Delay(1500);
+            await Task.Delay(100); // Command delay
         }
 
         [Fact]
@@ -230,18 +249,18 @@ namespace REWApi.Tests
         [Fact]
         public async Task SetImpulseResponseDataFile_ShouldSetFilePath()
         {
-            // Arrange
-            var testPath = "C:\\test\\impulse_data.txt";
+            // Arrange - Use valid file created by preconditions
+            var testPath = _setupResult!.StimulusFilePath!;
+            testPath.Should().NotBeNullOrEmpty("preconditions should create valid file");
 
             // Act
             var result = await _client.Import.SetImpulseResponseDataFileAsync(testPath);
             
             // Assert
-            result.Should().BeTrue("API should accept file path");
-            _output.WriteLine($"Set impulse response data file to: {testPath}");
+            result.Should().BeTrue("valid file should be accepted");
+            _output.WriteLine($"✅ Set impulse response data file to: {testPath}");
             
-            // Wait for CommandGate operation
-            await Task.Delay(1500);
+            await Task.Delay(100); // Command delay
         }
 
         #endregion

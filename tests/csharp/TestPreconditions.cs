@@ -21,12 +21,10 @@ namespace REWApi.Tests
     {
         private readonly RewClient _client;
         private readonly ITestOutputHelper? _output;
-        private readonly BaseServiceTests _baseTest;
 
-        public TestPreconditions(RewClient client, BaseServiceTests baseTest, ITestOutputHelper? output = null)
+        public TestPreconditions(RewClient client, ITestOutputHelper? output = null)
         {
             _client = client ?? throw new ArgumentNullException(nameof(client));
-            _baseTest = baseTest ?? throw new ArgumentNullException(nameof(baseTest));
             _output = output;
         }
 

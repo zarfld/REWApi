@@ -26,17 +26,33 @@ namespace REWApi.Tests
     /// - GET/POST /generator/protection
     /// - GET/POST /generator/invert-second-output
     /// </summary>
-    public class GeneratorServiceTests : IClassFixture<RewClientFixture>
+    public class GeneratorServiceTests : IClassFixture<RewClientFixture>, IAsyncLifetime
     {
         private readonly RewClientFixture _fixture;
         private readonly ITestOutputHelper _output;
         private readonly GeneratorService _generatorService;
+        private readonly RewClient _client;
+        private TestPreconditions? _preconditions;
+        private PreconditionResult? _setupResult;
 
         public GeneratorServiceTests(RewClientFixture fixture, ITestOutputHelper output)
         {
             _fixture = fixture;
             _output = output;
             _generatorService = new GeneratorService(_fixture.HttpClient, _fixture.BaseUrl);
+            _client = _fixture.Client!;
+        }
+
+        public async Task InitializeAsync()
+        {
+            // Setup test preconditions once for all tests
+            _preconditions = new TestPreconditions(_client, _output);
+            _setupResult = await _preconditions.SetupAllPreconditions();
+        }
+
+        public Task DisposeAsync()
+        {
+            return Task.CompletedTask;
         }
 
         #region Domain Object Tests

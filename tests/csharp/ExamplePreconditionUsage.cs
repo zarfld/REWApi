@@ -33,7 +33,7 @@ namespace REWApi.Tests
             await base.InitializeAsync();
 
             // Initialize preconditions helper
-            _preconditions = new TestPreconditions(_client!, this, _output);
+            _preconditions = new TestPreconditions(_client!, _output);
 
             // Setup all preconditions once at class initialization
             _setupResult = await _preconditions.SetupAllPreconditions();
