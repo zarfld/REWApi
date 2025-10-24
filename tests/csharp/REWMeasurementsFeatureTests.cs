@@ -4,6 +4,7 @@ using REWApi.Domain.Services;
 using REWApi.Domain;
 using System.Threading.Tasks;
 using System.Linq;
+using Xunit.Abstractions;
 
 namespace REWApi.Tests.CSharp;
 
@@ -16,10 +17,26 @@ namespace REWApi.Tests.CSharp;
 [Collection("REW Integration Tests")]
 public class REWMeasurementsFeatureTests : BaseServiceTests
 {
+    private readonly ITestOutputHelper? _output;
+    private TestPreconditions? _preconditions;
+    private PreconditionResult? _setupResult;
+
+    public REWMeasurementsFeatureTests(ITestOutputHelper output)
+    {
+        _output = output;
+    }
+
     public override async Task InitializeAsync()
     {
         await base.InitializeAsync();
         await LoadBaselineAsync(); // Load sample data before each test
+        
+        // Setup preconditions to get IR measurement ID
+        _preconditions = new TestPreconditions(_client!, _output);
+        _setupResult = await _preconditions.SetupAllPreconditions(generateRealSweeps: false);
+        
+        _output?.WriteLine($"📊 Measurements test setup complete");
+        _output?.WriteLine($"   IR measurement available: {_setupResult?.ImpulseResponseMeasurementId}");
     }
 
     /// <summary>
@@ -2422,16 +2439,16 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
     [Fact]
     public async Task UnwrapPhase_ValidId_UnwrapsSuccessfully()
     {
-        // Arrange
+        // Arrange - use IR measurement from preconditions
         var measurementsService = _client.Measurements;
-        var measurements = await measurementsService.ListMeasurements();
-        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
-        var measurementId = measurements[0].UUID;
+        var measurementId = _setupResult!.ImpulseResponseMeasurementId;
+        measurementId.Should().NotBeNullOrEmpty("preconditions should provide IR measurement");
 
         // Act
-        await measurementsService.UnwrapPhase(measurementId);
+        await measurementsService.UnwrapPhase(measurementId!);
 
         // Assert - if no exception thrown, test passes
+        _output?.WriteLine($"✅ UnwrapPhase executed successfully on measurement {measurementId}");
     }
 
     /// <summary>
@@ -2465,19 +2482,21 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
     [Fact]
     public async Task ExcessPhaseVersion_ValidId_CreatesExcessPhaseVersion()
     {
-        // Arrange
+        // Arrange - use IR measurement from preconditions
         var measurementsService = _client.Measurements;
+        var measurementId = _setupResult!.ImpulseResponseMeasurementId;
+        measurementId.Should().NotBeNullOrEmpty("preconditions should provide IR measurement");
+        
         var measurementsBefore = await measurementsService.ListMeasurements();
-        measurementsBefore.Should().NotBeNullOrEmpty("test requires at least one measurement");
-        var measurementId = measurementsBefore[0].UUID;
         var countBefore = measurementsBefore.Length;
 
         // Act
-        await measurementsService.ExcessPhaseVersion(measurementId);
+        await measurementsService.ExcessPhaseVersion(measurementId!);
 
         // Assert - verify count increased
         var measurementsAfter = await measurementsService.ListMeasurements();
         measurementsAfter.Length.Should().BeGreaterThan(countBefore, "excess phase version should create a new measurement");
+        _output?.WriteLine($"✅ ExcessPhaseVersion created new measurement (count: {countBefore} → {measurementsAfter.Length})");
     }
 
     /// <summary>
@@ -2488,16 +2507,16 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
     [Fact]
     public async Task GenerateMinimumPhase_ValidId_GeneratesSuccessfully()
     {
-        // Arrange
+        // Arrange - use IR measurement from preconditions
         var measurementsService = _client.Measurements;
-        var measurements = await measurementsService.ListMeasurements();
-        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
-        var measurementId = measurements[0].UUID;
+        var measurementId = _setupResult!.ImpulseResponseMeasurementId;
+        measurementId.Should().NotBeNullOrEmpty("preconditions should provide IR measurement");
 
         // Act
-        await measurementsService.GenerateMinimumPhase(measurementId);
+        await measurementsService.GenerateMinimumPhase(measurementId!);
 
         // Assert - if no exception thrown, test passes
+        _output?.WriteLine($"✅ GenerateMinimumPhase executed successfully on measurement {measurementId}");
     }
 
     /// <summary>
@@ -2549,17 +2568,17 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
     [Fact]
     public async Task OffsetTimeZero_ValidId_OffsetsSuccessfully()
     {
-        // Arrange
+        // Arrange - use IR measurement from preconditions
         var measurementsService = _client.Measurements;
-        var measurements = await measurementsService.ListMeasurements();
-        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
-        var measurementId = measurements[0].UUID;
+        var measurementId = _setupResult!.ImpulseResponseMeasurementId;
+        measurementId.Should().NotBeNullOrEmpty("preconditions should provide IR measurement");
         var offsetMs = 1.5;
 
         // Act
-        await measurementsService.OffsetTimeZero(measurementId, offsetMs);
+        await measurementsService.OffsetTimeZero(measurementId!, offsetMs);
 
         // Assert - if no exception thrown, test passes
+        _output?.WriteLine($"✅ OffsetTimeZero executed successfully with offset {offsetMs}ms on measurement {measurementId}");
     }
 
     /// <summary>
@@ -2591,17 +2610,17 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
     [Fact]
     public async Task GenerateMicInBoxCorrection_ValidId_GeneratesCorrection()
     {
-        // Arrange
+        // Arrange - use IR measurement from preconditions
         var measurementsService = _client.Measurements;
-        var measurements = await measurementsService.ListMeasurements();
-        measurements.Should().NotBeNullOrEmpty("test requires at least one measurement");
-        var measurementId = measurements[0].UUID;
+        var measurementId = _setupResult!.ImpulseResponseMeasurementId;
+        measurementId.Should().NotBeNullOrEmpty("preconditions should provide IR measurement");
 
         // Act
-        await measurementsService.GenerateMicInBoxCorrection(measurementId);
+        await measurementsService.GenerateMicInBoxCorrection(measurementId!);
 
         // Assert - if no exception thrown, test passes
         // REW API returns 200 OK on success
+        _output?.WriteLine($"✅ GenerateMicInBoxCorrection executed successfully on measurement {measurementId}");
     }
 
     /// <summary>
