@@ -852,8 +852,12 @@ namespace REWApi.Domain.Services
         /// Unwrap the phase response (remove discontinuities)
         /// Maps to POST /measurements/:id/command "Unwrap phase"
         /// </summary>
+        /// <param name="measurementId">The measurement ID</param>
+        /// <param name="frequency">Reference frequency where unwrapped phase will be within -180..180 degrees (must be within measurement range)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         public async Task UnwrapPhase(
             string measurementId,
+            double frequency = 1000.0,
             CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(measurementId))
@@ -863,14 +867,22 @@ namespace REWApi.Domain.Services
             {
                 var commandData = new
                 {
-                    command = "Unwrap phase"
+                    command = "Unwrap phase",
+                    parameters = new
+                    {
+                        frequency = frequency
+                    }
                 };
 
                 var json = JsonSerializer.Serialize(commandData);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
+                    throw new HttpRequestException($"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+                }
             }, "Unwrap Phase", cancellationToken);
         }
 
@@ -904,8 +916,27 @@ namespace REWApi.Domain.Services
         /// Create an excess phase version of the measurement
         /// Maps to POST /measurements/:id/command "Excess phase version"
         /// </summary>
+        /// <param name="measurementId">The measurement ID</param>
+        /// <param name="includeCal">Include calibration data</param>
+        /// <param name="appendLfTail">Append low frequency tail</param>
+        /// <param name="appendHfTail">Append high frequency tail</param>
+        /// <param name="lfTailStart">Low frequency tail start (Hz) - required if appendLfTail is true</param>
+        /// <param name="lfTailSlope">Low frequency tail slope (dB/octave) - must be ≥ 0</param>
+        /// <param name="hfTailStart">High frequency tail start (Hz) - required if appendHfTail is true</param>
+        /// <param name="hfTailSlope">High frequency tail slope (dB/octave) - must be ≤ 0</param>
+        /// <param name="frequencyWarping">Use frequency warping for HF tail</param>
+        /// <param name="replicateData">Replicate data - required if appendLfTail or appendHfTail is false</param>
         public async Task ExcessPhaseVersion(
             string measurementId,
+            bool includeCal = true,
+            bool appendLfTail = false,
+            bool appendHfTail = false,
+            double lfTailStart = 27.0,
+            double lfTailSlope = 12.0,
+            double hfTailStart = 15000.0,
+            double hfTailSlope = -18.0,
+            bool frequencyWarping = false,
+            bool replicateData = true,
             CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(measurementId))
@@ -913,16 +944,46 @@ namespace REWApi.Domain.Services
 
             await _commandGate.ExecuteCommand(async () =>
             {
+                var parameters = new Dictionary<string, object>
+                {
+                    ["include cal"] = includeCal,
+                    ["append lf tail"] = appendLfTail,
+                    ["append hf tail"] = appendHfTail
+                };
+
+                if (appendLfTail)
+                {
+                    parameters["lf tail start"] = lfTailStart;
+                    parameters["lf tail slope"] = lfTailSlope;
+                }
+
+                if (appendHfTail)
+                {
+                    parameters["hf tail start"] = hfTailStart;
+                    parameters["hf tail slope"] = hfTailSlope;
+                    parameters["frequency warping"] = frequencyWarping;
+                }
+
+                if (!appendLfTail || !appendHfTail)
+                {
+                    parameters["replicate data"] = replicateData;
+                }
+
                 var commandData = new
                 {
-                    command = "Excess phase version"
+                    command = "Excess phase version",
+                    parameters = parameters
                 };
 
                 var json = JsonSerializer.Serialize(commandData);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
+                    throw new HttpRequestException($"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+                }
             }, "Excess Phase Version", cancellationToken);
         }
 
@@ -930,8 +991,27 @@ namespace REWApi.Domain.Services
         /// Generate a minimum phase version of the measurement
         /// Maps to POST /measurements/:id/command "Generate minimum phase"
         /// </summary>
+        /// <param name="measurementId">The measurement ID</param>
+        /// <param name="includeCal">Include calibration data</param>
+        /// <param name="appendLfTail">Append low frequency tail</param>
+        /// <param name="appendHfTail">Append high frequency tail</param>
+        /// <param name="lfTailStart">Low frequency tail start (Hz) - required if appendLfTail is true</param>
+        /// <param name="lfTailSlope">Low frequency tail slope (dB/octave) - must be ≥ 0</param>
+        /// <param name="hfTailStart">High frequency tail start (Hz) - required if appendHfTail is true</param>
+        /// <param name="hfTailSlope">High frequency tail slope (dB/octave) - must be ≤ 0</param>
+        /// <param name="frequencyWarping">Use frequency warping for HF tail</param>
+        /// <param name="replicateData">Replicate data - required if appendLfTail or appendHfTail is false</param>
         public async Task GenerateMinimumPhase(
             string measurementId,
+            bool includeCal = true,
+            bool appendLfTail = false,
+            bool appendHfTail = false,
+            double lfTailStart = 27.0,
+            double lfTailSlope = 12.0,
+            double hfTailStart = 15000.0,
+            double hfTailSlope = -18.0,
+            bool frequencyWarping = false,
+            bool replicateData = true,
             CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(measurementId))
@@ -939,16 +1019,46 @@ namespace REWApi.Domain.Services
 
             await _commandGate.ExecuteCommand(async () =>
             {
+                var parameters = new Dictionary<string, object>
+                {
+                    ["include cal"] = includeCal,
+                    ["append lf tail"] = appendLfTail,
+                    ["append hf tail"] = appendHfTail
+                };
+
+                if (appendLfTail)
+                {
+                    parameters["lf tail start"] = lfTailStart;
+                    parameters["lf tail slope"] = lfTailSlope;
+                }
+
+                if (appendHfTail)
+                {
+                    parameters["hf tail start"] = hfTailStart;
+                    parameters["hf tail slope"] = hfTailSlope;
+                    parameters["frequency warping"] = frequencyWarping;
+                }
+
+                if (!appendLfTail || !appendHfTail)
+                {
+                    parameters["replicate data"] = replicateData;
+                }
+
                 var commandData = new
                 {
-                    command = "Generate minimum phase"
+                    command = "Generate minimum phase",
+                    parameters = parameters
                 };
 
                 var json = JsonSerializer.Serialize(commandData);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
+                    throw new HttpRequestException($"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+                }
             }, "Generate Minimum Phase", cancellationToken);
         }
 
@@ -1016,10 +1126,12 @@ namespace REWApi.Domain.Services
         /// Maps to POST /measurements/:id/command "Offset t=0"
         /// </summary>
         /// <param name="measurementId">The measurement ID</param>
-        /// <param name="offsetMs">The time offset value in milliseconds</param>
+        /// <param name="offset">The time offset value</param>
+        /// <param name="unit">The unit for the offset value: "seconds", "metres", "feet", or "samples"</param>
         public async Task OffsetTimeZero(
             string measurementId,
-            double offsetMs,
+            double offset,
+            string unit = "seconds",
             CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(measurementId))
@@ -1032,7 +1144,8 @@ namespace REWApi.Domain.Services
                     command = "Offset t=0",
                     parameters = new
                     {
-                        offset = offsetMs
+                        offset = offset,
+                        unit = unit
                     }
                 };
 
@@ -1040,7 +1153,11 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
+                    throw new HttpRequestException($"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+                }
             }, "Offset Time Zero", cancellationToken);
         }
 
@@ -1092,7 +1209,7 @@ namespace REWApi.Domain.Services
 
         /// <summary>
         /// Generate microphone in-box correction for a measurement
-        /// Maps to POST /measurements/:id/command "Generate Mic in box correction"
+        /// Maps to POST /measurements/:id/command "Mic in box correction"
         /// </summary>
         public async Task GenerateMicInBoxCorrection(
             string measurementId,
@@ -1105,15 +1222,19 @@ namespace REWApi.Domain.Services
             {
                 var commandData = new
                 {
-                    command = "Generate Mic in box correction"
+                    command = "Mic in box correction"  // Fixed: was "Generate Mic in box correction"
                 };
 
                 var json = JsonSerializer.Serialize(commandData);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
-            }, "Generate Mic In Box Correction", cancellationToken);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
+                    throw new HttpRequestException($"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+                }
+            }, "Mic In Box Correction", cancellationToken);
         }
 
         /// <summary>
