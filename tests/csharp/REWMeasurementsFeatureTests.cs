@@ -226,9 +226,9 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
     /// <summary>
     /// Test: Export measurement to file
     /// @test TEST-MEASUREMENTS-FEATURE-006 - Export measurement
-    /// @status TODO - Not yet implemented
+    /// @status TESTING - Let's see if export functionality exists
     /// </summary>
-    [Fact(Skip = "TODO: Implement export test")]
+    [Fact] // Unskipped 2025-10-24: Testing to verify if export is implemented or missing
     public async Task ExportMeasurement_ValidId_CreatesFile()
     {
         // Arrange
@@ -297,10 +297,10 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
     /// <summary>
     /// Test: Delete all measurements
     /// @test TEST-MEASUREMENTS-DELETE-003 - Clear all measurements
-    /// @status ACTIVE - TDD: Test written, implementation pending
+    /// @status TESTING - Has safety check, let's verify behavior
     /// WARNING: This test modifies REW state significantly
     /// </summary>
-    [Fact(Skip = "Dangerous test - only run manually when REW data can be cleared")]
+    [Fact] // Unskipped 2025-10-24: Has safety check, let's test if it works correctly
     public async Task DeleteAllMeasurements_WhenMeasurementsExist_ClearsAll()
     {
         // Arrange
@@ -664,9 +664,9 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
     /// <summary>
     /// Test: Execute EQ command - Optimise gains
     /// @test TEST-MEASUREMENTS-EQ-011 - Execute Optimise gains command
-    /// @status SKIP - May fail if REW command gate is busy from previous tests
+    /// @status TESTING - Testing if command gate issue is real or assumption
     /// </summary>
-    [Fact(Skip = "May fail if REW command gate is busy from previous EQ command executions - test manually if needed")]
+    [Fact] // Unskipped 2025-10-24: Let's verify if command gate issue exists or was assumed
     public async Task ExecuteEQCommand_OptimiseGains_Succeeds()
     {
         // Arrange
@@ -713,9 +713,9 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
     /// <summary>
     /// Test: Execute EQ command - Match target (long-running)
     /// @test TEST-MEASUREMENTS-EQ-013 - Execute Match target command
-    /// @status SKIP - Long-running operation that creates additional measurements
+    /// @status TESTING - Let's verify actual behavior and duration
     /// </summary>
-    [Fact(Skip = "Long-running operation that may create additional measurements - run manually if needed")]
+    [Fact] // Unskipped 2025-10-24: Testing actual behavior - we should know real duration/impact
     public async Task ExecuteEQCommand_MatchTarget_Succeeds()
     {
         // Arrange
@@ -2132,9 +2132,9 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
     /// <summary>
     /// Test: SetIRWindows updates window settings for a measurement
     /// @test TEST-MEASUREMENTS-PHASE4-019 - Set IR window settings
-    /// @status SKIPPED - REW returns 400 Bad Request (endpoint validation issue)
+    /// @status TESTING - Previously returned 400, testing to find root cause
     /// </summary>
-    [Fact(Skip = "REW endpoint returns 400 Bad Request - possible strict validation or unsupported properties")]
+    [Fact] // Unskipped 2025-10-24: Let's verify if this is API limitation or our bug
     public async Task SetIRWindows_ValidSettings_UpdatesWindowSettings()
     {
         // Arrange
@@ -2202,9 +2202,9 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
     /// <summary>
     /// Test: UpdateIRWindows updates window settings for a measurement
     /// @test TEST-MEASUREMENTS-PHASE4-021 - Update IR window settings
-    /// @status SKIPPED - REW returns 400 Bad Request (endpoint validation issue)
+    /// @status TESTING - Previously returned 400, testing to find root cause
     /// </summary>
-    [Fact(Skip = "REW endpoint returns 400 Bad Request - possible strict validation or unsupported properties")]
+    [Fact] // Unskipped 2025-10-24: Let's verify if this is API limitation or our bug
     public async Task UpdateIRWindows_ValidSettings_UpdatesWindowSettings()
     {
         // Arrange

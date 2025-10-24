@@ -357,7 +357,7 @@ namespace REWApi.Tests
 
         #region Subscription Tests
 
-        [Fact(Skip = "REW API subscription operations don't persist. SubscribeToGroupChanges returns success but subscription doesn't appear in GetSubscribers.")]
+        [Fact] // Unskipped 2025-10-24: Bug fixed - Property name changed from 'callbackUrl' to 'url'
         public async Task SubscribeToGroupChanges_ShouldSubscribe()
         {
             // Arrange
@@ -375,7 +375,7 @@ namespace REWApi.Tests
             subscribers.Should().Contain(callbackUrl);
         }
 
-        [Fact(Skip = "REW API subscription operations don't persist. Can't create subscription to unsubscribe from via API.")]
+        [Fact] // Unskipped 2025-10-24: Bug fixed - Property name changed from 'callbackUrl' to 'url'
         public async Task UnsubscribeFromGroupChanges_ShouldUnsubscribe()
         {
             // Arrange - First subscribe
