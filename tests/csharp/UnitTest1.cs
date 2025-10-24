@@ -321,10 +321,10 @@ public class REWMeasurementsApiTests
     /// <summary>
     /// RED Phase Test: Create new measurement
     /// @test TEST-MEASUREMENTS-003 - Create measurement
-    /// NOTE: REW API does not support creating individual measurements via REST API
-    /// Measurements are created through "Load" command with file paths
+    /// NOTE: Previously assumed REW API doesn't support this - now testing to verify
+    /// Measurements may be created through "Load" command with file paths OR direct REST
     /// </summary>
-    [Fact(Skip = "REW API does not support creating individual measurements via REST")]
+    [Fact] // Unskipped 2025-10-24: Testing assumption - let's see what actually happens
     public async Task CreateMeasurementAsync_ValidData_ReturnsCreatedMeasurement()
     {
         // Arrange
@@ -349,10 +349,10 @@ public class REWMeasurementsApiTests
     /// <summary>
     /// RED Phase Test: Update existing measurement
     /// @test TEST-MEASUREMENTS-004 - Update measurement
-    /// NOTE: REW API does not support updating individual measurements via REST API
-    /// Measurement properties can be updated through IR-windows endpoint, but not general updates
+    /// NOTE: Previously assumed REW API doesn't support this - now testing to verify
+    /// Measurement properties can be updated through IR-windows endpoint, but testing general updates
     /// </summary>
-    [Fact(Skip = "REW API does not support updating individual measurements via REST")]
+    [Fact] // Unskipped 2025-10-24: Testing assumption - let's see what actually happens
     public async Task UpdateMeasurementAsync_ValidIdAndData_ReturnsUpdatedMeasurement()
     {
         // Arrange
@@ -376,9 +376,9 @@ public class REWMeasurementsApiTests
     /// <summary>
     /// RED Phase Test: Delete measurement
     /// @test TEST-MEASUREMENTS-005 - Delete measurement
-    /// NOTE: REW API does not support deleting individual measurements via REST API
+    /// NOTE: Previously assumed REW API doesn't support this - now testing to verify
     /// </summary>
-    [Fact(Skip = "REW API does not support deleting individual measurements via REST")]
+    [Fact] // Unskipped 2025-10-24: Testing assumption - let's see what actually happens
     public async Task DeleteMeasurementAsync_ValidId_ReturnsSuccessConfirmation()
     {
         // Arrange
