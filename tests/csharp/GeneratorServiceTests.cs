@@ -306,7 +306,11 @@ namespace REWApi.Tests
         [Fact]
         public async Task UpdateConfiguration_ShouldModifySignalSettings()
         {
-            // Arrange - get current config
+            // Arrange - Ensure generator is stopped before configuration updates
+            var generatorStopped = await _preconditions!.EnsureGeneratorStopped();
+            generatorStopped.Should().BeTrue("generator should be stopped for configuration changes");
+
+            // Get current config
             var originalConfig = await _generatorService.GetConfiguration();
             
             // Modify dither setting
@@ -420,7 +424,11 @@ namespace REWApi.Tests
         [Fact]
         public async Task SetFrequency_ShouldChangeGeneratorFrequency()
         {
-            // Arrange - ensure we're on a sine wave
+            // Arrange - Ensure generator is stopped before configuration changes
+            var generatorStopped = await _preconditions!.EnsureGeneratorStopped();
+            generatorStopped.Should().BeTrue("generator should be stopped for frequency changes");
+
+            // Ensure we're on a sine wave
             var availableSignals = await _generatorService.GetAvailableSignals();
             var sineSignal = availableSignals.FirstOrDefault(s => s.Contains("Sine") || s.Contains("sine"));
             
