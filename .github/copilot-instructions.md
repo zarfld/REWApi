@@ -220,6 +220,8 @@ build/                  # Root build directory
 ✅ Implement functionality that is provided by actual API endpoints and its features
 ✅ Implement full features provided by the API 
 ✅ Always use descriptive names for variables, functions, classes, tests and modules - be specific and avoid generic names like "data", "info", "process", "phase", "fixed", ...
+✅ Always read the 400 error response body - it tells you exactly what's wrong!
+
 
 ### Never Do
 ❌ Proceed with ambiguous requirements  
