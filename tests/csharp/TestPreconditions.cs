@@ -32,21 +32,36 @@ namespace REWApi.Tests
 
         /// <summary>
         /// Ensure valid test WAV files exist for import operations
-        /// Creates minimal valid WAV files if they don't exist
+        /// Always tries to use real REW sweep from resources first
         /// </summary>
         public async Task<(string stimulusPath, string responsePath)> EnsureValidWAVFilesExist()
         {
             // First, try to use real sweep recording from resources
-            var resourcesDir = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "resources");
-            var realSweepPath = Path.Combine(resourcesDir, "256kMeasSweep_0_to_20000_-12_dBFS_48k_Float_LR_refL.wav");
-
-            if (File.Exists(realSweepPath))
+            // Try multiple possible locations
+            var possibleLocations = new[]
             {
-                _output?.WriteLine($"Using real sweep file from resources: {realSweepPath}");
-                // Use the same file for both stimulus and response for testing
-                await Task.CompletedTask;
-                return (realSweepPath, realSweepPath);
+                Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "resources", "256kMeasSweep_0_to_20000_-12_dBFS_48k_Float_LR_refL.wav"),
+                Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "resources", "256kMeasSweep_0_to_20000_-12_dBFS_48k_Float_LR_refL.wav"),
+                Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "..", "tests", "resources", "256kMeasSweep_0_to_20000_-12_dBFS_48k_Float_LR_refL.wav"),
+                Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) ?? "", "..", "..", "..", "..", "..", "tests", "resources", "256kMeasSweep_0_to_20000_-12_dBFS_48k_Float_LR_refL.wav")
+            };
+
+            foreach (var location in possibleLocations)
+            {
+                var fullPath = Path.GetFullPath(location);
+                if (File.Exists(fullPath))
+                {
+                    var fileSize = new FileInfo(fullPath).Length;
+                    _output?.WriteLine($"✅ Using REAL REW sweep from resources: {Path.GetFileName(fullPath)}");
+                    _output?.WriteLine($"   Size: {fileSize:N0} bytes ({fileSize / 1024.0 / 1024.0:F2} MB)");
+                    _output?.WriteLine($"   Path: {fullPath}");
+                    // Use the same file for both stimulus and response for testing
+                    await Task.CompletedTask;
+                    return (fullPath, fullPath);
+                }
             }
+
+            _output?.WriteLine("⚠️ Real sweep file not found in resources, creating minimal test WAV files");
 
             // Fallback: Create minimal test files if resources not found
             var testDir = Path.Combine(Path.GetTempPath(), "REWApi_TestData");
@@ -703,8 +718,7 @@ namespace REWApi.Tests
         /// Setup all preconditions for comprehensive testing
         /// Call this once at the beginning of test class initialization
         /// </summary>
-        /// <param name="generateRealSweeps">If true, attempts to generate actual REW sweep recordings (requires REW Pro)</param>
-        public async Task<PreconditionResult> SetupAllPreconditions(bool generateRealSweeps = false)
+        public async Task<PreconditionResult> SetupAllPreconditions()
         {
             var result = new PreconditionResult();
 
@@ -717,32 +731,10 @@ namespace REWApi.Tests
             result.ImpulseResponseMeasurementId = await FindMeasurementWithImpulseResponse();
             result.FrequencyResponseMeasurementId = await FindMeasurementWithFrequencyResponse();
 
-            // 3. Ensure valid test files exist
-            if (generateRealSweeps)
-            {
-                _output?.WriteLine("   🎵 Attempting to generate real REW sweep recordings...");
-                var sweepResult = await GenerateSweepRecording();
-                
-                if (sweepResult.HasValue && sweepResult.Value.stimulusPath != null && sweepResult.Value.responsePath != null)
-                {
-                    result.StimulusFilePath = sweepResult.Value.stimulusPath;
-                    result.ResponseFilePath = sweepResult.Value.responsePath;
-                    _output?.WriteLine("   ✅ Using real REW sweep recordings");
-                }
-                else
-                {
-                    _output?.WriteLine("   ⚠️ Sweep generation failed, falling back to minimal WAV files");
-                    var (stimulus, response) = await EnsureValidWAVFilesExist();
-                    result.StimulusFilePath = stimulus;
-                    result.ResponseFilePath = response;
-                }
-            }
-            else
-            {
-                var (stimulus, response) = await EnsureValidWAVFilesExist();
-                result.StimulusFilePath = stimulus;
-                result.ResponseFilePath = response;
-            }
+            // 3. Ensure valid test files exist - ALWAYS use real sweep files when available
+            var (stimulus, response) = await EnsureValidWAVFilesExist();
+            result.StimulusFilePath = stimulus;
+            result.ResponseFilePath = response;
 
             // 3a. Create frequency response test file (.frd format)
             result.FrequencyResponseFilePath = await EnsureFrequencyResponseFileExists();

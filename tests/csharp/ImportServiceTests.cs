@@ -49,32 +49,25 @@ namespace REWApi.Tests
             // Setup test preconditions once for all tests
             _preconditions = new TestPreconditions(_client, _output);
             
-            // Check if REW Pro is available for real sweep generation
-            var rewProAvailable = Environment.GetEnvironmentVariable("REW_PRO_LICENSE")?.ToLower() == "true";
+            _output.WriteLine("🎬 Setting up Import tests with real sweep recordings...");
+            _setupResult = await _preconditions.SetupAllPreconditions();
             
-            if (rewProAvailable)
+            // Verify sweep files were loaded
+            if (_setupResult?.StimulusFilePath != null && File.Exists(_setupResult.StimulusFilePath))
             {
-                _output.WriteLine("🎬 REW Pro available - generating REAL sweep recordings for Import tests...");
-                _setupResult = await _preconditions.SetupAllPreconditions(generateRealSweeps: true);
-                
-                // Verify real sweep files were created
-                if (_setupResult?.StimulusFilePath != null && File.Exists(_setupResult.StimulusFilePath))
+                var stimulusSize = new FileInfo(_setupResult.StimulusFilePath).Length;
+                var isRealSweep = stimulusSize > 1024 * 1024; // Real sweeps are > 1MB
+                if (isRealSweep)
                 {
-                    var stimulusSize = new FileInfo(_setupResult.StimulusFilePath).Length;
-                    _output.WriteLine($"   ✅ Real sweep stimulus: {stimulusSize:N0} bytes ({stimulusSize / 1024.0 / 1024.0:F2} MB)");
+                    _output.WriteLine($"   ✅ Using REAL REW sweep: {stimulusSize:N0} bytes ({stimulusSize / 1024.0 / 1024.0:F2} MB)");
                 }
-                if (_setupResult?.ResponseFilePath != null && File.Exists(_setupResult.ResponseFilePath))
+                else
                 {
-                    var responseSize = new FileInfo(_setupResult.ResponseFilePath).Length;
-                    _output.WriteLine($"   ✅ Real sweep response: {responseSize:N0} bytes ({responseSize / 1024.0 / 1024.0:F2} MB)");
+                    _output.WriteLine($"   ⚠️ Using minimal test WAV: {stimulusSize:N0} bytes");
                 }
             }
-            else
-            {
-                _output.WriteLine("ℹ️ Using minimal WAV files for Import tests (REW_PRO_LICENSE not set)");
-                _output.WriteLine("   Set REW_PRO_LICENSE=true to test with real REW sweep recordings");
-                _setupResult = await _preconditions.SetupAllPreconditions(generateRealSweeps: false);
-            }
+
+            _output.WriteLine("🔧 Import test setup complete");
         }
 
         public Task DisposeAsync()

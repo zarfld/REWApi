@@ -177,8 +177,8 @@ namespace REWApi.Tests.CSharp
             _output.WriteLine("========================================\n");
 
             // Act
-            _output.WriteLine("🔧 Setting up all preconditions (generateRealSweeps: true)...\n");
-            var result = await _preconditions.SetupAllPreconditions(generateRealSweeps: true);
+            _output.WriteLine("🔧 Setting up all preconditions with real sweep files...\n");
+            var result = await _preconditions.SetupAllPreconditions();
 
             // Assert
             _output.WriteLine("\n========================================");
@@ -241,8 +241,8 @@ namespace REWApi.Tests.CSharp
             _output.WriteLine("========================================\n");
 
             // Act
-            _output.WriteLine("🔧 Setting up preconditions (generateRealSweeps: false)...\n");
-            var result = await _preconditions.SetupAllPreconditions(generateRealSweeps: false);
+            _output.WriteLine("🔧 Setting up preconditions...\n");
+            var result = await _preconditions.SetupAllPreconditions();
 
             // Assert
             _output.WriteLine("\n========================================");

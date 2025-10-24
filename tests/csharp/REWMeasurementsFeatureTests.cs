@@ -33,7 +33,7 @@ public class REWMeasurementsFeatureTests : BaseServiceTests
         
         // Setup preconditions to get IR measurement ID
         _preconditions = new TestPreconditions(_client!, _output);
-        _setupResult = await _preconditions.SetupAllPreconditions(generateRealSweeps: false);
+        _setupResult = await _preconditions.SetupAllPreconditions();
         
         _output?.WriteLine($"📊 Measurements test setup complete");
         _output?.WriteLine($"   IR measurement available: {_setupResult?.ImpulseResponseMeasurementId}");
