@@ -249,18 +249,26 @@ namespace REWApi.Domain.Services
 
         /// <summary>
         /// Subscribe to group change notifications
+        /// POST /groups/subscribe
+        /// REW API expects: {"url": "..."}
         /// </summary>
-        /// <param name="callbackUrl">URL to receive notifications</param>
+        /// <param name="subscriberUrl">URL to receive notifications</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>True if subscription was successful</returns>
-        public async Task<bool> SubscribeToGroupChanges(string callbackUrl, CancellationToken cancellationToken = default)
+        public async Task<bool> SubscribeToGroupChanges(string subscriberUrl, CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrWhiteSpace(callbackUrl))
-                throw new ArgumentException("Callback URL cannot be null or empty", nameof(callbackUrl));
+            if (string.IsNullOrWhiteSpace(subscriberUrl))
+                throw new ArgumentException("Subscriber URL cannot be null or empty", nameof(subscriberUrl));
 
             var url = $"{_baseUrl}/groups/subscribe";
-            var subscriber = new { callbackUrl };
-            var json = JsonSerializer.Serialize(subscriber);
+            
+            // REW API expects {"url": "..."}
+            var subscriptionData = new Dictionary<string, string>
+            {
+                ["url"] = subscriberUrl
+            };
+            
+            var json = JsonSerializer.Serialize(subscriptionData);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
             var response = await _httpClient.PostAsync(url, content, cancellationToken);
@@ -269,18 +277,26 @@ namespace REWApi.Domain.Services
 
         /// <summary>
         /// Unsubscribe from group change notifications
+        /// POST /groups/unsubscribe
+        /// REW API expects: {"url": "..."}
         /// </summary>
-        /// <param name="callbackUrl">URL that was subscribed</param>
+        /// <param name="subscriberUrl">URL that was subscribed</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>True if unsubscription was successful</returns>
-        public async Task<bool> UnsubscribeFromGroupChanges(string callbackUrl, CancellationToken cancellationToken = default)
+        public async Task<bool> UnsubscribeFromGroupChanges(string subscriberUrl, CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrWhiteSpace(callbackUrl))
-                throw new ArgumentException("Callback URL cannot be null or empty", nameof(callbackUrl));
+            if (string.IsNullOrWhiteSpace(subscriberUrl))
+                throw new ArgumentException("Subscriber URL cannot be null or empty", nameof(subscriberUrl));
 
             var url = $"{_baseUrl}/groups/unsubscribe";
-            var subscriber = new { callbackUrl };
-            var json = JsonSerializer.Serialize(subscriber);
+            
+            // REW API expects {"url": "..."}
+            var subscriptionData = new Dictionary<string, string>
+            {
+                ["url"] = subscriberUrl
+            };
+            
+            var json = JsonSerializer.Serialize(subscriptionData);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
             var response = await _httpClient.PostAsync(url, content, cancellationToken);
@@ -289,9 +305,11 @@ namespace REWApi.Domain.Services
 
         /// <summary>
         /// Get list of all subscribers to group changes
+        /// GET /groups/subscribers
+        /// REW API returns: [{"url": "..."}, ...]
         /// </summary>
         /// <param name="cancellationToken">Cancellation token</param>
-        /// <returns>List of subscriber callback URLs</returns>
+        /// <returns>List of subscriber URLs</returns>
         public async Task<List<string>> GetSubscribers(CancellationToken cancellationToken = default)
         {
             var url = $"{_baseUrl}/groups/subscribers";
@@ -299,11 +317,11 @@ namespace REWApi.Domain.Services
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
-            // API returns array of subscriber objects with callbackUrl property
+            // API returns array of subscriber objects with "url" property
             var subscribers = JsonSerializer.Deserialize<List<Dictionary<string, string>>>(content, JsonOptions) ?? new List<Dictionary<string, string>>();
             return subscribers
-                .Where(s => s.ContainsKey("callbackUrl"))
-                .Select(s => s["callbackUrl"])
+                .Where(s => s.ContainsKey("url"))
+                .Select(s => s["url"])
                 .ToList();
         }
 

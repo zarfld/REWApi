@@ -419,15 +419,25 @@ namespace REWApi.Domain.Services
         /// <summary>
         /// Subscribes to import events
         /// POST /import/subscribe
+        /// REW API expects: {"url": "..."}
         /// </summary>
-        public async Task<bool> SubscribeAsync(string callbackUrl, CancellationToken cancellationToken = default)
+        /// <param name="subscriberUrl">URL to receive import completion notifications</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task<bool> SubscribeAsync(string subscriberUrl, CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrWhiteSpace(callbackUrl))
-                throw new ArgumentException("Callback URL cannot be null or empty", nameof(callbackUrl));
+            if (string.IsNullOrWhiteSpace(subscriberUrl))
+                throw new ArgumentException("Subscriber URL cannot be null or empty", nameof(subscriberUrl));
 
             var url = $"{_baseUrl}/import/subscribe";
+            
+            // REW API expects {"url": "..."}
+            var subscriptionData = new Dictionary<string, string>
+            {
+                ["url"] = subscriberUrl
+            };
+            
             var jsonContent = new StringContent(
-                JsonSerializer.Serialize(new { callbackUrl }),
+                JsonSerializer.Serialize(subscriptionData),
                 Encoding.UTF8,
                 "application/json");
 
@@ -439,15 +449,25 @@ namespace REWApi.Domain.Services
         /// <summary>
         /// Unsubscribes from import events
         /// POST /import/unsubscribe
+        /// REW API expects: {"url": "..."}
         /// </summary>
-        public async Task<bool> UnsubscribeAsync(string callbackUrl, CancellationToken cancellationToken = default)
+        /// <param name="subscriberUrl">URL to stop receiving notifications</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task<bool> UnsubscribeAsync(string subscriberUrl, CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrWhiteSpace(callbackUrl))
-                throw new ArgumentException("Callback URL cannot be null or empty", nameof(callbackUrl));
+            if (string.IsNullOrWhiteSpace(subscriberUrl))
+                throw new ArgumentException("Subscriber URL cannot be null or empty", nameof(subscriberUrl));
 
             var url = $"{_baseUrl}/import/unsubscribe";
+            
+            // REW API expects {"url": "..."}
+            var subscriptionData = new Dictionary<string, string>
+            {
+                ["url"] = subscriberUrl
+            };
+            
             var jsonContent = new StringContent(
-                JsonSerializer.Serialize(new { callbackUrl }),
+                JsonSerializer.Serialize(subscriptionData),
                 Encoding.UTF8,
                 "application/json");
 
@@ -459,6 +479,7 @@ namespace REWApi.Domain.Services
         /// <summary>
         /// Gets list of current import event subscribers
         /// GET /import/subscribers
+        /// REW API returns: [{"url": "..."}, ...]
         /// </summary>
         public async Task<List<string>> GetSubscribersAsync(CancellationToken cancellationToken = default)
         {
@@ -467,7 +488,16 @@ namespace REWApi.Domain.Services
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<List<string>>(content, JsonOptions) ?? new List<string>();
+            var subscribers = JsonSerializer.Deserialize<List<Dictionary<string, string>>>(content, JsonOptions) ?? new List<Dictionary<string, string>>();
+            
+            // Extract URLs from subscriber objects (REW API uses "url" property)
+            var result = new List<string>();
+            foreach (var subscriber in subscribers)
+            {
+                if (subscriber.ContainsKey("url"))
+                    result.Add(subscriber["url"]);
+            }
+            return result;
         }
 
         #endregion

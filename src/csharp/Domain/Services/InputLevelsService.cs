@@ -144,16 +144,36 @@ namespace REWApi.Domain.Services
 
         /// <summary>
         /// Subscribe to input level change notifications
+        /// POST /input-levels/subscribe
+        /// REW API expects: {"url": "...", "parameters": {"unit": "..."}}
         /// </summary>
-        /// <param name="callbackUrl">URL to receive notifications</param>
-        public async Task<bool> SubscribeAsync(string callbackUrl, CancellationToken cancellationToken = default)
+        /// <param name="subscriberUrl">URL to receive notifications</param>
+        /// <param name="unit">Optional unit for level values (e.g., "dBFS", "dBV", "SPL"). If omitted, defaults to dBFS.</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task<bool> SubscribeAsync(string subscriberUrl, string? unit = null, CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrWhiteSpace(callbackUrl))
-                throw new ArgumentException("Callback URL cannot be null or empty", nameof(callbackUrl));
+            if (string.IsNullOrWhiteSpace(subscriberUrl))
+                throw new ArgumentException("Subscriber URL cannot be null or empty", nameof(subscriberUrl));
 
             var url = $"{_baseUrl}/input-levels/subscribe";
+            
+            // Build subscription request matching REW API spec
+            var subscriptionData = new Dictionary<string, object>
+            {
+                ["url"] = subscriberUrl
+            };
+            
+            // Add optional parameters if specified
+            if (!string.IsNullOrWhiteSpace(unit))
+            {
+                subscriptionData["parameters"] = new Dictionary<string, string>
+                {
+                    ["unit"] = unit
+                };
+            }
+            
             var jsonContent = new StringContent(
-                JsonSerializer.Serialize(new { callbackUrl }),
+                JsonSerializer.Serialize(subscriptionData),
                 Encoding.UTF8,
                 "application/json");
 
@@ -164,16 +184,26 @@ namespace REWApi.Domain.Services
 
         /// <summary>
         /// Unsubscribe from input level change notifications
+        /// POST /input-levels/unsubscribe
+        /// REW API expects: {"url": "..."}
         /// </summary>
-        /// <param name="callbackUrl">URL to stop receiving notifications</param>
-        public async Task<bool> UnsubscribeAsync(string callbackUrl, CancellationToken cancellationToken = default)
+        /// <param name="subscriberUrl">URL to stop receiving notifications</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task<bool> UnsubscribeAsync(string subscriberUrl, CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrWhiteSpace(callbackUrl))
-                throw new ArgumentException("Callback URL cannot be null or empty", nameof(callbackUrl));
+            if (string.IsNullOrWhiteSpace(subscriberUrl))
+                throw new ArgumentException("Subscriber URL cannot be null or empty", nameof(subscriberUrl));
 
             var url = $"{_baseUrl}/input-levels/unsubscribe";
+            
+            // REW API expects {"url": "..."}
+            var subscriptionData = new Dictionary<string, string>
+            {
+                ["url"] = subscriberUrl
+            };
+            
             var jsonContent = new StringContent(
-                JsonSerializer.Serialize(new { callbackUrl }),
+                JsonSerializer.Serialize(subscriptionData),
                 Encoding.UTF8,
                 "application/json");
 
@@ -184,6 +214,8 @@ namespace REWApi.Domain.Services
 
         /// <summary>
         /// Get list of current subscribers
+        /// GET /input-levels/subscribers
+        /// REW API returns: [{"url": "..."}, ...]
         /// </summary>
         public async Task<List<string>> GetSubscribersAsync(CancellationToken cancellationToken = default)
         {
@@ -194,12 +226,12 @@ namespace REWApi.Domain.Services
             var content = await response.Content.ReadAsStringAsync();
             var subscribers = JsonSerializer.Deserialize<List<Dictionary<string, string>>>(content, JsonOptions) ?? new List<Dictionary<string, string>>();
             
-            // Extract callback URLs from subscriber objects
+            // Extract URLs from subscriber objects (REW API uses "url" property)
             var result = new List<string>();
             foreach (var subscriber in subscribers)
             {
-                if (subscriber.ContainsKey("callbackUrl"))
-                    result.Add(subscriber["callbackUrl"]);
+                if (subscriber.ContainsKey("url"))
+                    result.Add(subscriber["url"]);
             }
             return result;
         }
