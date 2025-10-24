@@ -76,9 +76,23 @@ namespace REWApi.Tests
         /// Ensure sweep stimulus is set before setting response
         /// Addresses prerequisite: "The sweep stimulus must be set before setting the sweep response"
         /// </summary>
-        public async Task<bool> EnsureSweepStimulusSet()
+        public async Task<bool> EnsureSweepStimulusSet(PreconditionResult? setupResult = null)
         {
-            var (stimulusPath, _) = await EnsureValidWAVFilesExist();
+            // Use the real sweep stimulus from setup result, not the fallback files
+            string stimulusPath;
+            
+            if (setupResult?.StimulusFilePath != null && File.Exists(setupResult.StimulusFilePath))
+            {
+                stimulusPath = setupResult.StimulusFilePath;
+                _output?.WriteLine($"Using real sweep stimulus from setup: {stimulusPath}");
+            }
+            else
+            {
+                // Fallback: use generated test files
+                var (path, _) = await EnsureValidWAVFilesExist();
+                stimulusPath = path;
+                _output?.WriteLine($"Using fallback stimulus: {stimulusPath}");
+            }
 
             try
             {

@@ -130,7 +130,7 @@ namespace REWApi.Tests
         public async Task SetSweepResponse_ShouldSetFilePath()
         {
             // Arrange - CRITICAL: Ensure stimulus is set BEFORE response (per REW API requirement)
-            var stimulusSet = await _preconditions!.EnsureSweepStimulusSet();
+            var stimulusSet = await _preconditions!.EnsureSweepStimulusSet(_setupResult);
             stimulusSet.Should().BeTrue("stimulus must be set before response");
             
             await Task.Delay(100); // Command delay
