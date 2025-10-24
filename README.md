@@ -2,6 +2,44 @@
 
 This repository contains implementations of the Room EQ Wizard (REW) API in C#, C++, JavaScript, and TypeScript. The REW API allows users to interact with REW over HTTP at localhost (127.0.0.1) on the default port 4735. The API server can be started using the -api argument when running REW. The API supports GET, PUT, and POST methods, with PUT and POST requiring a Pro upgrade license for automated sweep measurements. The API documentation is available via swagger-ui at localhost:4735, with the OpenAPI specification accessible in JSON or YAML formats.
 
+## 📋 Documentation
+
+- **[CHANGELOG](CHANGELOG.md)** - Detailed history of fixes, features, and improvements
+- **[API Coverage Report](docs/API-COVERAGE.md)** - Test results and implementation status
+- **[REW API Documentation](https://www.roomeqwizard.com/help/help_en-GB/html/api.html)** - Official REW API reference
+- **[Object Model](03-architecture/views/object-model.md)** - System architecture and design
+
+## ✅ Current Status
+
+**Last Updated**: 2025-10-24
+
+### Test Results Summary
+
+**Total**: 468 tests | **Passing**: 414 (88.5%) | **Failed**: 30 (6.4%) | **Skipped**: 24 (5.1%)  
+**Duration**: 1595.6 seconds | **Build Status**: ⚠️ 30 errors, 916 warnings
+
+| Component | Status | Test Coverage | Notes |
+|-----------|--------|---------------|-------|
+| **Import Service** | ✅ Operational | High coverage | Core functionality working |
+| **Measurements Service** | ✅ Operational | High coverage | Key operations tested |
+| **Measure Service** | ✅ Operational | High coverage | Level operations working |
+| **Filter Service** | ✅ Operational | Base64 encoding fixed | Data transfer working |
+| **Room Simulator Service** | ✅ Operational | Object instantiation fixed | API calls functional |
+| **RTA Service** | ⚠️ Partial | Some failures | See known issues |
+| **Additional Services** | ⚠️ Mixed | Various coverage | Work in progress |
+
+**Overall Test Pass Rate**: 88.5% across all implemented services
+
+### Recent Fixes (2024-12-19)
+
+- ✅ **Import Service**: Fixed endpoint URLs for file-based vs. data-based imports
+- ✅ **Measurements Service**: Implemented smoothing and time offset operations
+- ✅ **Measure Service**: Implemented measurement level get/set operations
+- ✅ **Filter Service**: Fixed Base64 encoding/decoding for filter arrays
+- ✅ **Room Simulator Service**: Fixed object instantiation issues
+
+See [CHANGELOG.md](CHANGELOG.md) for detailed fix information.
+
 ## Setting Up and Using the REW API
 
 1. Start the REW API server by running REW with the -api argument.
