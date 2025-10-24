@@ -54,7 +54,7 @@ namespace REWApi.Domain.Services
         /// <summary>
         /// Sets the sweep stimulus file path for import
         /// POST /import/sweep-recordings/stimulus
-        /// Note: REW API expects a FilePath object with path, channels (optional), applyCal (optional)
+        /// Note: REW API expects a plain JSON string (e.g., "C:\\path\\file.wav"), not an object
         /// </summary>
         public async Task<bool> SetSweepStimulusAsync(string filePath, CancellationToken cancellationToken = default)
         {
@@ -63,16 +63,21 @@ namespace REWApi.Domain.Services
 
             var url = $"{_baseUrl}/import/sweep-recordings/stimulus";
             
-            // REW API expects FilePath object: { "path": "...", "channels": "All", "applyCal": false }
-            var filePathObject = new { path = filePath };
-            
+            // REW API expects plain string: "C:\\path\\file.wav"
             var jsonContent = new StringContent(
-                JsonSerializer.Serialize(filePathObject),
+                JsonSerializer.Serialize(filePath),
                 Encoding.UTF8,
                 "application/json");
 
             var response = await _httpClient.PostAsync(url, jsonContent, cancellationToken);
-            response.EnsureSuccessStatusCode();
+            
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                _logger?.LogError($"SetSweepStimulus failed with {response.StatusCode}: {errorBody}");
+                throw new HttpRequestException($"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
+            
             return true;
         }
 
@@ -93,7 +98,7 @@ namespace REWApi.Domain.Services
         /// <summary>
         /// Sets the sweep response file path for import
         /// POST /import/sweep-recordings/response
-        /// Note: REW API expects a FilePath object with path, channels (optional), applyCal (optional)
+        /// Note: REW API expects a FilePath object with path and channels
         /// Note: The sweep stimulus must be set before setting the sweep response
         /// </summary>
         public async Task<bool> SetSweepResponseAsync(string filePath, string? channels = null, CancellationToken cancellationToken = default)
@@ -103,7 +108,7 @@ namespace REWApi.Domain.Services
 
             var url = $"{_baseUrl}/import/sweep-recordings/response";
             
-            // REW API expects FilePath object: { "path": "...", "channels": "All", "applyCal": false }
+            // REW API expects FilePath object: { "path": "...", "channels": "All" }
             var filePathObject = new 
             { 
                 path = filePath,
@@ -116,7 +121,14 @@ namespace REWApi.Domain.Services
                 "application/json");
 
             var response = await _httpClient.PostAsync(url, jsonContent, cancellationToken);
-            response.EnsureSuccessStatusCode();
+            
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                _logger?.LogError($"SetSweepResponse failed with {response.StatusCode}: {errorBody}");
+                throw new HttpRequestException($"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
+            
             return true;
         }
 
@@ -159,7 +171,14 @@ namespace REWApi.Domain.Services
                 "application/json");
 
             var response = await _httpClient.PostAsync(url, jsonContent, cancellationToken);
-            response.EnsureSuccessStatusCode();
+            
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                _logger?.LogError($"SetFrequencyResponseFile failed with {response.StatusCode}: {errorBody}");
+                throw new HttpRequestException($"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
+            
             return true;
         }
 
@@ -199,7 +218,14 @@ namespace REWApi.Domain.Services
                 "application/json");
 
             var response = await _httpClient.PostAsync(url, jsonContent, cancellationToken);
-            response.EnsureSuccessStatusCode();
+            
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                _logger?.LogError($"SetFrequencyResponseDataFile failed with {response.StatusCode}: {errorBody}");
+                throw new HttpRequestException($"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
+            
             return true;
         }
 
@@ -246,7 +272,14 @@ namespace REWApi.Domain.Services
                 "application/json");
 
             var response = await _httpClient.PostAsync(url, jsonContent, cancellationToken);
-            response.EnsureSuccessStatusCode();
+            
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                _logger?.LogError($"SetImpulseResponseFile failed with {response.StatusCode}: {errorBody}");
+                throw new HttpRequestException($"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
+            
             return true;
         }
 
@@ -286,7 +319,14 @@ namespace REWApi.Domain.Services
                 "application/json");
 
             var response = await _httpClient.PostAsync(url, jsonContent, cancellationToken);
-            response.EnsureSuccessStatusCode();
+            
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                _logger?.LogError($"SetImpulseResponseDataFile failed with {response.StatusCode}: {errorBody}");
+                throw new HttpRequestException($"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
+            
             return true;
         }
 
@@ -334,7 +374,14 @@ namespace REWApi.Domain.Services
                 "application/json");
 
             var response = await _httpClient.PostAsync(url, jsonContent, cancellationToken);
-            response.EnsureSuccessStatusCode();
+            
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                _logger?.LogError($"SetRTAFile failed with {response.StatusCode}: {errorBody}");
+                throw new HttpRequestException($"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
+            
             return true;
         }
 
