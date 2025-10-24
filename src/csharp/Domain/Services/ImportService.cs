@@ -188,7 +188,7 @@ namespace REWApi.Domain.Services
         /// </summary>
         public async Task<string> GetFrequencyResponseDataFileAsync(CancellationToken cancellationToken = default)
         {
-            var url = $"{_baseUrl}/import/frequency-response-data";
+            var url = $"{_baseUrl}/import/frequency-response";
             var response = await _httpClient.GetAsync(url, cancellationToken);
             response.EnsureSuccessStatusCode();
 
@@ -197,19 +197,18 @@ namespace REWApi.Domain.Services
         }
 
         /// <summary>
-        /// Sets the frequency response data file path for import
-        /// POST /import/frequency-response-data
-        /// Note: This endpoint accepts FrequencyResponseData object, not FilePath
+        /// Sets the frequency response file path for import
+        /// POST /import/frequency-response
+        /// Accepts FilePath object with path and optional channels
         /// </summary>
         public async Task<bool> SetFrequencyResponseDataFileAsync(string filePath, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(filePath))
                 throw new ArgumentException("File path cannot be null or empty", nameof(filePath));
 
-            var url = $"{_baseUrl}/import/frequency-response-data";
+            var url = $"{_baseUrl}/import/frequency-response";
             
-            // Note: This may need to be FrequencyResponseData object, not FilePath
-            // For now, treating as FilePath for backward compatibility
+            // FilePath object for file-based import
             var filePathObject = new { path = filePath };
             
             var jsonContent = new StringContent(
@@ -289,7 +288,7 @@ namespace REWApi.Domain.Services
         /// </summary>
         public async Task<string> GetImpulseResponseDataFileAsync(CancellationToken cancellationToken = default)
         {
-            var url = $"{_baseUrl}/import/impulse-response-data";
+            var url = $"{_baseUrl}/import/impulse-response";
             var response = await _httpClient.GetAsync(url, cancellationToken);
             response.EnsureSuccessStatusCode();
 
@@ -298,19 +297,18 @@ namespace REWApi.Domain.Services
         }
 
         /// <summary>
-        /// Sets the impulse response data file path for import
-        /// POST /import/impulse-response-data
-        /// Note: This endpoint accepts ImpulseResponseData object, not FilePath
+        /// Sets the impulse response file path for import
+        /// POST /import/impulse-response
+        /// Accepts FilePath object with path and optional channels
         /// </summary>
         public async Task<bool> SetImpulseResponseDataFileAsync(string filePath, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(filePath))
                 throw new ArgumentException("File path cannot be null or empty", nameof(filePath));
 
-            var url = $"{_baseUrl}/import/impulse-response-data";
+            var url = $"{_baseUrl}/import/impulse-response";
             
-            // Note: This may need to be ImpulseResponseData object, not FilePath
-            // For now, treating as FilePath for backward compatibility
+            // FilePath object for file-based import
             var filePathObject = new { path = filePath };
             
             var jsonContent = new StringContent(

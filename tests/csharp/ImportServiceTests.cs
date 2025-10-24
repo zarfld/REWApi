@@ -216,15 +216,15 @@ namespace REWApi.Tests
         [Fact]
         public async Task SetFrequencyResponseDataFile_ShouldSetFilePath()
         {
-            // Arrange - Use valid file created by preconditions
-            var testPath = _setupResult!.StimulusFilePath!;
-            testPath.Should().NotBeNullOrEmpty("preconditions should create valid file");
+            // Arrange - Use valid .frd file created by preconditions
+            var testPath = _setupResult!.FrequencyResponseFilePath!;
+            testPath.Should().NotBeNullOrEmpty("preconditions should create valid .frd file");
 
             // Act
             var result = await _client.Import.SetFrequencyResponseDataFileAsync(testPath);
             
             // Assert
-            result.Should().BeTrue("valid file should be accepted");
+            result.Should().BeTrue("valid .frd file should be accepted");
             _output.WriteLine($"✅ Set frequency response data file to: {testPath}");
             
             await Task.Delay(100); // Command delay
