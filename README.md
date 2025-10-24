@@ -40,6 +40,26 @@ This repository contains implementations of the Room EQ Wizard (REW) API in C#, 
 
 See [CHANGELOG.md](CHANGELOG.md) for detailed fix information.
 
+### Skipped Tests (24 tests - 5.1%)
+
+The test suite includes 24 intentionally skipped tests for various reasons:
+- **API Limitations** (8 tests): Functionality not available via REW API
+- **Manual Tests** (5 tests): Require human intervention (audio playback, long-running)
+- **Implementation Pending** (2 tests): Features not yet implemented
+- **Known API Issues** (4 tests): REW API validation errors under investigation
+- **Educational Tests** (5 tests): Demonstrate wrong patterns or deprecated endpoints
+
+To explore and run skipped tests:
+```powershell
+# List all skipped test categories
+.\scripts\Run-SkippedTests-Simple.ps1 -Category List
+
+# Attempt to run safe skipped tests
+.\scripts\Run-SkippedTests-Simple.ps1 -Category Safe
+```
+
+See [SKIPPED-TESTS-ANALYSIS.md](docs/SKIPPED-TESTS-ANALYSIS.md) for detailed analysis.
+
 ## Setting Up and Using the REW API
 
 1. Start the REW API server by running REW with the -api argument.

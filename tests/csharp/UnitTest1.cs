@@ -89,7 +89,7 @@ public class REWApiHttpCommunicationTests
     /// @implementation SRC:REWApi.cs - PostAsync method
     /// @test TEST-REWAPI-002-01 - Basic POST operation with real REW endpoint
     /// </summary>
-    [Fact(Skip = "Obsolete test for deprecated REWApi.cs class - endpoints return 404")]
+    [Fact] // Unskipped - should FAIL with 404 (REW API doesn't support POST /measurements)
     public async Task PostAsync_ValidEndpointAndData_ReturnsResponse()
     {
         // Arrange
@@ -110,7 +110,7 @@ public class REWApiHttpCommunicationTests
     /// @implementation SRC:REWApi.cs - PutAsync method  
     /// @test TEST-REWAPI-002-02 - Basic PUT operation with real REW endpoint  
     /// </summary>
-    [Fact(Skip = "Obsolete test for deprecated REWApi.cs class - endpoints return 404")]
+    [Fact] // Unskipped - should FAIL with 404 (REW API doesn't support PUT /application/settings)
     public async Task PutAsync_ValidEndpointAndData_ReturnsResponse()
     {
         // Arrange
@@ -177,9 +177,9 @@ public class REWApiHttpCommunicationTests
 
     /// <summary>
     /// HTTP Error Handling Test - 400 Bad Request
-    /// @test TEST-REWAPI-ERROR-002 - Malformed request handling
+    /// @test TEST-REWAPI-ERROR-002 - Invalid data handling
     /// </summary>
-    [Fact(Skip = "Obsolete test for deprecated REWApi.cs class - assertion logic incorrect")]
+    [Fact] // Unskipped - should FAIL with wrong assertion (tests non-existent endpoint)
     public async Task PostAsync_InvalidJsonData_ThrowsHttpRequestException()
     {
         // Arrange
@@ -495,7 +495,7 @@ public class REWMeasurementsModernApiTests : IClassFixture<RewClientFixture>
     /// @test TEST-MEASUREMENTS-MODERN-001 - List measurements via MeasurementsService
     /// @note Requires REW to have at least one measurement loaded
     /// </summary>
-    [Fact(Skip = "Type assertion test - functionality tested elsewhere")]
+    [Fact] // Unskipped - may be redundant but let it run
     public async Task ListMeasurements_ValidCall_ReturnsMeasurementArray()
     {
         // Arrange - using domain service

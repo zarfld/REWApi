@@ -253,7 +253,7 @@ namespace REWApi.Tests
 
         #region Demonstrating WRONG vs CORRECT Patterns
 
-        [Fact(Skip = "Demonstration of WRONG pattern - will fail with 400 error")]
+        [Fact] // Unskipped - should FAIL with 400 (demonstrates WRONG pattern)
         public async Task Example_WRONG_SetSweepResponse_WithoutStimulus()
         {
             // ❌ WRONG: Trying to set response without stimulus
@@ -265,7 +265,7 @@ namespace REWApi.Tests
             result.Should().BeTrue();
         }
 
-        [Fact(Skip = "Demonstration of WRONG pattern - will fail with 400 error")]
+        [Fact] // Unskipped - should FAIL with 400 (demonstrates WRONG pattern)
         public async Task Example_WRONG_RTA_Reset_WithoutStarting()
         {
             // ❌ WRONG: Trying to reset RTA without starting it first
@@ -275,7 +275,7 @@ namespace REWApi.Tests
             // This will fail with 400 Bad Request
         }
 
-        [Fact(Skip = "Demonstration of WRONG pattern - may fail")]
+        [Fact] // Unskipped - should FAIL (demonstrates WRONG pattern)
         public async Task Example_WRONG_Generator_SetFrequency_WhileRunning()
         {
             // ❌ WRONG: Changing frequency while generator is running
