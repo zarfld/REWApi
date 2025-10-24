@@ -287,6 +287,7 @@ namespace REWApi.Tests
         /// <summary>
         /// Ensure RTA is started before issuing RTA commands
         /// Addresses failures: Reset, SaveGraphImage, SetSPLOffset
+        /// Note: RTA requires audio input device to be configured in REW
         /// </summary>
         public async Task<bool> EnsureRTAStarted()
         {
@@ -304,12 +305,14 @@ namespace REWApi.Tests
                 if (!status.Enabled)
                 {
                     _output?.WriteLine("⚠️ RTA is not enabled - cannot start");
+                    _output?.WriteLine("   RTA requires audio input device to be configured in REW");
                     return false;
                 }
 
                 // Start RTA
+                _output?.WriteLine("🎙️ Starting RTA...");
                 await _client.RTA.Start();
-                await Task.Delay(2000); // Wait for RTA to fully start (StateChange timing)
+                await Task.Delay(3000); // Wait for RTA to fully start (increased from 2s - RTA needs time to initialize audio)
 
                 // Verify it started
                 status = await _client.RTA.GetStatus();
@@ -321,7 +324,12 @@ namespace REWApi.Tests
                 }
                 else
                 {
-                    _output?.WriteLine("❌ RTA failed to start");
+                    _output?.WriteLine("❌ RTA failed to start after Start command");
+                    _output?.WriteLine("   Possible reasons:");
+                    _output?.WriteLine("   - No audio input device configured in REW");
+                    _output?.WriteLine("   - Audio device is not accessible");
+                    _output?.WriteLine("   - REW audio initialization failed");
+                    _output?.WriteLine("   - Insufficient permissions for audio device");
                 }
 
                 return started;
@@ -329,6 +337,10 @@ namespace REWApi.Tests
             catch (Exception ex)
             {
                 _output?.WriteLine($"❌ Failed to start RTA: {ex.Message}");
+                if (ex.Message.Contains("400"))
+                {
+                    _output?.WriteLine("   400 Bad Request suggests RTA cannot start - check audio device configuration in REW");
+                }
                 return false;
             }
         }
