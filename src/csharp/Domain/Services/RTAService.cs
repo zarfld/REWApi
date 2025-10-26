@@ -72,17 +72,35 @@ namespace REWApi.Domain.Services
         /// POST /rta/command
         /// </summary>
         /// <param name="command">Command to send (Start, Stop, Restart, etc.)</param>
+        /// <param name="parameters">Optional parameters object for the command</param>
         /// <param name="cancellationToken">Cancellation token</param>
-        public async Task SendCommand(string command, CancellationToken cancellationToken = default)
+        public async Task SendCommand(string command, object? parameters = null, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(command))
                 throw new ArgumentException("Command cannot be null or empty", nameof(command));
 
-            var json = JsonSerializer.Serialize(new { command });
+            object commandData;
+            if (parameters == null)
+            {
+                commandData = new { command };
+            }
+            else
+            {
+                commandData = new { command, parameters };
+            }
+                
+            var json = JsonSerializer.Serialize(commandData);
             var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
             
             var response = await _httpClient.PostAsync($"{_baseUrl}/rta/command", httpContent, cancellationToken);
-            response.EnsureSuccessStatusCode();
+            
+            // If not successful, read the response body to get the actual error message
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
         }
 
         /// <summary>
@@ -92,7 +110,7 @@ namespace REWApi.Domain.Services
         /// <param name="cancellationToken">Cancellation token</param>
         public async Task Start(CancellationToken cancellationToken = default)
         {
-            await SendCommand("Start", cancellationToken);
+            await SendCommand("Start", null, cancellationToken);
         }
 
         /// <summary>
@@ -102,7 +120,7 @@ namespace REWApi.Domain.Services
         /// <param name="cancellationToken">Cancellation token</param>
         public async Task Stop(CancellationToken cancellationToken = default)
         {
-            await SendCommand("Stop", cancellationToken);
+            await SendCommand("Stop", null, cancellationToken);
         }
 
         /// <summary>
@@ -112,7 +130,7 @@ namespace REWApi.Domain.Services
         /// <param name="cancellationToken">Cancellation token</param>
         public async Task Restart(CancellationToken cancellationToken = default)
         {
-            await SendCommand("Restart", cancellationToken);
+            await SendCommand("Restart", null, cancellationToken);
         }
 
         /// <summary>
@@ -122,7 +140,7 @@ namespace REWApi.Domain.Services
         /// <param name="cancellationToken">Cancellation token</param>
         public async Task Reset(CancellationToken cancellationToken = default)
         {
-            await SendCommand("Reset", cancellationToken);
+            await SendCommand("Reset", null, cancellationToken);
         }
 
         /// <summary>
@@ -133,17 +151,7 @@ namespace REWApi.Domain.Services
         /// <param name="cancellationToken">Cancellation token</param>
         public async Task SetSPLOffset(double offsetDb, CancellationToken cancellationToken = default)
         {
-            var commandData = new
-            {
-                command = "Set SPL offset",
-                parameters = new { offset = offsetDb }
-            };
-
-            var json = JsonSerializer.Serialize(commandData);
-            var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
-            
-            var response = await _httpClient.PostAsync($"{_baseUrl}/rta/command", httpContent, cancellationToken);
-            response.EnsureSuccessStatusCode();
+            await SendCommand("Set SPL offset", new { offset = offsetDb }, cancellationToken);
         }
 
         /// <summary>
@@ -157,17 +165,7 @@ namespace REWApi.Domain.Services
             if (string.IsNullOrWhiteSpace(filePath))
                 throw new ArgumentException("File path cannot be null or empty", nameof(filePath));
 
-            var commandData = new
-            {
-                command = "Import cal",
-                parameters = new { filePath }
-            };
-
-            var json = JsonSerializer.Serialize(commandData);
-            var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
-            
-            var response = await _httpClient.PostAsync($"{_baseUrl}/rta/command", httpContent, cancellationToken);
-            response.EnsureSuccessStatusCode();
+            await SendCommand("Import cal", new { filePath }, cancellationToken);
         }
 
         /// <summary>
@@ -181,17 +179,7 @@ namespace REWApi.Domain.Services
             if (string.IsNullOrWhiteSpace(filePath))
                 throw new ArgumentException("File path cannot be null or empty", nameof(filePath));
 
-            var commandData = new
-            {
-                command = "Import reference",
-                parameters = new { filePath }
-            };
-
-            var json = JsonSerializer.Serialize(commandData);
-            var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
-            
-            var response = await _httpClient.PostAsync($"{_baseUrl}/rta/command", httpContent, cancellationToken);
-            response.EnsureSuccessStatusCode();
+            await SendCommand("Import reference", new { filePath }, cancellationToken);
         }
 
         /// <summary>
@@ -205,7 +193,7 @@ namespace REWApi.Domain.Services
         /// </remarks>
         public async Task SaveGraphImage(CancellationToken cancellationToken = default)
         {
-            await SendCommand("Save graph image", cancellationToken);
+            await SendCommand("Save graph image", null, cancellationToken);
         }
 
         #endregion
