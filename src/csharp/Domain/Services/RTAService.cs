@@ -99,7 +99,9 @@ namespace REWApi.Domain.Services
             {
                 var errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
                 throw new HttpRequestException(
-                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}",
+                    null,
+                    response.StatusCode);
             }
         }
 
@@ -135,12 +137,12 @@ namespace REWApi.Domain.Services
 
         /// <summary>
         /// Reset the RTA (clears all data and averages)
-        /// Convenience method that sends "Reset" command
+        /// Convenience method that sends "Reset averaging" command
         /// </summary>
         /// <param name="cancellationToken">Cancellation token</param>
         public async Task Reset(CancellationToken cancellationToken = default)
         {
-            await SendCommand("Reset", null, cancellationToken);
+            await SendCommand("Reset averaging", null, cancellationToken);
         }
 
         /// <summary>
@@ -151,7 +153,8 @@ namespace REWApi.Domain.Services
         /// <param name="cancellationToken">Cancellation token</param>
         public async Task SetSPLOffset(double offsetDb, CancellationToken cancellationToken = default)
         {
-            await SendCommand("Set SPL offset", new { offset = offsetDb }, cancellationToken);
+            // REW API expects parameters as an array
+            await SendCommand("Set SPL offset", new[] { offsetDb.ToString() }, cancellationToken);
         }
 
         /// <summary>
@@ -186,14 +189,24 @@ namespace REWApi.Domain.Services
         /// Save RTA graph as image
         /// Convenience method that sends "Save graph image" command
         /// </summary>
+        /// <param name="filePath">Optional file path to save the image. If not specified, uses the filename from REW GUI preferences.</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <remarks>
-        /// Image capture settings can be configured via GetImageCaptureSettings/UpdateImageCaptureSettings
-        /// The image will be saved to the location specified in those settings
+        /// The command accepts a filename parameter as a string or string array.
+        /// Image capture settings (format, resolution, etc.) can be configured via GetImageCaptureSettings/UpdateImageCaptureSettings
+        /// If no filePath is provided, REW will use the filename configured in GUI preferences (if set).
         /// </remarks>
-        public async Task SaveGraphImage(CancellationToken cancellationToken = default)
+        public async Task SaveGraphImage(string? filePath = null, CancellationToken cancellationToken = default)
         {
-            await SendCommand("Save graph image", null, cancellationToken);
+            if (string.IsNullOrWhiteSpace(filePath))
+            {
+                await SendCommand("Save graph image", null, cancellationToken);
+            }
+            else
+            {
+                // REW API accepts parameters as an array of strings
+                await SendCommand("Save graph image", new[] { filePath }, cancellationToken);
+            }
         }
 
         #endregion

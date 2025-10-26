@@ -257,25 +257,23 @@ namespace REWApi.Tests
 
             await Task.Delay(2000); // Wait for RTA to capture data (StateChange timing)
 
-            // Act - Try to save graph image
-            // Note: This requires image capture filename to be configured in REW GUI preferences
+            // Act - Save graph image with explicit filename
+            var testImagePath = Path.Combine(Path.GetTempPath(), "REWApi_Test_RTA_Graph.png");
             try
             {
-                await _rtaService.SaveGraphImage();
-                _output.WriteLine($"✅ RTA Save Graph Image command executed successfully");
-            }
-            catch (HttpRequestException ex) when (ex.Message.Contains("400"))
-            {
-                // Expected if no filename configured in REW preferences
-                _output.WriteLine($"⚠️ SaveGraphImage requires filename configuration in REW GUI: {ex.Message}");
-                // Try to get the actual error message
-                var statusCode = ex.StatusCode;
-                if (statusCode == System.Net.HttpStatusCode.BadRequest)
+                await _rtaService.SaveGraphImage(testImagePath);
+                _output.WriteLine($"✅ RTA graph image saved to: {testImagePath}");
+                
+                // Verify file was created (optional - REW might save in different location)
+                if (File.Exists(testImagePath))
                 {
-                    _output.WriteLine("   This is expected - SaveGraphImage requires a filename to be configured in REW's image capture settings");
-                    // Test passes - we verified the API is accessible even if not fully configured
-                    return;
+                    var fileInfo = new FileInfo(testImagePath);
+                    _output.WriteLine($"   File size: {fileInfo.Length} bytes");
                 }
+            }
+            catch (HttpRequestException ex)
+            {
+                _output.WriteLine($"❌ Failed to save graph image: {ex.Message}");
                 throw;
             }
         }
