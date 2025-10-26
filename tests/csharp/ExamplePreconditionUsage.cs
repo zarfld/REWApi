@@ -115,20 +115,6 @@ namespace REWApi.Tests
             _output.WriteLine("✅ RTA graph saved successfully (check REW configured location)");
         }
 
-        [Fact]
-        public async Task Example_RTAService_SetSPLOffset_WithPreconditions()
-        {
-            // ✅ CORRECT: Start RTA before setting SPL offset
-            var rtaStarted = await _preconditions!.EnsureRTAStarted();
-            rtaStarted.Should().BeTrue("RTA must be running for SPL offset");
-
-            // Now safe to set SPL offset
-            var offset = 3.0; // dB
-            await _client!.RTA.SetSPLOffset(offset);
-
-            _output.WriteLine($"✅ RTA SPL offset set to {offset} dB");
-        }
-
         #endregion
 
         #region Generator Service Examples

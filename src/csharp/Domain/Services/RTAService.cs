@@ -146,18 +146,6 @@ namespace REWApi.Domain.Services
         }
 
         /// <summary>
-        /// Set SPL offset for the RTA
-        /// Convenience method that sends "Set SPL offset" command with value
-        /// </summary>
-        /// <param name="offsetDb">SPL offset in dB</param>
-        /// <param name="cancellationToken">Cancellation token</param>
-        public async Task SetSPLOffset(double offsetDb, CancellationToken cancellationToken = default)
-        {
-            // REW API expects parameters as an array
-            await SendCommand("Set SPL offset", new[] { offsetDb.ToString() }, cancellationToken);
-        }
-
-        /// <summary>
         /// Import calibration file for RTA input
         /// Convenience method that sends "Import cal" command with file path
         /// </summary>

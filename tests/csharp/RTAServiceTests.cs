@@ -235,20 +235,6 @@ namespace REWApi.Tests
         }
 
         [Fact]
-        public async Task SetSPLOffset_ValidOffset_ShouldExecuteSuccessfully()
-        {
-            // Arrange - Ensure RTA is started before setting SPL offset
-            var rtaStarted = await _preconditions!.EnsureRTAStarted();
-            rtaStarted.Should().BeTrue("RTA must be running for SetSPLOffset command");
-
-            double offsetDb = -3.5;
-
-            // Act & Assert (should not throw)
-            await _rtaService.SetSPLOffset(offsetDb);
-            _output.WriteLine($"✅ RTA SPL Offset set to {offsetDb} dB");
-        }
-
-        [Fact]
         public async Task SaveGraphImage_ShouldExecuteSuccessfully()
         {
             // Arrange - Ensure RTA is started and has data before saving graph
