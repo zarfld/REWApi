@@ -221,7 +221,7 @@ build/                  # Root build directory
 ✅ Implement full features provided by the API 
 ✅ Always use descriptive names for variables, functions, classes, tests and modules - be specific and avoid generic names like "data", "info", "process", "phase", "fixed", ...
 ✅ Always read the 400 error response body - it tells you exactly what's wrong!
-
+✅ keep the concepts consistent across all implementations
 
 ### Never Do
 ❌ Proceed with ambiguous requirements  
@@ -241,6 +241,7 @@ build/                  # Root build directory
 ❌ start an reimplementation if you can fix the existing code
 ❌ never implement speculatively
 ❌ never use generic names for variables, functions, classes, tests and modules - be specific and avoid generic names like "data", "info", "process", "phase", "fixed", ...
+❌ start implementeing new concept variants if the existing concepts are proven to work
 
 ## 🔍 When to Ask Questions
 

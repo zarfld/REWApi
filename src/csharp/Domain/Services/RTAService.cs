@@ -177,24 +177,20 @@ namespace REWApi.Domain.Services
         /// Save RTA graph as image
         /// Convenience method that sends "Save graph image" command
         /// </summary>
-        /// <param name="filePath">Optional file path to save the image. If not specified, uses the filename from REW GUI preferences.</param>
+        /// <param name="filePath">File path to save the image (required). Must include full path and filename with extension (e.g., "C:\\temp\\graph.png")</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <remarks>
-        /// The command accepts a filename parameter as a string or string array.
+        /// The command requires a filename parameter as per REW API documentation.
         /// Image capture settings (format, resolution, etc.) can be configured via GetImageCaptureSettings/UpdateImageCaptureSettings
-        /// If no filePath is provided, REW will use the filename configured in GUI preferences (if set).
+        /// Example: await SaveGraphImage("C:\\temp\\rta_graph.png");
         /// </remarks>
-        public async Task SaveGraphImage(string? filePath = null, CancellationToken cancellationToken = default)
+        public async Task SaveGraphImage(string filePath, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(filePath))
-            {
-                await SendCommand("Save graph image", null, cancellationToken);
-            }
-            else
-            {
-                // REW API accepts parameters as an array of strings
-                await SendCommand("Save graph image", new[] { filePath }, cancellationToken);
-            }
+                throw new ArgumentException("File path cannot be null or empty. REW API requires a filename to save the graph.", nameof(filePath));
+
+            // REW API accepts parameters as an array of strings
+            await SendCommand("Save graph image", new[] { filePath }, cancellationToken);
         }
 
         #endregion

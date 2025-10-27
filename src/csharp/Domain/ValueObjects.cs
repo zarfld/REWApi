@@ -735,8 +735,9 @@ namespace REWApi.Domain
         /// <summary>
         /// Width of the FDW in cycles or octaves
         /// Note: Can be in cycles or octaves depending on REW View preferences
+        /// Valid range: 1 to 35 (per REW API documentation)
         /// </summary>
-        public double FdwWidthCycles { get; set; }
+        public double FdwWidthCycles { get; set; } = 15.0; // Default to 15 (middle of valid range)
 
         /// <summary>
         /// Domain behavior: Set symmetric windowing (same settings for left and right)
@@ -749,13 +750,22 @@ namespace REWApi.Domain
 
         /// <summary>
         /// Domain behavior: Validate window settings
+        /// Per REW API: FDW width cycles must be between 1 and 35
         /// </summary>
         public bool IsValid()
         {
-            return !string.IsNullOrEmpty(LeftWindowType) 
-                && !string.IsNullOrEmpty(RightWindowType)
-                && LeftWindowWidthms >= 0 
-                && RightWindowWidthms >= 0;
+            // Basic window type and width validation
+            if (string.IsNullOrEmpty(LeftWindowType) || string.IsNullOrEmpty(RightWindowType))
+                return false;
+            
+            if (LeftWindowWidthms < 0 || RightWindowWidthms < 0)
+                return false;
+
+            // Validate FDW cycles range (1-35) when FDW is enabled
+            if (AddFDW && (FdwWidthCycles < 1.0 || FdwWidthCycles > 35.0))
+                return false;
+
+            return true;
         }
     }
 

@@ -69,7 +69,12 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/sweep", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+                if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
                 var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
                 var responseData = JsonSerializer.Deserialize<JsonElement>(responseJson);
@@ -234,7 +239,12 @@ namespace REWApi.Domain.Services
                 url += "?" + string.Join("&", queryParams);
 
             var response = await _httpClient.GetAsync(url, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             var data = JsonSerializer.Deserialize<JsonElement>(json);
@@ -276,7 +286,12 @@ namespace REWApi.Domain.Services
                 throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
 
             var response = await _httpClient.GetAsync($"{_baseUrl}/measurements/{measurementId}", cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             var data = JsonSerializer.Deserialize<JsonElement>(json);
@@ -311,7 +326,12 @@ namespace REWApi.Domain.Services
                     return false;
                 }
                 
-                response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
                 _logger?.LogInformation("Deleted measurement {MeasurementId}", measurementId);
                 return true;
             }
@@ -333,7 +353,12 @@ namespace REWApi.Domain.Services
             try
             {
                 var response = await _httpClient.DeleteAsync($"{_baseUrl}/measurements", cancellationToken);
-                response.EnsureSuccessStatusCode();
+                if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
                 
                 _logger?.LogInformation("Deleted all measurements");
                 return true;
@@ -383,7 +408,13 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorBody = await response.Content.ReadAsStringAsync();
+                    throw new HttpRequestException(
+                        $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+                }
 
                 var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
                 var responseData = JsonSerializer.Deserialize<JsonElement>(responseJson);
@@ -486,7 +517,13 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorBody = await response.Content.ReadAsStringAsync();
+                    throw new HttpRequestException(
+                        $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+                }
 
                 var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
                 var responseData = JsonSerializer.Deserialize<JsonElement>(responseJson);
@@ -583,7 +620,13 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorBody = await response.Content.ReadAsStringAsync();
+                    throw new HttpRequestException(
+                        $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+                }
 
                 var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
                 var responseData = JsonSerializer.Deserialize<JsonElement>(responseJson);
@@ -684,7 +727,13 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorBody = await response.Content.ReadAsStringAsync();
+                    throw new HttpRequestException(
+                        $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+                }
 
                 var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
                 var responseData = JsonSerializer.Deserialize<JsonElement>(responseJson);
@@ -740,7 +789,13 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorBody = await response.Content.ReadAsStringAsync();
+                    throw new HttpRequestException(
+                        $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+                }
             }, "Save Measurement", cancellationToken);
         }
 
@@ -766,7 +821,12 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+                if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             }, "Invert Measurement", cancellationToken);
         }
 
@@ -792,7 +852,12 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+                if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             }, "Response Copy", cancellationToken);
         }
 
@@ -818,7 +883,12 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+                if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             }, "Response Magnitude Copy", cancellationToken);
         }
 
@@ -844,7 +914,12 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+                if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             }, "Wrap Phase", cancellationToken);
         }
 
@@ -890,8 +965,25 @@ namespace REWApi.Domain.Services
         /// Create a minimum phase version of the measurement
         /// Maps to POST /measurements/:id/command "Minimum phase version"
         /// </summary>
+        /// <param name="measurementId">The measurement ID</param>
+        /// <param name="includeCal">Include calibration data</param>
+        /// <param name="appendLfTail">Append low frequency tail</param>
+        /// <param name="appendHfTail">Append high frequency tail</param>
+        /// <param name="lfTailStart">Low frequency tail start (Hz) - required if appendLfTail is true</param>
+        /// <param name="lfTailSlope">Low frequency tail slope (dB/octave) - must be ≥ 0</param>
+        /// <param name="hfTailStart">High frequency tail start (Hz) - required if appendHfTail is true</param>
+        /// <param name="hfTailSlope">High frequency tail slope (dB/octave) - must be ≤ 0</param>
+        /// <param name="replicateData">Replicate data - required if appendLfTail or appendHfTail is false</param>
         public async Task MinimumPhaseVersion(
             string measurementId,
+            bool includeCal = true,
+            bool appendLfTail = false,
+            bool appendHfTail = false,
+            double lfTailStart = 27.0,
+            double lfTailSlope = 12.0,
+            double hfTailStart = 15000.0,
+            double hfTailSlope = -18.0,
+            bool replicateData = true,
             CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(measurementId))
@@ -899,16 +991,46 @@ namespace REWApi.Domain.Services
 
             await _commandGate.ExecuteCommand(async () =>
             {
+                var parameters = new Dictionary<string, object>
+                {
+                    ["include cal"] = includeCal,
+                    ["append lf tail"] = appendLfTail,
+                    ["append hf tail"] = appendHfTail
+                };
+
+                if (appendLfTail)
+                {
+                    parameters["lf tail start"] = lfTailStart;
+                    parameters["lf tail slope"] = lfTailSlope;
+                }
+
+                if (appendHfTail)
+                {
+                    parameters["hf tail start"] = hfTailStart;
+                    parameters["hf tail slope"] = hfTailSlope;
+                }
+
+                if (!appendLfTail && !appendHfTail)
+                {
+                    parameters["replicate data"] = replicateData;
+                }
+
                 var commandData = new
                 {
-                    command = "Minimum phase version"
+                    command = "Minimum phase version",
+                    parameters = parameters
                 };
 
                 var json = JsonSerializer.Serialize(commandData);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
+                    throw new HttpRequestException(
+                        $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+                }
             }, "Minimum Phase Version", cancellationToken);
         }
 
@@ -1084,7 +1206,12 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+                if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             }, "Trim IR to Windows", cancellationToken);
         }
 
@@ -1117,7 +1244,12 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+                if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             }, "Add SPL Offset", cancellationToken);
         }
 
@@ -1185,7 +1317,12 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+               if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
                 var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
                 var responseData = JsonSerializer.Deserialize<JsonElement>(responseJson);
@@ -1259,7 +1396,12 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+                if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             }, "Merge Cal Data To IR", cancellationToken);
         }
 
@@ -1267,9 +1409,35 @@ namespace REWApi.Domain.Services
         /// Generate equalised waterfall for a measurement
         /// Maps to POST /measurements/:id/command "Generate equalised waterfall"
         /// Note: This generates a waterfall with EQ applied
+        /// Waterfall requires different parameters than spectrogram - see REW API docs
         /// </summary>
+        /// <param name="measurementId">The measurement ID</param>
+        /// <param name="mode">Waterfall mode: "Fourier" or "Burst decay"</param>
+        /// <param name="slices">Number of slices to generate</param>
+        /// <param name="ppo">Frequency resolution (points per octave)</param>
+        /// <param name="smoothing">Smoothing (e.g., "1/48")</param>
+        /// <param name="leftWindowType">Left window type for Fourier mode (e.g., "Hann", "Tukey 0.25")</param>
+        /// <param name="rightWindowType">Right window type for Fourier mode (e.g., "Hann", "Tukey 0.25")</param>
+        /// <param name="windowWidthMs">Window width in milliseconds for Fourier mode</param>
+        /// <param name="timeRangeMs">Time range in milliseconds for Fourier mode</param>
+        /// <param name="riseTimeMs">Rise time in milliseconds for Fourier mode</param>
+        /// <param name="useCsdMode">Use CSD (Cross-Spectral Density) mode for Fourier</param>
+        /// <param name="bandwidth">Bandwidth for Burst decay mode (e.g., "1/3")</param>
+        /// <param name="periods">Periods for Burst decay mode</param>
         public async Task GenerateEqualisedWaterfall(
             string measurementId,
+            string mode = "Fourier",
+            int slices = 101,
+            int ppo = 48,
+            string smoothing = "1/48",
+            string leftWindowType = "Hann",
+            string rightWindowType = "Tukey 0.25",
+            double windowWidthMs = 300.0,
+            double timeRangeMs = 500.0,
+            double riseTimeMs = 150.0,
+            bool useCsdMode = false,
+            string bandwidth = "1/3",
+            int periods = 30,
             CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(measurementId))
@@ -1277,16 +1445,46 @@ namespace REWApi.Domain.Services
 
             await _commandGate.ExecuteCommand(async () =>
             {
+                var parameters = new Dictionary<string, string>
+                {
+                    ["mode"] = mode,
+                    ["slices"] = slices.ToString(),
+                    ["ppo"] = ppo.ToString(),
+                    ["smoothing"] = smoothing
+                };
+
+                // Add mode-specific parameters
+                if (mode == "Fourier")
+                {
+                    parameters["left window type"] = leftWindowType;
+                    parameters["right window type"] = rightWindowType;
+                    parameters["window width ms"] = windowWidthMs.ToString();
+                    parameters["time range ms"] = timeRangeMs.ToString();
+                    parameters["rise time ms"] = riseTimeMs.ToString();
+                    parameters["use csd mode"] = useCsdMode.ToString().ToLower();
+                }
+                else if (mode == "Burst decay")
+                {
+                    parameters["bandwidth"] = bandwidth;
+                    parameters["periods"] = periods.ToString();
+                }
+
                 var commandData = new
                 {
-                    command = "Generate equalised waterfall"
+                    command = "Generate equalised waterfall",
+                    parameters = parameters
                 };
 
                 var json = JsonSerializer.Serialize(commandData);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
+                    throw new HttpRequestException(
+                        $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+                }
             }, "Generate Equalised Waterfall", cancellationToken);
         }
 
@@ -1295,8 +1493,29 @@ namespace REWApi.Domain.Services
         /// Maps to POST /measurements/:id/command "Generate equalised spectrogram"
         /// Note: This generates a spectrogram with EQ applied
         /// </summary>
+        /// <param name="measurementId">The measurement ID</param>
+        /// <param name="mode">Spectrogram mode: "Fourier", "Wavelet", "Airy CWT", "Morlet CWT", or "Burst decay"</param>
+        /// <param name="slices">Number of slices to generate</param>
+        /// <param name="ppo">Frequency resolution (points per octave)</param>
+        /// <param name="amplitude">Amplitude scale: "Log (dB SPL)" or "Linear (% peak)"</param>
+        /// <param name="windowType">Window type for Fourier mode (e.g., "Gaussian")</param>
+        /// <param name="windowWidthMs">Window width in milliseconds for Fourier mode</param>
+        /// <param name="beforeMs">Time before peak in milliseconds</param>
+        /// <param name="afterMs">Time after peak in milliseconds</param>
+        /// <param name="bandwidth">Bandwidth for wavelet modes (e.g., "1/3")</param>
+        /// <param name="periods">Periods for Burst decay mode</param>
         public async Task GenerateEqualisedSpectrogram(
             string measurementId,
+            string mode = "Fourier",
+            int slices = 551,
+            int ppo = 48,
+            string amplitude = "Log (dB SPL)",
+            string windowType = "Gaussian",
+            double windowWidthMs = 300.0,
+            double beforeMs = 50.0,
+            double afterMs = 500.0,
+            string bandwidth = "1/3",
+            int periods = 10,
             CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(measurementId))
@@ -1304,16 +1523,50 @@ namespace REWApi.Domain.Services
 
             await _commandGate.ExecuteCommand(async () =>
             {
+                var parameters = new Dictionary<string, object>
+                {
+                    ["mode"] = mode,
+                    ["slices"] = slices.ToString(),
+                    ["ppo"] = ppo.ToString(),
+                    ["amplitude"] = amplitude
+                };
+
+                // Add mode-specific parameters
+                if (mode == "Fourier")
+                {
+                    parameters["window type"] = windowType;
+                    parameters["window width ms"] = windowWidthMs.ToString();
+                    parameters["before ms"] = beforeMs.ToString();
+                    parameters["after ms"] = afterMs.ToString();
+                }
+                else if (mode == "Burst decay")
+                {
+                    parameters["bandwidth"] = bandwidth;
+                    parameters["periods"] = periods.ToString();
+                }
+                else if (mode == "Wavelet" || mode == "Airy CWT" || mode == "Morlet CWT")
+                {
+                    parameters["bandwidth"] = bandwidth;
+                    parameters["before ms"] = beforeMs.ToString();
+                    parameters["after ms"] = afterMs.ToString();
+                }
+
                 var commandData = new
                 {
-                    command = "Generate equalised spectrogram"
+                    command = "Generate equalised spectrogram",
+                    parameters = parameters
                 };
 
                 var json = JsonSerializer.Serialize(commandData);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/command", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
+                    throw new HttpRequestException(
+                        $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+                }
             }, "Generate Equalised Spectrogram", cancellationToken);
         }
 
@@ -1352,7 +1605,12 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/command", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+             if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             }, "Save All Measurements", cancellationToken);
         }
 
@@ -1387,7 +1645,12 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/command", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+             if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             }, "Load Measurements", cancellationToken);
         }
 
@@ -1430,7 +1693,12 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/command", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+              if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             }, "Generate Dirac Measurement", cancellationToken);
         }
 
@@ -1453,7 +1721,12 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/command", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             }, "Sort Measurements Alphabetically", cancellationToken);
         }
 
@@ -1526,7 +1799,12 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/process-measurements", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+               if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             }, "Align SPL", cancellationToken);
         }
 
@@ -1558,7 +1836,12 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/process-measurements", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             }, "Vector Average", cancellationToken);
         }
 
@@ -1618,7 +1901,12 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/process-measurements", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             }, "Trace Arithmetic", cancellationToken);
         }
 
@@ -1658,7 +1946,12 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/process-measurements", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             }, "Smooth Batch", cancellationToken);
         }
 
@@ -1690,7 +1983,12 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/process-measurements", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             }, "Time Align", cancellationToken);
         }
 
@@ -1722,7 +2020,12 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/process-measurements", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             }, "Align IR Start", cancellationToken);
         }
 
@@ -1754,7 +2057,12 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/process-measurements", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             }, "Cross Correlation Align", cancellationToken);
         }
 
@@ -1786,7 +2094,12 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/process-measurements", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             }, "RMS Average", cancellationToken);
         }
 
@@ -1818,7 +2131,12 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/process-measurements", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             }, "dB Average", cancellationToken);
         }
 
@@ -1850,7 +2168,12 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/process-measurements", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             }, "Magnitude Plus Phase Average", cancellationToken);
         }
 
@@ -1882,7 +2205,12 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/process-measurements", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             }, "dB Plus Phase Average", cancellationToken);
         }
 
@@ -1914,7 +2242,12 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/process-measurements", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             }, "Vector Sum", cancellationToken);
         }
 
@@ -1946,7 +2279,12 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/process-measurements", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             }, "Remove IR Delays", cancellationToken);
         }
 
@@ -1978,7 +2316,12 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/eq/command", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             }, "Calculate Target Level", cancellationToken);
         }
 
@@ -2006,7 +2349,12 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/eq/command", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             }, "Match Target", cancellationToken);
         }
 
@@ -2034,7 +2382,12 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/eq/command", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             }, "Optimise Gains", cancellationToken);
         }
 
@@ -2062,7 +2415,12 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/eq/command", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             }, "Optimise Gains and Qs", cancellationToken);
         }
 
@@ -2090,7 +2448,12 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/eq/command", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             }, "Optimise Gains, Qs and Fcs", cancellationToken);
         }
 
@@ -2118,7 +2481,12 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/eq/command", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             }, "Generate Predicted Measurement", cancellationToken);
         }
 
@@ -2146,7 +2514,12 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/eq/command", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             }, "Generate Filters Measurement", cancellationToken);
         }
 
@@ -2174,7 +2547,17 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/eq/command", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             }, "Generate Target Measurement", cancellationToken);
         }
 
@@ -2201,7 +2584,12 @@ namespace REWApi.Domain.Services
                 url += $"&ppo={ppo.Value}";
 
             var response = await _httpClient.GetAsync(url, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             var data = JsonSerializer.Deserialize<JsonElement>(json);
@@ -2226,7 +2614,12 @@ namespace REWApi.Domain.Services
             var url = $"{_baseUrl}/measurements/{measurementId}/impulse-response?unit={Uri.EscapeDataString(unit)}&windowed={windowed.ToString().ToLowerInvariant()}&normalised={normalised.ToString().ToLowerInvariant()}";
 
             var response = await _httpClient.GetAsync(url, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             var data = JsonSerializer.Deserialize<JsonElement>(json);
@@ -2261,7 +2654,12 @@ namespace REWApi.Domain.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/measurements/{measurementId}/export", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             }, "Export Measurement", cancellationToken);
         }
 
@@ -2284,7 +2682,12 @@ namespace REWApi.Domain.Services
                 urlBuilder.Append($"&ppo={ppo.Value}");
 
             var response = await _httpClient.GetAsync(urlBuilder.ToString(), cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             var data = JsonSerializer.Deserialize<JsonElement>(json);
@@ -2307,7 +2710,12 @@ namespace REWApi.Domain.Services
 
             var url = $"{_baseUrl}/measurements/{measurementId}/distortion?unit={Uri.EscapeDataString(unit)}&ppo={ppo}";
             var response = await _httpClient.GetAsync(url, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             var data = JsonSerializer.Deserialize<JsonElement>(json);
@@ -2336,7 +2744,12 @@ namespace REWApi.Domain.Services
 
             var url = $"{_baseUrl}/measurements/{measurementId}/rt60?octaveFrac={octaveFrac}";
             var response = await _httpClient.GetAsync(url, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             var data = JsonSerializer.Deserialize<JsonElement>(json);
@@ -2362,7 +2775,12 @@ namespace REWApi.Domain.Services
 
             var url = $"{_baseUrl}/measurements/{measurementId}/equaliser";
             var response = await _httpClient.GetAsync(url, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             return JsonSerializer.Deserialize<EqualiserInfo>(json, new JsonSerializerOptions 
@@ -2398,7 +2816,12 @@ namespace REWApi.Domain.Services
                 "application/json");
 
             var response = await _httpClient.PostAsync(url, content, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
         }
 
         /// <summary>
@@ -2417,7 +2840,12 @@ namespace REWApi.Domain.Services
 
             var url = $"{_baseUrl}/measurements/{measurementId}/filters";
             var response = await _httpClient.GetAsync(url, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             var data = JsonSerializer.Deserialize<JsonElement>(json);
@@ -2475,7 +2903,12 @@ namespace REWApi.Domain.Services
             };
 
             var response = await _httpClient.SendAsync(request, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
         }
 
         /// <summary>
@@ -2508,7 +2941,12 @@ namespace REWApi.Domain.Services
                 "application/json");
 
             var response = await _httpClient.PostAsync(url, content, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
         }
 
         /// <summary>
@@ -2527,7 +2965,12 @@ namespace REWApi.Domain.Services
 
             var url = $"{_baseUrl}/measurements/{measurementId}/target-settings";
             var response = await _httpClient.GetAsync(url, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             return JsonSerializer.Deserialize<TargetSettings>(json, new JsonSerializerOptions 
@@ -2568,7 +3011,12 @@ namespace REWApi.Domain.Services
             };
 
             var response = await _httpClient.SendAsync(request, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
         }
 
         /// <summary>
@@ -2587,7 +3035,12 @@ namespace REWApi.Domain.Services
 
             var url = $"{_baseUrl}/measurements/{measurementId}/target-level";
             var response = await _httpClient.GetAsync(url, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             return JsonSerializer.Deserialize<double>(json);
@@ -2615,7 +3068,12 @@ namespace REWApi.Domain.Services
                 "application/json");
 
             var response = await _httpClient.PostAsync(url, content, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
         }
 
         #endregion
@@ -2634,7 +3092,12 @@ namespace REWApi.Domain.Services
         {
             var url = $"{_baseUrl}/measurements/eq/commands";
             var response = await _httpClient.GetAsync(url, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             using var doc = JsonDocument.Parse(json);
@@ -2704,7 +3167,12 @@ namespace REWApi.Domain.Services
                 "application/json");
 
             var response = await _httpClient.PostAsync(url, content, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             return JsonSerializer.Deserialize<EQCommandResult>(json, new JsonSerializerOptions 
@@ -2735,7 +3203,12 @@ namespace REWApi.Domain.Services
             }
 
             var response = await _httpClient.GetAsync(url, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             using var doc = JsonDocument.Parse(json);
@@ -2772,7 +3245,12 @@ namespace REWApi.Domain.Services
         {
             var url = $"{_baseUrl}/eq/manufacturers";
             var response = await _httpClient.GetAsync(url, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             using var doc = JsonDocument.Parse(json);
@@ -2804,7 +3282,12 @@ namespace REWApi.Domain.Services
         {
             var url = $"{_baseUrl}/eq/default-equaliser";
             var response = await _httpClient.GetAsync(url, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             return JsonSerializer.Deserialize<EqualiserInfo>(json, new JsonSerializerOptions 
@@ -2835,7 +3318,12 @@ namespace REWApi.Domain.Services
                 "application/json");
 
             var response = await _httpClient.PostAsync(url, content, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
         }
 
         /// <summary>
@@ -2848,7 +3336,12 @@ namespace REWApi.Domain.Services
         {
             var url = $"{_baseUrl}/eq/default-target-settings";
             var response = await _httpClient.GetAsync(url, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             return JsonSerializer.Deserialize<TargetSettings>(json, new JsonSerializerOptions 
@@ -2885,7 +3378,12 @@ namespace REWApi.Domain.Services
                 ? await _httpClient.PutAsync(url, content, cancellationToken)
                 : await _httpClient.PostAsync(url, content, cancellationToken);
             
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
         }
 
         /// <summary>
@@ -2897,7 +3395,12 @@ namespace REWApi.Domain.Services
         {
             var url = $"{_baseUrl}/eq/default-target-level";
             var response = await _httpClient.GetAsync(url, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             return JsonSerializer.Deserialize<double>(json);
@@ -2919,7 +3422,12 @@ namespace REWApi.Domain.Services
                 "application/json");
 
             var response = await _httpClient.PostAsync(url, content, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
         }
 
         #endregion
@@ -2937,7 +3445,12 @@ namespace REWApi.Domain.Services
         {
             var url = $"{_baseUrl}/eq/default-room-curve-settings";
             var response = await _httpClient.GetAsync(url, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
@@ -2970,7 +3483,12 @@ namespace REWApi.Domain.Services
                 ? await _httpClient.PutAsync(url, content, cancellationToken)
                 : await _httpClient.PostAsync(url, content, cancellationToken);
 
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
         }
 
         /// <summary>
@@ -2988,7 +3506,12 @@ namespace REWApi.Domain.Services
 
             var url = $"{_baseUrl}/measurements/{measurementId}/room-curve-settings";
             var response = await _httpClient.GetAsync(url, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
@@ -3025,7 +3548,12 @@ namespace REWApi.Domain.Services
                 ? await _httpClient.PutAsync(url, content, cancellationToken)
                 : await _httpClient.PostAsync(url, content, cancellationToken);
 
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
         }
 
         /// <summary>
@@ -3039,7 +3567,12 @@ namespace REWApi.Domain.Services
         {
             var url = $"{_baseUrl}/eq/house-curve";
             var response = await _httpClient.GetAsync(url, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             return JsonSerializer.Deserialize<string>(json) ?? string.Empty;
@@ -3064,7 +3597,12 @@ namespace REWApi.Domain.Services
                 "application/json");
 
             var response = await _httpClient.PostAsync(url, content, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
         }
 
         /// <summary>
@@ -3076,7 +3614,12 @@ namespace REWApi.Domain.Services
         {
             var url = $"{_baseUrl}/eq/house-curve";
             var response = await _httpClient.DeleteAsync(url, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
         }
 
         #endregion
@@ -3094,7 +3637,12 @@ namespace REWApi.Domain.Services
         {
             var url = $"{_baseUrl}/eq/match-target-settings";
             var response = await _httpClient.GetAsync(url, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
@@ -3127,7 +3675,12 @@ namespace REWApi.Domain.Services
                 ? await _httpClient.PutAsync(url, content, cancellationToken)
                 : await _httpClient.PostAsync(url, content, cancellationToken);
 
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
         }
 
         /// <summary>
@@ -3140,7 +3693,12 @@ namespace REWApi.Domain.Services
         {
             var url = $"{_baseUrl}/eq/target-shapes";
             var response = await _httpClient.GetAsync(url, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             return JsonSerializer.Deserialize<string[]>(json) ?? Array.Empty<string>();
@@ -3156,7 +3714,12 @@ namespace REWApi.Domain.Services
         {
             var url = $"{_baseUrl}/eq/crossover-types";
             var response = await _httpClient.GetAsync(url, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             return JsonSerializer.Deserialize<string[]>(json) ?? Array.Empty<string>();
@@ -3172,7 +3735,12 @@ namespace REWApi.Domain.Services
         {
             var url = $"{_baseUrl}/eq/slopes";
             var response = await _httpClient.GetAsync(url, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             return JsonSerializer.Deserialize<int[]>(json) ?? Array.Empty<int>();
@@ -3188,7 +3756,12 @@ namespace REWApi.Domain.Services
         {
             var url = $"{_baseUrl}/eq/house-curve-log-interpolation";
             var response = await _httpClient.GetAsync(url, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             return JsonSerializer.Deserialize<bool>(json);
@@ -3210,7 +3783,12 @@ namespace REWApi.Domain.Services
                 "application/json");
 
             var response = await _httpClient.PostAsync(url, content, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
         }
 
         /// <summary>
@@ -3234,7 +3812,12 @@ namespace REWApi.Domain.Services
                 "application/json");
 
             var response = await _httpClient.PostAsync(url, content, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
         }
 
         /// <summary>
@@ -3257,7 +3840,12 @@ namespace REWApi.Domain.Services
                 "application/json");
 
             var response = await _httpClient.PostAsync(url, content, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
         }
 
         /// <summary>
@@ -3269,7 +3857,12 @@ namespace REWApi.Domain.Services
         {
             var url = $"{_baseUrl}/eq/subscribers";
             var response = await _httpClient.GetAsync(url, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             using var doc = JsonDocument.Parse(json);
@@ -3319,7 +3912,12 @@ namespace REWApi.Domain.Services
 
             var url = $"{_baseUrl}/measurements/{measurementId}/target-response";
             var response = await _httpClient.GetAsync(url, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             var data = JsonSerializer.Deserialize<JsonElement>(json);
@@ -3355,7 +3953,12 @@ namespace REWApi.Domain.Services
                 urlBuilder.Append($"&ppo={ppo.Value}");
 
             var response = await _httpClient.GetAsync(urlBuilder.ToString(), cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             var data = JsonSerializer.Deserialize<JsonElement>(json);
@@ -3389,7 +3992,12 @@ namespace REWApi.Domain.Services
                 urlBuilder.Append($"&ppo={ppo.Value}");
 
             var response = await _httpClient.GetAsync(urlBuilder.ToString(), cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             var data = JsonSerializer.Deserialize<JsonElement>(json);
@@ -3427,7 +4035,12 @@ namespace REWApi.Domain.Services
                 urlBuilder.Append("&normalised=false");
 
             var response = await _httpClient.GetAsync(urlBuilder.ToString(), cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             var data = JsonSerializer.Deserialize<JsonElement>(json);
@@ -3467,7 +4080,12 @@ namespace REWApi.Domain.Services
                 urlBuilder.Append($"&ppo={ppo.Value}");
 
             var response = await _httpClient.GetAsync(urlBuilder.ToString(), cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             var data = JsonSerializer.Deserialize<JsonElement>(json);
@@ -3502,7 +4120,12 @@ namespace REWApi.Domain.Services
 
             var url = $"{_baseUrl}/measurements/{measurementId}/filters-impulse-response?samplerate={sampleRate}&length={length}";
             var response = await _httpClient.GetAsync(url, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             var data = JsonSerializer.Deserialize<JsonElement>(json);
@@ -3536,7 +4159,12 @@ namespace REWApi.Domain.Services
 
             var url = $"{_baseUrl}/measurements/{measurementId}/commands";
             var response = await _httpClient.GetAsync(url, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             var commands = JsonSerializer.Deserialize<string[]>(json);
@@ -3576,7 +4204,12 @@ namespace REWApi.Domain.Services
 
             var url = $"{_baseUrl}/measurements/{measurementId}";
             var response = await _httpClient.PutAsync(url, content, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
         }
 
         /// <summary>
@@ -3590,7 +4223,12 @@ namespace REWApi.Domain.Services
         {
             var url = $"{_baseUrl}/measurements/selected-uuid";
             var response = await _httpClient.GetAsync(url, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             var data = JsonSerializer.Deserialize<JsonElement>(json);
@@ -3622,7 +4260,12 @@ namespace REWApi.Domain.Services
             var content = new StringContent($"\"{measurementId}\"", System.Text.Encoding.UTF8, "application/json");
             
             var response = await _httpClient.PostAsync(url, content, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
         }
 
         /// <summary>
@@ -3641,7 +4284,12 @@ namespace REWApi.Domain.Services
 
             var url = $"{_baseUrl}/measurements/{measurementId}/ir-windows";
             var response = await _httpClient.GetAsync(url, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             var windows = JsonSerializer.Deserialize<IRWindows>(json, new JsonSerializerOptions
@@ -3667,6 +4315,14 @@ namespace REWApi.Domain.Services
                 throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
             if (windows == null)
                 throw new ArgumentNullException(nameof(windows));
+            
+            // Normalize FDW cycles: if 0 (invalid), set to default 15
+            // API requires FDW cycles to be 1-35 even when FDW is not enabled
+            if (windows.FdwWidthCycles == 0.0)
+            {
+                windows.FdwWidthCycles = 15.0;
+            }
+            
             if (!windows.IsValid())
                 throw new ArgumentException("Invalid IR window settings", nameof(windows));
 
@@ -3678,7 +4334,12 @@ namespace REWApi.Domain.Services
 
             var url = $"{_baseUrl}/measurements/{measurementId}/ir-windows";
             var response = await _httpClient.PostAsync(url, content, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
         }
 
         /// <summary>
@@ -3696,6 +4357,14 @@ namespace REWApi.Domain.Services
                 throw new ArgumentException("Measurement ID cannot be null or empty", nameof(measurementId));
             if (windows == null)
                 throw new ArgumentNullException(nameof(windows));
+            
+            // Normalize FDW cycles: if 0 (invalid), set to default 15
+            // API requires FDW cycles to be 1-35 even when FDW is not enabled
+            if (windows.FdwWidthCycles == 0.0)
+            {
+                windows.FdwWidthCycles = 15.0;
+            }
+            
             if (!windows.IsValid())
                 throw new ArgumentException("Invalid IR window settings", nameof(windows));
 
@@ -3707,7 +4376,12 @@ namespace REWApi.Domain.Services
 
             var url = $"{_baseUrl}/measurements/{measurementId}/ir-windows";
             var response = await _httpClient.PutAsync(url, content, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
         }
 
         #endregion
@@ -3719,7 +4393,12 @@ namespace REWApi.Domain.Services
             while (!cancellationToken.IsCancellationRequested)
             {
                 var response = await _httpClient.GetAsync($"{_baseUrl}/jobs/{jobId}", cancellationToken);
-                response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
                 var json = await response.Content.ReadAsStringAsync(cancellationToken);
                 var data = JsonSerializer.Deserialize<JsonElement>(json);
@@ -3761,7 +4440,12 @@ namespace REWApi.Domain.Services
                         continue;
                     }
 
-                    response.EnsureSuccessStatusCode();
+                if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
                     var json = await response.Content.ReadAsStringAsync(cancellationToken);
                     var processResult = JsonSerializer.Deserialize<JsonElement>(json);
@@ -3811,7 +4495,12 @@ namespace REWApi.Domain.Services
         private async Task<MeasurementSummary> GetMeasurementSummary(string measurementId, CancellationToken cancellationToken)
         {
             var response = await _httpClient.GetAsync($"{_baseUrl}/measurements/{measurementId}/summary", cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             var data = JsonSerializer.Deserialize<JsonElement>(json);
@@ -4362,7 +5051,12 @@ namespace REWApi.Domain.Services
                 "application/json");
 
             var response = await _httpClient.PostAsync(url, content, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             
             _logger?.LogInformation("Subscribed to measurement changes: {Url}", subscriberUrl);
         }
@@ -4388,7 +5082,12 @@ namespace REWApi.Domain.Services
                 "application/json");
 
             var response = await _httpClient.PostAsync(url, content, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             
             _logger?.LogInformation("Unsubscribed from measurement changes: {Url}", subscriberUrl);
         }
@@ -4404,7 +5103,12 @@ namespace REWApi.Domain.Services
         {
             var url = $"{_baseUrl}/measurements/subscribers";
             var response = await _httpClient.GetAsync(url, cancellationToken);
-            response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             var subscribers = JsonSerializer.Deserialize<JsonElement>(json);

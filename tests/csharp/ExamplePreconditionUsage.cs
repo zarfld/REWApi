@@ -109,10 +109,11 @@ namespace REWApi.Tests
 
             await Task.Delay(StateChange); // Wait for RTA to capture data
 
-            // Now safe to save graph (saves to default/configured location)
-            await _client!.RTA.SaveGraphImage();
+            // Now safe to save graph - filename is required by REW API
+            var testImagePath = Path.Combine(Path.GetTempPath(), "REWApi_Test_RTA_Graph.png");
+            await _client!.RTA.SaveGraphImage(testImagePath);
 
-            _output.WriteLine("✅ RTA graph saved successfully (check REW configured location)");
+            _output.WriteLine($"✅ RTA graph saved successfully to: {testImagePath}");
         }
 
         #endregion
@@ -145,17 +146,22 @@ namespace REWApi.Tests
             // Get current configuration
             var currentConfig = await _client!.Generator.GetConfiguration();
 
-            // Modify configuration
-            var newConfig = new GeneratorConfiguration
+            // Set signal to sine first (required for frequency and dither properties)
+            await _client.Generator.SetSignal("sine");
+            await Task.Delay(200);
+
+            // Use signal-specific configuration method
+            var sineConfig = new SineConfiguration
             {
-                AddDither = false,
-                Frequency = 1000.0 // For sine wave signals
+                Frequency = 1000.0,
+                AddDither = true,
+                DitherBits = 16
             };
 
-            // Now safe to update
-            await _client.Generator.UpdateConfiguration(newConfig);
+            // Now safe to update with signal-specific method
+            await _client.Generator.UpdateSineConfiguration(sineConfig);
 
-            _output.WriteLine("✅ Generator configuration updated successfully");
+            _output.WriteLine("✅ Generator sine configuration updated successfully");
         }
 
         #endregion

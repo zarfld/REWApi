@@ -35,7 +35,13 @@ namespace REWApi.Domain.Services
         public async Task<List<string>> GetCommands()
         {
             var response = await _httpClient.GetAsync($"{_baseUrl}/spl-meter/commands");
-            response.EnsureSuccessStatusCode();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             
             var content = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<List<string>>(content);
@@ -57,7 +63,13 @@ namespace REWApi.Domain.Services
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             
             var response = await _httpClient.PostAsync($"{_baseUrl}/spl-meter/{meterNumber}/command", content);
-            response.EnsureSuccessStatusCode();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
         }
 
         /// <summary>
@@ -92,7 +104,13 @@ namespace REWApi.Domain.Services
             ValidateMeterNumber(meterNumber);
             
             var response = await _httpClient.GetAsync($"{_baseUrl}/spl-meter/{meterNumber}/configuration");
-            response.EnsureSuccessStatusCode();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             
             var content = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<SPLMeterConfiguration>(content);
@@ -125,7 +143,12 @@ namespace REWApi.Domain.Services
                 ? await _httpClient.PutAsync($"{_baseUrl}/spl-meter/{meterNumber}/configuration", content)
                 : await _httpClient.PostAsync($"{_baseUrl}/spl-meter/{meterNumber}/configuration", content);
             
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
         }
 
         #endregion
@@ -140,7 +163,13 @@ namespace REWApi.Domain.Services
         public async Task<List<string>> GetModes()
         {
             var response = await _httpClient.GetAsync($"{_baseUrl}/spl-meter/modes");
-            response.EnsureSuccessStatusCode();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             
             var content = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<List<string>>(content);
@@ -154,7 +183,13 @@ namespace REWApi.Domain.Services
         public async Task<List<string>> GetWeightings()
         {
             var response = await _httpClient.GetAsync($"{_baseUrl}/spl-meter/weightings");
-            response.EnsureSuccessStatusCode();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             
             var content = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<List<string>>(content);
@@ -168,7 +203,13 @@ namespace REWApi.Domain.Services
         public async Task<List<string>> GetFilters()
         {
             var response = await _httpClient.GetAsync($"{_baseUrl}/spl-meter/filters");
-            response.EnsureSuccessStatusCode();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             
             var content = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<List<string>>(content);
@@ -189,7 +230,13 @@ namespace REWApi.Domain.Services
             ValidateMeterNumber(meterNumber);
             
             var response = await _httpClient.GetAsync($"{_baseUrl}/spl-meter/{meterNumber}/levels");
-            response.EnsureSuccessStatusCode();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             
             var content = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<SPLValues>(content);
@@ -216,7 +263,13 @@ namespace REWApi.Domain.Services
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             
             var response = await _httpClient.PostAsync($"{_baseUrl}/spl-meter/{meterNumber}/subscribe", content);
-            response.EnsureSuccessStatusCode();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             
             Console.WriteLine($"Subscribed to SPL meter {meterNumber}: {subscriberUrl}");
         }
@@ -237,7 +290,13 @@ namespace REWApi.Domain.Services
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             
             var response = await _httpClient.PostAsync($"{_baseUrl}/spl-meter/{meterNumber}/unsubscribe", content);
-            response.EnsureSuccessStatusCode();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             
             Console.WriteLine($"Unsubscribed from SPL meter {meterNumber}: {subscriberUrl}");
         }
@@ -253,7 +312,13 @@ namespace REWApi.Domain.Services
             ValidateMeterNumber(meterNumber);
             
             var response = await _httpClient.GetAsync($"{_baseUrl}/spl-meter/{meterNumber}/subscribers");
-            response.EnsureSuccessStatusCode();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             
             var content = await response.Content.ReadAsStringAsync();
             var subscribers = JsonSerializer.Deserialize<List<Dictionary<string, string>>>(content) 

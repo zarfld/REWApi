@@ -73,7 +73,14 @@ namespace REWApi.Domain.Services
             var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
             
             var response = await _httpClient.PostAsync($"{_baseUrl}/generator/command", httpContent, cancellationToken);
-            response.EnsureSuccessStatusCode();
+            
+            // If not successful, read the response body to get the actual error message
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
         }
 
         /// <summary>
@@ -132,7 +139,13 @@ namespace REWApi.Domain.Services
             var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
             
             var response = await _httpClient.PostAsync($"{_baseUrl}/generator/signal", httpContent, cancellationToken);
-            response.EnsureSuccessStatusCode();
+            
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
         }
 
         /// <summary>
@@ -170,20 +183,181 @@ namespace REWApi.Domain.Services
         /// <summary>
         /// Update configuration for current signal
         /// POST or PUT /generator/signal/configuration
+        /// DEPRECATED: Use signal-specific methods instead (UpdateSineConfiguration, UpdateRandomNoiseConfiguration, etc.)
         /// </summary>
-        /// <param name="configuration">New configuration settings</param>
+        /// <param name="configuration">New configuration settings (can be partial - only non-null properties sent)</param>
         /// <param name="cancellationToken">Cancellation token</param>
+        /// <remarks>
+        /// The API accepts partial configurations per REW documentation.
+        /// Different signals require different configuration properties - consult /generator/signals for schemas.
+        /// This method serializes only non-null properties to support partial updates.
+        /// </remarks>
+        [Obsolete("Use signal-specific configuration methods instead: UpdateSineConfiguration, UpdateRandomNoiseConfiguration, etc.")]
         public async Task UpdateConfiguration(GeneratorConfiguration configuration, CancellationToken cancellationToken = default)
         {
             if (configuration == null)
                 throw new ArgumentNullException(nameof(configuration));
 
-            var json = JsonSerializer.Serialize(configuration);
+            // Serialize with options to ignore null values for partial configuration support
+            var options = new JsonSerializerOptions
+            {
+                DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+            };
+            
+            var json = JsonSerializer.Serialize(configuration, options);
             var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
             
             var response = await _httpClient.PostAsync($"{_baseUrl}/generator/signal/configuration", httpContent, cancellationToken);
-            response.EnsureSuccessStatusCode();
+            
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
         }
+
+        #region Signal-Specific Configuration Methods
+
+        /// <summary>
+        /// Updates sine wave generator configuration.
+        /// </summary>
+        public async Task UpdateSineConfiguration(SineConfiguration configuration, CancellationToken cancellationToken = default)
+        {
+            await UpdateSignalConfiguration(configuration, cancellationToken);
+        }
+
+        /// <summary>
+        /// Updates random noise generator configuration (pinknoise, whitenoise).
+        /// </summary>
+        public async Task UpdateRandomNoiseConfiguration(RandomNoiseConfiguration configuration, CancellationToken cancellationToken = default)
+        {
+            await UpdateSignalConfiguration(configuration, cancellationToken);
+        }
+
+        /// <summary>
+        /// Updates periodic noise generator configuration (pinkpn, whitepn).
+        /// </summary>
+        public async Task UpdatePeriodicNoiseConfiguration(PeriodicNoiseConfiguration configuration, CancellationToken cancellationToken = default)
+        {
+            await UpdateSignalConfiguration(configuration, cancellationToken);
+        }
+
+        /// <summary>
+        /// Updates square wave generator configuration.
+        /// </summary>
+        public async Task UpdateSquareConfiguration(SquareConfiguration configuration, CancellationToken cancellationToken = default)
+        {
+            await UpdateSignalConfiguration(configuration, cancellationToken);
+        }
+
+        /// <summary>
+        /// Updates sawtooth wave generator configuration.
+        /// </summary>
+        public async Task UpdateSawtoothConfiguration(SawtoothConfiguration configuration, CancellationToken cancellationToken = default)
+        {
+            await UpdateSignalConfiguration(configuration, cancellationToken);
+        }
+
+        /// <summary>
+        /// Updates tone burst generator configuration.
+        /// </summary>
+        public async Task UpdateToneBurstConfiguration(ToneBurstConfiguration configuration, CancellationToken cancellationToken = default)
+        {
+            await UpdateSignalConfiguration(configuration, cancellationToken);
+        }
+
+        /// <summary>
+        /// Updates CEA burst generator configuration.
+        /// </summary>
+        public async Task UpdateCEABurstConfiguration(CEABurstConfiguration configuration, CancellationToken cancellationToken = default)
+        {
+            await UpdateSignalConfiguration(configuration, cancellationToken);
+        }
+
+        /// <summary>
+        /// Updates two-tone generator configuration (dualtone).
+        /// </summary>
+        public async Task UpdateTwoToneConfiguration(TwoToneConfiguration configuration, CancellationToken cancellationToken = default)
+        {
+            await UpdateSignalConfiguration(configuration, cancellationToken);
+        }
+
+        /// <summary>
+        /// Updates three-tone generator configuration (tripletone).
+        /// </summary>
+        public async Task UpdateThreeToneConfiguration(ThreeToneConfiguration configuration, CancellationToken cancellationToken = default)
+        {
+            await UpdateSignalConfiguration(configuration, cancellationToken);
+        }
+
+        /// <summary>
+        /// Updates quadtone (4-tone) generator configuration.
+        /// </summary>
+        public async Task UpdateQuadtoneConfiguration(QuadtoneConfiguration configuration, CancellationToken cancellationToken = default)
+        {
+            await UpdateSignalConfiguration(configuration, cancellationToken);
+        }
+
+        /// <summary>
+        /// Updates multitone generator configuration.
+        /// </summary>
+        public async Task UpdateMultitoneConfiguration(MultitoneConfiguration configuration, CancellationToken cancellationToken = default)
+        {
+            await UpdateSignalConfiguration(configuration, cancellationToken);
+        }
+
+        /// <summary>
+        /// Updates linear sweep generator configuration.
+        /// </summary>
+        public async Task UpdateLinearSweepConfiguration(LinearSweepConfiguration configuration, CancellationToken cancellationToken = default)
+        {
+            await UpdateSignalConfiguration(configuration, cancellationToken);
+        }
+
+        /// <summary>
+        /// Updates log sweep generator configuration.
+        /// </summary>
+        public async Task UpdateLogSweepConfiguration(LogSweepConfiguration configuration, CancellationToken cancellationToken = default)
+        {
+            await UpdateSignalConfiguration(configuration, cancellationToken);
+        }
+
+        /// <summary>
+        /// Updates measurement sweep generator configuration.
+        /// </summary>
+        public async Task UpdateMeasSweepConfiguration(MeasSweepConfiguration configuration, CancellationToken cancellationToken = default)
+        {
+            await UpdateSignalConfiguration(configuration, cancellationToken);
+        }
+
+        /// <summary>
+        /// Generic helper method to update signal-specific configuration.
+        /// </summary>
+        private async Task UpdateSignalConfiguration<T>(T configuration, CancellationToken cancellationToken) where T : class
+        {
+            if (configuration == null)
+                throw new ArgumentNullException(nameof(configuration));
+
+            var options = new JsonSerializerOptions
+            {
+                DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+            };
+
+            var json = JsonSerializer.Serialize(configuration, options);
+            var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync($"{_baseUrl}/generator/signal/configuration", httpContent, cancellationToken);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
+        }
+
+        #endregion
 
         /// <summary>
         /// Get commands available for current signal
@@ -216,7 +390,13 @@ namespace REWApi.Domain.Services
             var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
             
             var response = await _httpClient.PostAsync($"{_baseUrl}/generator/signal/command", httpContent, cancellationToken);
-            response.EnsureSuccessStatusCode();
+            
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
         }
 
         #endregion
@@ -258,7 +438,13 @@ namespace REWApi.Domain.Services
             var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
             
             var response = await _httpClient.PostAsync($"{_baseUrl}/generator/level", httpContent, cancellationToken);
-            response.EnsureSuccessStatusCode();
+            
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
         }
 
         /// <summary>
@@ -307,7 +493,13 @@ namespace REWApi.Domain.Services
             var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
             
             var response = await _httpClient.PostAsync($"{_baseUrl}/generator/frequency", httpContent, cancellationToken);
-            response.EnsureSuccessStatusCode();
+            
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
         }
 
         #endregion
@@ -341,7 +533,13 @@ namespace REWApi.Domain.Services
             var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
             
             var response = await _httpClient.PostAsync($"{_baseUrl}/generator/invert-second-output", httpContent, cancellationToken);
-            response.EnsureSuccessStatusCode();
+            
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
         }
 
         #endregion
@@ -379,7 +577,13 @@ namespace REWApi.Domain.Services
             var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
             
             var response = await _httpClient.PostAsync($"{_baseUrl}/generator/protection", httpContent, cancellationToken);
-            response.EnsureSuccessStatusCode();
+            
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
         }
 
         #endregion

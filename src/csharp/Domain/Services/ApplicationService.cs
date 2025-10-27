@@ -49,7 +49,12 @@ namespace REWApi.Domain.Services
                     new StringContent("", Encoding.UTF8, "application/json"),
                     cancellationToken);
 
-                response.EnsureSuccessStatusCode();
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
+                    throw new HttpRequestException(
+                        $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+                }
                 
                 _logger?.LogInformation("REW application shutdown initiated");
             }, "Shutdown Application", cancellationToken);
@@ -73,7 +78,12 @@ namespace REWApi.Domain.Services
                     content,
                     cancellationToken);
 
-                response.EnsureSuccessStatusCode();
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
+                    throw new HttpRequestException(
+                        $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+                }
                 
                 _logger?.LogInformation("REW blocking mode {Action}", enable ? "enabled" : "disabled");
             }, $"{(enable ? "Enable" : "Disable")} Blocking Mode", cancellationToken);
@@ -200,7 +210,12 @@ namespace REWApi.Domain.Services
                 new StringContent("", Encoding.UTF8, "application/json"),
                 cancellationToken);
 
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+            }
             
             _logger?.LogInformation("Cleared REW command in progress");
         }
@@ -294,7 +309,12 @@ namespace REWApi.Domain.Services
                     content,
                     cancellationToken);
 
-                response.EnsureSuccessStatusCode();
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
+                    throw new HttpRequestException(
+                        $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}). Response: {errorBody}");
+                }
 
                 var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
                 var data = JsonSerializer.Deserialize<JsonElement>(responseJson);

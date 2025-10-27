@@ -310,32 +310,222 @@ namespace REWApi.Tests
             var generatorStopped = await _preconditions!.EnsureGeneratorStopped();
             generatorStopped.Should().BeTrue("generator should be stopped for configuration changes");
 
-            // Get current config
+            // Set signal to sine (which supports addDither/ditherBits)
+            await _generatorService.SetSignal("sine");
+            await Task.Delay(200);
+
+            // Get current config for sine signal
             var originalConfig = await _generatorService.GetConfiguration();
             
-            // Modify dither setting
-            var modifiedConfig = new GeneratorConfiguration
+            // Modify only the dither settings using signal-specific configuration
+            var sineConfig = new SineConfiguration
             {
                 AddDither = !originalConfig.AddDither,
-                DitherBits = 16,
-                Frequency = originalConfig.Frequency,
-                NoiseColor = originalConfig.NoiseColor,
-                CustomFilter = originalConfig.CustomFilter,
-                HighPassFreq = originalConfig.HighPassFreq,
-                LowPassFreq = originalConfig.LowPassFreq
+                DitherBits = 18  // Different from default 16
             };
 
-            // Act
-            await _generatorService.UpdateConfiguration(modifiedConfig);
+            // Act - Use signal-specific method
+            await _generatorService.UpdateSineConfiguration(sineConfig);
             await Task.Delay(300); // Wait for update
             var updatedConfig = await _generatorService.GetConfiguration();
 
             // Assert
-            updatedConfig.AddDither.Should().Be(modifiedConfig.AddDither, "dither setting should be updated");
-            _output.WriteLine($"✅ Configuration updated: AddDither changed from {originalConfig.AddDither} to {updatedConfig.AddDither}");
+            updatedConfig.AddDither.Should().Be(sineConfig.AddDither, "dither setting should be updated");
+            updatedConfig.DitherBits.Should().Be(18, "dither bits should be updated to 18");
+            _output.WriteLine($"✅ Sine configuration updated: AddDither={updatedConfig.AddDither}, DitherBits={updatedConfig.DitherBits}");
 
-            // Cleanup - restore original
+            // Cleanup - restore original using generic method (backward compatibility test)
+            #pragma warning disable CS0618 // Type or member is obsolete
             await _generatorService.UpdateConfiguration(originalConfig);
+            #pragma warning restore CS0618
+        }
+
+        [Theory]
+        [InlineData("square")]
+        [InlineData("sawtooth")]
+        [InlineData("toneburst")]
+        [InlineData("cea-burst")]
+        [InlineData("dualtone")]
+        [InlineData("tripletone")]
+        [InlineData("quadtone")]
+        [InlineData("multitone")]
+        [InlineData("pinknoise")]
+        [InlineData("whitenoise")]
+        [InlineData("pinkpn")]
+        [InlineData("whitepn")]
+        [InlineData("linearsweep")]
+        [InlineData("logsweep")]
+        [InlineData("meassweep")]
+        public async Task UpdateConfiguration_ShouldWorkForAllSignalTypes(string signalType)
+        {
+            // Arrange - Ensure generator stopped
+            var stopped = await _preconditions!.EnsureGeneratorStopped();
+            stopped.Should().BeTrue($"generator should be stopped before testing {signalType}");
+
+            // Set the signal type
+            await _generatorService.SetSignal(signalType);
+            await Task.Delay(200); // Allow signal to switch
+
+            // Get original configuration (returns signal-specific type)
+            var originalConfig = await _generatorService.GetConfiguration();
+            originalConfig.Should().NotBeNull($"{signalType} should return configuration");
+
+            // Act - Update configuration using signal-specific method based on signal type
+            await UpdateSignalSpecificConfiguration(signalType, originalConfig);
+            await Task.Delay(300); // Allow update to process
+
+            // Assert - Verify configuration was accepted (no exception thrown)
+            var updatedConfig = await _generatorService.GetConfiguration();
+            updatedConfig.Should().NotBeNull($"{signalType} configuration should be retrievable after update");
+            
+            _output.WriteLine($"✅ {signalType} configuration update successful");
+
+            // Cleanup - Restore original configuration
+            await RestoreSignalConfiguration(signalType, originalConfig);
+        }
+
+        private async Task UpdateSignalSpecificConfiguration(string signalType, GeneratorConfiguration originalConfig)
+        {
+            // Use signal-specific update methods based on signal type
+            switch (signalType)
+            {
+                case "square":
+                    await _generatorService.UpdateSquareConfiguration(new SquareConfiguration
+                    {
+                        Frequency = originalConfig.Frequency ?? 1000,
+                        AddDither = originalConfig.AddDither,
+                        DitherBits = originalConfig.DitherBits
+                    });
+                    break;
+
+                case "sawtooth":
+                    await _generatorService.UpdateSawtoothConfiguration(new SawtoothConfiguration
+                    {
+                        Frequency = originalConfig.Frequency ?? 1000,
+                        AddDither = originalConfig.AddDither,
+                        DitherBits = originalConfig.DitherBits
+                    });
+                    break;
+
+                case "toneburst":
+                    await _generatorService.UpdateToneBurstConfiguration(new ToneBurstConfiguration
+                    {
+                        Frequency = originalConfig.Frequency ?? 1000,
+                        Window = "Rectangular",  // API requires valid window type
+                        WindowWidthUnit = "cycles",  // API requires valid window width unit
+                        PeriodUnit = "cycles"  // API requires valid period unit
+                    });
+                    break;
+
+                case "cea-burst":
+                    await _generatorService.UpdateCEABurstConfiguration(new CEABurstConfiguration
+                    {
+                        Frequency = originalConfig.Frequency ?? 1000
+                    });
+                    break;
+
+                case "dualtone":
+                    await _generatorService.UpdateTwoToneConfiguration(new TwoToneConfiguration
+                    {
+                        Type = "smpte",  // API requires valid dual tone type
+                        AddDither = originalConfig.AddDither,
+                        DitherBits = originalConfig.DitherBits
+                    });
+                    break;
+
+                case "tripletone":
+                    await _generatorService.UpdateThreeToneConfiguration(new ThreeToneConfiguration
+                    {
+                        Type = "borberly",  // API requires valid triple tone type
+                        AddDither = originalConfig.AddDither,
+                        DitherBits = originalConfig.DitherBits
+                    });
+                    break;
+
+                case "quadtone":
+                    await _generatorService.UpdateQuadtoneConfiguration(new QuadtoneConfiguration
+                    {
+                        Type = "smpte",  // API requires valid quad tone type
+                        AddDither = originalConfig.AddDither,
+                        DitherBits = originalConfig.DitherBits
+                    });
+                    break;
+
+                case "multitone":
+                    await _generatorService.UpdateMultitoneConfiguration(new MultitoneConfiguration
+                    {
+                        SequenceLength = "16k",  // API requires valid sequence length
+                        Spectrum = "White",  // API requires valid spectrum setting
+                        Spacing = "Oct",  // API requires valid multitone spacing
+                        AddDither = originalConfig.AddDither,
+                        DitherBits = originalConfig.DitherBits
+                    });
+                    break;
+
+                case "pinknoise":
+                    await _generatorService.UpdateRandomNoiseConfiguration(new RandomNoiseConfiguration
+                    {
+                        Type = "full-range"  // API requires valid noise type, not "pink"
+                    });
+                    break;
+
+                case "whitenoise":
+                    await _generatorService.UpdateRandomNoiseConfiguration(new RandomNoiseConfiguration
+                    {
+                        Type = "full-range"  // API requires valid noise type, not "white"
+                    });
+                    break;
+
+                case "pinkpn":
+                    await _generatorService.UpdatePeriodicNoiseConfiguration(new PeriodicNoiseConfiguration
+                    {
+                        Type = "full-range"  // API requires valid periodic noise type
+                    });
+                    break;
+
+                case "whitepn":
+                    await _generatorService.UpdatePeriodicNoiseConfiguration(new PeriodicNoiseConfiguration
+                    {
+                        Type = "full-range"  // API requires valid periodic noise type
+                    });
+                    break;
+
+                case "linearsweep":
+                    await _generatorService.UpdateLinearSweepConfiguration(new LinearSweepConfiguration
+                    {
+                        StartFrequency = 20,
+                        EndFrequency = 20000
+                    });
+                    break;
+
+                case "logsweep":
+                    await _generatorService.UpdateLogSweepConfiguration(new LogSweepConfiguration
+                    {
+                        StartFrequency = 20,
+                        EndFrequency = 20000,
+                        FadeInFraction = "None",   // API requires valid fade fraction
+                        FadeOutFraction = "None"   // API requires valid fade fraction
+                    });
+                    break;
+
+                case "meassweep":
+                    await _generatorService.UpdateMeasSweepConfiguration(new MeasSweepConfiguration
+                    {
+                        StartFrequency = 20,
+                        EndFrequency = 20000,
+                        Length = "256k"  // API requires valid meas sweep length
+                    });
+                    break;
+
+                default:
+                    throw new ArgumentException($"Unknown signal type: {signalType}");
+            }
+        }
+
+        private async Task RestoreSignalConfiguration(string signalType, GeneratorConfiguration originalConfig)
+        {
+            // Restore using the same signal-specific method
+            await UpdateSignalSpecificConfiguration(signalType, originalConfig);
         }
 
         [Fact]
