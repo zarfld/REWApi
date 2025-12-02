@@ -1,17 +1,18 @@
 ---
 title: "REW Client Library Requirements - [Resource Group Name]"
 specType: requirements
+standard: "IEEE/ISO/IEC 29148:2018"
 phase: 02-requirements
 version: 1.0.0
 status: draft
 author: requirements-analysis
-date: 2025-10-21
+date: "2025-10-21"
 traceability:
   stakeholderRequirements:
-    - STR-001 (Audio measurement automation)
-    - STR-002 (Test automation support)
+    - StR-001
+    - StR-002
   architecture:
-    - ADR-004 (Domain Service Architecture)
+    - ADR-004
   verification:
     - TEST-[RESOURCE]-XXX
 description: "Functional requirements for [Resource] domain service exposing REW REST API /[resource]/* endpoints through OOP interface"
@@ -19,7 +20,7 @@ description: "Functional requirements for [Resource] domain service exposing REW
 
 # REW Client Library - [Resource Group] Requirements
 
-**Document ID**: REQ-F-CLIENT-[XXX]  
+**Document ID**: REQ-F-CLIENT-[XXX] (Example: REQ-F-CLIENT-001)  
 **REW REST API Resource**: `/[resource]/*`  
 **Client Library Component**: `[Resource]Service.cs` (Domain Service)  
 **Standards**: ISO/IEC/IEEE 29148:2018 (System Requirements)

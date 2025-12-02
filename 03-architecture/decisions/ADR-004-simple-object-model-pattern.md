@@ -1,3 +1,15 @@
+---
+title: "ADR-004: Battle-Tested Domain Service Architecture"
+specType: architecture-decision
+standard: "ISO/IEC/IEEE 42010:2011"
+phase: 03-architecture
+version: "1.0.0"
+status: accepted
+author: architecture-team
+date: "2024-12-19"
+description: "Decision on using Domain Service Architecture for REW API client library"
+---
+
 # ADR-004: Battle-Tested Domain Service Architecture
 
 ## Status

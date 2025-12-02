@@ -1,17 +1,18 @@
 ---
 title: "REW Client Library Requirements - Measurements API"
 specType: requirements
+standard: "IEEE/ISO/IEC 29148:2018"
 phase: 02-requirements
 version: 1.0.0
-status: active
+status: approved
 author: requirements-analysis
-date: 2025-10-21
+date: "2025-10-21"
 traceability:
   stakeholderRequirements:
-    - STR-001 (Audio measurement automation)
-    - STR-002 (Test automation support)
+    - StR-001
+    - StR-002
   architecture:
-    - ADR-004 (Domain Service Architecture)
+    - ADR-004
   verification:
     - TEST-MEASUREMENTS-001 through TEST-MEASUREMENTS-050
 description: "Functional requirements for MeasurementsService exposing REW REST API /measurements/* endpoints"

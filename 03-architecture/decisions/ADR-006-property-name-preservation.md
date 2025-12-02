@@ -1,3 +1,15 @@
+---
+title: "ADR-006: Property Name Preservation"
+specType: architecture-decision
+standard: "ISO/IEC/IEEE 42010:2011"
+phase: 03-architecture
+version: "1.0.0"
+status: accepted
+author: architecture-team
+date: "2024-12-19"
+description: "Decision on preserving REW API property names exactly as-is across all language implementations"
+---
+
 # ADR-006: Property Name Preservation
 
 ## Status

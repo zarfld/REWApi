@@ -1,16 +1,17 @@
 ---
 title: "REW Client Library Requirements - Remaining API Groups (Groups, Import, Measure, Alignment-Tool, Room-Sim, Stepped-Measurement, Input-Levels, Version)"
 specType: requirements
+standard: "IEEE/ISO/IEC 29148:2018"
 phase: 02-requirements
 version: 1.0.0
 status: draft
 author: requirements-analysis
-date: 2025-10-21
+date: "2025-10-21"
 traceability:
   stakeholderRequirements:
-    - STR-001 (Audio measurement automation)
+    - StR-001
   architecture:
-    - ADR-004 (Domain Service Architecture)
+    - ADR-004
 description: "Functional requirements for remaining 8 API resource groups (consolidated document)"
 ---
 

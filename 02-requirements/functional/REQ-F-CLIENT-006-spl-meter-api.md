@@ -1,16 +1,17 @@
 ---
 title: "REW Client Library Requirements - SPL Meter API"
 specType: requirements
+standard: "IEEE/ISO/IEC 29148:2018"
 phase: 02-requirements
 version: 1.0.0
 status: draft
 author: requirements-analysis
-date: 2025-10-21
+date: "2025-10-21"
 traceability:
   stakeholderRequirements:
-    - STR-001 (Audio measurement automation)
+    - StR-001
   architecture:
-    - ADR-004 (Domain Service Architecture)
+    - ADR-004
   verification:
     - TEST-SPLMETER-XXX
 description: "Functional requirements for SPLMeterService exposing REW REST API /spl-meter/* endpoints"

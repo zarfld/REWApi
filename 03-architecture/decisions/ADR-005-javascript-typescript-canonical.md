@@ -1,3 +1,15 @@
+---
+title: "ADR-005: JavaScript/TypeScript as Canonical Object Model"
+specType: architecture-decision
+standard: "ISO/IEC/IEEE 42010:2011"
+phase: 03-architecture
+version: "1.0.0"
+status: accepted
+author: architecture-team
+date: "2024-12-19"
+description: "Decision on using JavaScript/TypeScript as canonical source for object model definitions"
+---
+
 # ADR-005: JavaScript/TypeScript as Canonical Object Model
 
 ## Status

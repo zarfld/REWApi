@@ -1,3 +1,15 @@
+---
+title: "REW API Client Library - Functionality Coverage Analysis"
+specType: analysis
+standard: "IEEE/ISO/IEC 29148:2018"
+phase: 02-requirements
+version: "1.0.0"
+status: draft
+author: requirements-analysis
+date: "2025-10-21"
+description: "Analysis of OOP client library coverage against REW REST API functionality"
+---
+
 # REW API Client Library - Functionality Coverage Analysis
 
 **Analysis Date**: 2025-10-21  

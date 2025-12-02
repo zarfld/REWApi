@@ -1,3 +1,15 @@
+---
+title: "REW Object Model Architecture"
+specType: architecture-view
+standard: "ISO/IEC/IEEE 42010:2011"
+phase: 03-architecture
+version: "1.0.0"
+status: approved
+author: architecture-team
+date: "2024-12-19"
+description: "Object model architecture providing consistent abstraction for REW API across multiple programming languages"
+---
+
 # REW Object Model Architecture
 
 ## 1. Introduction
