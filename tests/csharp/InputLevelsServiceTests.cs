@@ -150,6 +150,9 @@ namespace REWApi.Tests
 
             // Act
             var result = await _client.InputLevels.SubscribeAsync(callbackUrl);
+            
+            // Wait for CommandGate operation to complete
+            await Task.Delay(1000);
 
             // Assert
             result.Should().BeTrue();
@@ -171,6 +174,9 @@ namespace REWApi.Tests
 
             // Act
             var result = await _client.InputLevels.UnsubscribeAsync(callbackUrl);
+            
+            // Wait for CommandGate operation to complete
+            await Task.Delay(1000);
 
             // Assert
             result.Should().BeTrue();

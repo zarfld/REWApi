@@ -27,7 +27,7 @@ namespace REWApi.Tests
         protected const int SimulatorCalc = 3000;       // After room simulator updates
 
         // Sample data configuration
-        private const string SampleDataPath = "D:/Repos/REWApi/tests/resources/Sampledata.mdat";
+        private const string SampleDataPath = "C:/Users/dzarf/source/repos/REWApi/tests/resources/Sampledata.mdat";
         private const int ExpectedMinimumMeasurements = 7;  // REW de-duplicates some measurements
 
         // REW startup configuration

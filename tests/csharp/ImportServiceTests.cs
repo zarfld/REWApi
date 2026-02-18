@@ -97,10 +97,12 @@ namespace REWApi.Tests
 
             // Act
             var result = await _client.Import.SetSweepStimulusAsync(testPath);
-            await Task.Delay(100); // Command delay
-
+            
             // Assert
             result.Should().BeTrue("valid WAV file should be accepted");
+            
+            // Wait for CommandGate operation to complete
+            await Task.Delay(1000);
             
             var retrievedPath = await _client.Import.GetSweepStimulusAsync();
             retrievedPath.Should().Contain(Path.GetFileName(testPath), "file path should persist");
@@ -126,7 +128,8 @@ namespace REWApi.Tests
             var stimulusSet = await _preconditions!.EnsureSweepStimulusSet(_setupResult);
             stimulusSet.Should().BeTrue("stimulus must be set before response");
             
-            await Task.Delay(100); // Command delay
+            // Wait for CommandGate operation
+            await Task.Delay(1000);
 
             // Use valid response WAV file created by preconditions
             var testPath = _setupResult!.ResponseFilePath!;
@@ -139,7 +142,8 @@ namespace REWApi.Tests
             result.Should().BeTrue("response should be accepted after stimulus is set");
             _output.WriteLine($"✅ Set sweep response to: {testPath}");
             
-            await Task.Delay(100); // Command delay
+            // Wait for CommandGate operation to complete
+            await Task.Delay(1000);
             
             var retrievedPath = await _client.Import.GetSweepResponseAsync();
             if (retrievedPath == testPath || retrievedPath.Contains(Path.GetFileName(testPath)))
@@ -182,7 +186,8 @@ namespace REWApi.Tests
             result.Should().BeTrue("valid .frd file should be accepted");
             _output.WriteLine($"✅ Set frequency response file to: {testPath}");
             
-            await Task.Delay(100); // Command delay
+            // Wait for CommandGate operation to complete
+            await Task.Delay(1000);
             
             var retrievedPath = await _client.Import.GetFrequencyResponseFileAsync();
             if (retrievedPath == testPath || retrievedPath.Contains(Path.GetFileName(testPath)))
@@ -220,7 +225,8 @@ namespace REWApi.Tests
             result.Should().BeTrue("valid .frd file should be accepted");
             _output.WriteLine($"✅ Set frequency response data file to: {testPath}");
             
-            await Task.Delay(100); // Command delay
+            // Wait for CommandGate operation to complete
+            await Task.Delay(1000);
         }
 
         #endregion
@@ -252,7 +258,8 @@ namespace REWApi.Tests
             result.Should().BeTrue("valid WAV file should be accepted");
             _output.WriteLine($"✅ Set impulse response file to: {testPath}");
             
-            await Task.Delay(100); // Command delay
+            // Wait for CommandGate operation to complete
+            await Task.Delay(1000);
         }
 
         [Fact]
@@ -280,7 +287,8 @@ namespace REWApi.Tests
             result.Should().BeTrue("valid file should be accepted");
             _output.WriteLine($"✅ Set impulse response data file to: {testPath}");
             
-            await Task.Delay(100); // Command delay
+            // Wait for CommandGate operation to complete
+            await Task.Delay(1000);
         }
 
         #endregion
