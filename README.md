@@ -1,6 +1,12 @@
-# Room EQ Wizard API Implementation
+# Room EQ Wizard API Client Library
 
-This repository contains implementations of the Room EQ Wizard (REW) API in C#, C++, JavaScript, and TypeScript. The REW API allows users to interact with REW over HTTP at localhost (127.0.0.1) on the default port 4735. The API server can be started using the -api argument when running REW. The API supports GET, PUT, and POST methods, with PUT and POST requiring a Pro upgrade license for automated sweep measurements. The API documentation is available via swagger-ui at localhost:4735, with the OpenAPI specification accessible in JSON or YAML formats.
+Status: experimental / partial.
+
+This repository contains partial client implementations for selected REW API endpoints,
+primarily in C#, with additional C++, JavaScript, and TypeScript implementations at
+different maturity levels.
+
+It is not yet a complete implementation of the REW API.
 
 ## 📋 Documentation
 
