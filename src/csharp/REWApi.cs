@@ -1105,6 +1105,38 @@ public class REWApi
         return await PutAsync($"http://localhost:4735/measurements/{id}/ir-windows", content);
     }
 
+    public async Task<string> GetLeftWindowTypeAsync(string id)
+    {
+        var response = await GetIRWindowSettingsAsync(id);
+        var jsonResponse = Newtonsoft.Json.Linq.JObject.Parse(response);
+        return jsonResponse["leftWindowType"].ToString();
+    }
+
+    public async Task<string> UpdateLeftWindowTypeAsync(string id, string leftWindowType)
+    {
+        var response = await GetIRWindowSettingsAsync(id);
+        var jsonResponse = Newtonsoft.Json.Linq.JObject.Parse(response);
+        jsonResponse["leftWindowType"] = leftWindowType;
+        var content = new StringContent(jsonResponse.ToString(), Encoding.UTF8, "application/json");
+        return await UpdateIRWindowSettingsAsync(id, content);
+    }
+
+    public async Task<string> GetRightWindowTypeAsync(string id)
+    {
+        var response = await GetIRWindowSettingsAsync(id);
+        var jsonResponse = Newtonsoft.Json.Linq.JObject.Parse(response);
+        return jsonResponse["rightWindowType"].ToString();
+    }
+
+    public async Task<string> UpdateRightWindowTypeAsync(string id, string rightWindowType)
+    {
+        var response = await GetIRWindowSettingsAsync(id);
+        var jsonResponse = Newtonsoft.Json.Linq.JObject.Parse(response);
+        jsonResponse["rightWindowType"] = rightWindowType;
+        var content = new StringContent(jsonResponse.ToString(), Encoding.UTF8, "application/json");
+        return await UpdateIRWindowSettingsAsync(id, content);
+    }
+
     // Methods for handling REW View preferences
     public async Task<string> GetREWViewPreferencesAsync()
     {
